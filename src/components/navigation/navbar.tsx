@@ -81,21 +81,20 @@ export function Navbar({ session }: { session: Session | null }) {
                       Armitage
                     </div>
                     <p className="text-sm leading-tight text-muted-foreground">
-                      Beautifully designed components that you can copy and
-                      paste into your apps. Accessible. Customizable. Open
-                      Source.
+                      Measure, incentivise and govern open source software
+                      contributions programmatically
                     </p>
                   </a>
                 </NavigationMenuLink>
               </li>
               <ListItem href="/docs" title="Introduction">
-                Re-usable components built using Radix UI and Tailwind CSS.
+                Understand how Armitage and Sourcecred works.
               </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
+              <ListItem href="/docs/installation" title="Contribute">
+                Armitage is a meta app, and you can earn money contributing.
               </ListItem>
-              <ListItem href="/docs/primitives/typography" title="Typography">
-                Styles for headings, paragraphs, lists...etc
+              <ListItem href="/docs/primitives/typography" title="Roadmap">
+                Armitage vision, mission and future features.
               </ListItem>
             </ul>
           </NavigationMenuContent>
