@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Session, getServerSession } from "next-auth";
 import { options } from "@/app/api/auth/[...nextauth]/options";
+import { signIn, signOut } from "next-auth/react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -125,8 +126,11 @@ export function Navbar({ session }: { session: Session | null }) {
 
         {!session ? (
           <NavigationMenuItem>
-            <Link href="/sign-in" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <Link href="">
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => signIn("github", { callbackUrl: "/" })}
+              >
                 Sign-In
               </NavigationMenuLink>
             </Link>
@@ -134,22 +138,17 @@ export function Navbar({ session }: { session: Session | null }) {
         ) : (
           <>
             <NavigationMenuItem>
-              <Link href="/sign-out" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <Link href="">
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                >
                   Sign-out
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/profile" legacyBehavior passHref>
-                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                  Profile
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
           </>
         )}
-
       </NavigationMenuList>
     </NavigationMenu>
   );
