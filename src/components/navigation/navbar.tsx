@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -14,45 +13,30 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { Session, getServerSession } from "next-auth";
-import { options } from "@/app/api/auth/[...nextauth]/options";
+import { Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
+    title: "Github Repository",
+    href: "/gitrepo",
+    description: "Register and manage Github Repositories on your account.",
   },
   {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
+    title: "Cred Scores",
+    href: "/scores",
     description:
-      "For sighted users to preview content available behind a link.",
+      "Generate new contribution scores from registered repositories.",
   },
   {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+    title: "Credits",
+    href: "/credits",
+    description: "Buy credits to calculate new scores or add new repositories.",
   },
   {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+    title: "History",
+    href: "/history",
+    description: "Analyse previous calculated scores and data.",
   },
 ];
 
