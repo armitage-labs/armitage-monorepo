@@ -7,83 +7,39 @@ authors:
   - sudoferraz
 ---
 
-To understand how Armitage works, we need to dive onto the mechanics of Sourcecred, a project that once had support from Protocol Labs that is now unfortunately archived.
-Althought the project is archived, we don't think its impact needs to stop, and with Armitage, we hope to ignite interest into new people on the industry, both to revive Sourcecred and to engage new conversations about open source governance and autonomous organizations.
+Hey there! Ready to dive into the world of Armitage and Sourcecred? It's like uncovering the secret sauce behind your favorite app. Even though Sourcecred is kind of like a retired superhero from the tech world, its legacy lives on with Armitage. And guess what? We're here to pump new energy into this old legend.
 We are also proudly inspired by the works of the Token Engineering Academy, and the Token Engineering commons, you should definetely check them out!
 
-> If you haven't ever heard about `sourcecred` before, we highly recommend that you watch Dandelion's 20 minute talk (+Qs) from SustainWeb3 to get some familiarity with the project.
+> If Sourcecred sounds as mysterious as a ghost in your attic, I recommend checking out [Dandelion's 20-minute talk from SustainWeb3](https://www.youtube.com/watch?v=yVTqRLekRl4). It's like the ultimate beginner's guide.
 
-There will also be some math, but you should be able to get a solid intution on this if you are comfortable talking about graphs as a set of nodes and edges, where the edges connect nodes, can be directed and can have weights. We will also briefly touch upon the PageRank algorithm, which computes the "importance" of nodes in a graph based on the "importance" of nodes connected to it.
+And don't worry, we're not gonna talk about math here, but think of it like being a detective piecing together a puzzle of nodes and edges - it's about mapping out the web of contributions.
+If you would like to dive deeper into the mechanics of Sourcecred, we highly encourage reading [this article](https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/) from Evan Miyazono where goes in detail about Markov Chains, Stationary Distributions and all that jazz.
 
-## The high-level overview
+## How sourcecred works its magic
 
-Sourcecred main purpose is to gather information from various sources (in our case github), and build a structure that can represent importance between objects, which can later be translated by how a group of objects is important compared to others.
-More directly speaking, sourcecred takes information about contributions and generates what we call a `contribution-graph`, with this first part of the article, we aim to explain what that graph is and where it comes from.
-After exploring the structure called `contribution-graph`, we will then discuss how Sourcecred runs the CredRank algorithm to generate cred scores, what we call in Armitage as contribution scores.
+Sourcecred is like a techy fortune-teller; it predicts who or what will be the next big thing in a project. Imagine it rummaging through various sources (like GitHub), collecting data like a treasure hunter, and then crafting a map known as a `contribution-graph’. This map is a visual story of who did what and how much it matters.
+It creates a contribution graph from all the data it finds. Imagine each contribution or contributor as a dot (node) on a map, and the connections (edges) are the lines between them, showing how they're related.
 
-If you have already stumbled upon Armitage roadmap, you probably saw that we also have plans to enable a feature that distributes "points" based on contribution scores, this, on the Sourcecred world, was called Cred distribution, which was generated and calculated from the graph of cred scores periodically as a stream of rewards. We have slightly different plans on how to utilize this functionality in Armitage, but this is for another deeper article!
+- Nodes: These are like the characters or items in a game, each with a unique address. They can be the people helping out (contributors) or the help they offer (contributions).
+- Weights: Both the characters and their connections have weights, like having different strengths or influence levels.
+- Timestamps: Every connection (edge) is marked with the time it happened, like a timestamp in a message.
 
-
-> POST IMAGE OF THE HIGH LEVEL OVERVIEW HERE
-
-### Components of contributions in Sourcecred
-
-We will now outline how contribution data is gathered and structured, and how it is transformed into the exact amounts of cred and grain that are calculated.
-
-Sourcecred first generates a contribution graph from the input data, in this graph, a node is a contributor or contribution, and an edge represents some sort of connection between the nodes.
-These "connections" are intended to include all possible ways in which a contribution or contributor on a platform can express dependencies, recognition or flows of value.
-An example of such connection, would be liking or merging a PR on Github.
-
-It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
+If you have already stumbled upon Armitage roadmap, you probably saw that we also have plans to enable a feature that distributes "points" or tokens based on contribution scores, this, on the Sourcecred world, was called Cred distribution, which was generated and calculated from the graph of cred scores periodically as a stream of rewards. We have slightly different plans on how to utilize this functionality in Armitage, but this is for another deeper article!
 
 
-#### Nodes
+> Image of a weighted directed graph
 
-Contributions are represented as nodes in the graph and are given addresses to identify them uniquely. These addresses include a prefix, which takes the form: `[organization making the plugin that generates the node] + [name of the plugin] + [type of contribution]`
-Contributors are also represented as nodes in the graph. These nodes are similarly prefixed and connected to contributions with directed edges.
-For example, if an author node creates an issue, the author node gets an incoming edge from the issue node. Or if an author of a pull request mentions another contributor on the PR, the PR creates an outbound edge coming from the author.
+>It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
 
+Sourcecred needs rules to make sense of all the actions - like figuring out wether creating an issue on Github is more impactful than commenting on one. It uses special constants for this balancing act.
 
-#### Weights
-
-Both nodes and edges have weights, and an edge object in the SourceCred implementation can have forward and backward weight. We'll get into what these weights mean shortly, but, for now, it's worth noting that these weights can easily be set by address prefix.
-Additionally, an edge can start and end on the same node (loops), which could be relevant when a piece of content is edited or a contribution references itself.
-
-
-> POST IMAGE OF NODES AND WEIGHTS
-> https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/sourcecred_contribution_graph.svg
-> Create the same diagram without the pink weights on them
-
-<Image
-  src="/images/blog/blog-post-4.jpg"
-  width="718"
-  height="404"
-  alt="Image"
-/>
+Armitage also plans to let communities set their own rules for scoring contributions. It's like customizing the game rules to suit your team.
 
 #### Timestamps
 
-Because edges are associated with actions or events, they will always have a timestamp that corresponds to when the action or event occurred.
+Because edges (connections between nodes) are associated with actions or events, they will always have a timestamp that corresponds to when the action or event occurred.
 Nodes don't need a timestamp since the edge will carry information about the moment of the contribution.
 
-> Now we know about the components of the contribution graph, their properties, and how they fit together. Now let's cover how they're generated.
-
-
-### Generating the contribution graph
-
-Because sourcecred incorporate data from all sorts of contributions and outputs a single directed graph with weights (for nodes and edges), ther eneeds to be a way
-to compare actions quantitatively (e.g., authoring a Github issue vs responding or referencing it). To accomplish this, there's a set of constants that determine weights for nodes and edges.
-For an example set of constants, see the below figure:
-
-> Cut only the right part of the github sliders
-> https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/sourcecred_weight_sliders.png
-> Prob better to take an updated screenshot showing the actuall current sliders for github plugin
-
-**Additionally, note that Armitage plans to offer all these parameters to be scoped to a community through governance features. Currently, it only calculate contribution scores using the default parameters as shown on the picture above.**
-With the possibility of changing the default parameters comes the opportunity for not only the maintainer, but if desired, the community that supports a project to set and control the parameters. 
-Armitage adopts several sourcecred stances, and aims to provide community control, keeping humans in the loop, both for gaming mitigation and general adaptability. At the bottom line, it's important to keep the humans in control because good governance technology only works with the consent of the governed.
-
-At this point, we've got data from all our sources combined in one directed graph, where contributions and contributors are nodes, and interactions and connections between nodes are edges. Both nodes and edges have a relative weight based on parameters the community or the maintainer has set, and were ready to run the CredRank algorithm on the graph.
 
 ### Sourcecred CredRAnk algorithm
 
@@ -112,206 +68,83 @@ As a _metaphor_, we can visualize cred flowing through the graph as water flowin
 - Additionally, water from all of these ponds seeps into the ground, replenishing the springs and providing a closed loop.
 - Finally, the equilibrium water level in each pond is proportional to the relative importance of that node.
 
+The contribution graph tells us the size of various creek beds, but we want to know the distribution of destinations for the water that leaves each pond.
+We can calculate the paths a different water droplet can take to the transition probabilities in a Markov chain With these numbers, we can then calculate the equilibrium distribution of water, called the stationary distribution on a Markov chain.
+Before diving into the calculations, we need to understand the motivation for time-based contribution scores (or cred).
 
+*On the origin of cred*
 
+The weights of the nodes are used to determine the amount of cred minted for each action (i.e. the rate at which each spring adds water). This newly-minted cred flows to connected nodes, but the total amount of cred minted by contributions will be the total amount received by contributors.
+In this way, the total amount of cred increases in proportion to the amount of cred generating activity on the project itself.
 
+*Cred-minting philosophy*
 
+As a matter of design philosophy, sourcecred believes cred should be minted at moments when there is a review of an action rather than the action itself.
+This reduces the danger of spam and reinforces the idea that contributors dictate what is valuable.
 
+*Motivating time-based cred*
 
+In sourcecred, contributions are valued based on their current impact, regardless of when the contribution was made. As a result, a past action that was recently found to be valuable in the present
+should have new cred flow to it. In contrast, a buggy feature that was replaced for not being easily maintained should have its cred decrease.
 
+In order to accomodate these properties over time, soucecred adoped a model that creates "epoch nodes" that, in effect, act like time-bounded identities for each contributor for each time period.
+The evolution of a user's cred over time can then be quickly evaluated by summing over epoch nodes without having to recalculate a stationary state.
 
+### SourceCred's Credrank algorithm - calculation
 
 
+*The seed node*
 
+First, we add our flow from every node to replenish the groundwater. We create a `seed node` to which all nodes transfer cred at a rate `alpha`. Note taht, other than `alpha`, the contribution graph only has weights at this point.
+At the end of the next step, we'll convert all the weights to probabilities as well. Because the groundwater supplies the springs, we create edges from the seed node to the various nodes in the contribution graph, where the weight of the new edge is the weight of the node.
 
-```html
-<article class="prose">
-  <h1>Garlic bread with cheese: What the science tells us</h1>
-  <p>
-    For years parents have espoused the health benefits of eating garlic bread
-    with cheese to their children, with the food earning such an iconic status
-    in our culture that kids will often dress up as warm, cheesy loaf for
-    Halloween.
-  </p>
-  <p>
-    But a recent study shows that the celebrated appetizer may be linked to a
-    series of rabies cases springing up around the country.
-  </p>
-</article>
-```
 
-For more information about how to use the plugin and the features it includes, [read the documentation](https://github.com/tailwindcss/typography/blob/master/README.md).
+*Time epochs and fibration*
 
----
+Then we add epoch nodes to facilitate our calculation of cred over time. To simplify the computational overhead and storage required to compute cred over time, SourceCred moved towards a fibration model where a node is added per contributor, per unit time (usually a week). In this model,
+epoch nodes intermediate flows to a user from any nodes during a period of time and have a fixed transition probability to the user's node `beta` (note that, like `alpha`, this is also a probability, not a weight).
 
-## What to expect from here on out
+A giver user's epoch nodes are connected to each other with transition rates `gForward` and `gBackwards`, connecting forward and backward in time, respectively.
+These sets of edges in the Markov graph are referred to as "webbing" elsewhere. These transition rates are shown below.
 
-What follows from here is just a bunch of absolute nonsense I've written to dogfood the plugin itself. It includes every sensible typographic element I could think of, like **bold text**, unordered lists, ordered lists, code blocks, block quotes, _and even italics_.
+> https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/sourcecred_fibrations.svg
+> Original implementation of time-weighted cred (left), in which PageRank is recalculated at each time-step, incorporating only nodes from previous time intervals.
+> This is contrasted with the fibration model (right), in which an epoch node is added per epoch per contributor (orange), and cred flows to the contributor through the epoch nodes at rate `beta`.
+> Additionally, each epoch node connects to that user's epoch node one step forward and backward in time at rate `g`. The cred flows from each non-epoch node to the seed node at rate `alpha`, and from teh seed node according to the node weights (pink) are also shown.
 
-It's important to cover all of these use cases for a few reasons:
+The motivation between these changes are two-fold. Firstly, your cred in the project should have some inertia over time, stabilized accross epochs. Additionally, 
+if you make a contribution at the beginning of one epoch, some if not most of the work likely took place in a previous epoch, and thus some cred should flow between epochs.
 
-1.  We want everything to look good out of the box.
-2.  Really just the first reason, that's the whole point of the plugin.
-3.  Here's a third pretend reason though a list with three items looks more realistic than a list with two items.
 
-Now we're going to try out another header style.
+*Finishing conversion to a Markov chain*
 
-### Typography should be easy
+Each node now has a mix of transition probabilities and edge weights. After checking that the transition probabilities sum to less than one, the remaining transition probability
+is then shared between the outbound edges in proportion to their weights. For example, a node with outbound transition rate `alpha`=0.3 and outbound edge weights of { 1, 1, 2, 4} will have 
+transition probabilities { 0.1125, 0.1125, 0.225, 0.45 } along those edges; note that probabilities preserve relative weights.
 
-So that's a header for you — with any luck if we've done our job correctly that will look pretty reasonable.
+At this point we can easily generate a pure Markov process from our modified contribution graph; all we have left to do is collapse any edges linking the same two nodes into one edge by summing the probabilities (i.e. two interactions that both flow cred from one node to another).
 
-Something a wise person once told me about typography is:
 
-> Typography is pretty important if you don't want your stuff to look like trash. Make it good then it won't be bad.
+*Solving for the stationary distribution*
 
-It's probably important that images look okay here by default as well:
+It should be reasonably clear that our goal is to calculate the equilibrium amount for each of the N nodes. We have N potential flows to all other nodes, all known.
+Since the total flow is conserved (flow in = flow out for each node), we can write N equations with N unknowns, which we could solve for the equilibrium cred.
 
-<Image
-  src="/images/blog/blog-post-4.jpg"
-  width="718"
-  height="404"
-  alt="Image"
-/>
+*Stationary distribution as an eigenvector*
 
-Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.
+If you are familiar with linear algebra, you will be pleased to hear that the common way to compute this is to convert the graph to a matrix P where each entry `Puv`
+is the transition probability from node `u` to node `v`. Each dimension corresponds to a node, and the matrix maps from all nodes to all nodes.
+Finding the stationary distribution is the same as finding the eigenvector of the transition matrix that corresponds to eigenvalue 1; this eigenvector is the 
+distribution of value to each node such that, if value flowed down each edge in proportion to its weight, the resulting value distribution would remain the same.
 
-Now I'm going to show you an example of an unordered list to make sure that looks good, too:
 
-- So here is the first item in this list.
-- In this example we're keeping the items short.
-- Later, we'll use longer, more complex list items.
+*Cred from a stationary distribution*
 
-And that's the end of this section.
+Once we've computed the stationary distribution, we have a "raw score" assigned to every node in the graph. These scores form a probability distribution, so they sum to 1.
+However, we want cred scores, which means that the "total amount of cred" should sum to the total amount of cred minting, i.e. the total node weights.
 
-## What if we stack headings?
+Therefore, we compute `m`, the sum of all node weights in the graph, and `s`, the sum of all raw scores received by "scoring node" (typically users). Then, for any node `n`, 
+its cred score `Cn` is derived from its raw score `Rn` by `Cn = Rx * m/s`. This ensures that the sum of all users cred is equal to the total amount of cred that was minted.
+The total amount of cred grows over time as the number of contributions that mint cred increases.
 
-### We should make sure that looks good, too.
 
-Sometimes you have headings directly underneath each other. In those cases you often have to undo the top margin on the second heading because it usually looks better for the headings to be closer together than a paragraph followed by a heading should be.
-
-### When a heading comes after a paragraph …
-
-When a heading comes after a paragraph, we need a bit more space, like I already mentioned above. Now let's see what a more complex list would look like.
-
-- **I often do this thing where list items have headings.**
-
-  For some reason I think this looks cool which is unfortunate because it's pretty annoying to get the styles right.
-
-  I often have two or three paragraphs in these list items, too, so the hard part is getting the spacing between the paragraphs, list item heading, and separate list items to all make sense. Pretty tough honestly, you could make a strong argument that you just shouldn't write this way.
-
-- **Since this is a list, I need at least two items.**
-
-  I explained what I'm doing already in the previous list item, but a list wouldn't be a list if it only had one item, and we really want this to look realistic. That's why I've added this second list item so I actually have something to look at when writing the styles.
-
-- **It's not a bad idea to add a third item either.**
-
-  I think it probably would've been fine to just use two items but three is definitely not worse, and since I seem to be having no trouble making up arbitrary things to type, I might as well include it.
-
-After this sort of list I usually have a closing statement or paragraph, because it kinda looks weird jumping right to a heading.
-
-## Code should look okay by default.
-
-I think most people are going to use [highlight.js](https://highlightjs.org/) or [Prism](https://prismjs.com/) or something if they want to style their code blocks but it wouldn't hurt to make them look _okay_ out of the box, even with no syntax highlighting.
-
-Here's what a default `tailwind.config.js` file looks like at the time of writing:
-
-```js
-module.exports = {
-  purge: [],
-  theme: {
-    extend: {},
-  },
-  variants: {},
-  plugins: [],
-}
-```
-
-Hopefully that looks good enough to you.
-
-### What about nested lists?
-
-Nested lists basically always look bad which is why editors like Medium don't even let you do it, but I guess since some of you goofballs are going to do it we have to carry the burden of at least making it work.
-
-1.  **Nested lists are rarely a good idea.**
-    - You might feel like you are being really "organized" or something but you are just creating a gross shape on the screen that is hard to read.
-    - Nested navigation in UIs is a bad idea too, keep things as flat as possible.
-    - Nesting tons of folders in your source code is also not helpful.
-2.  **Since we need to have more items, here's another one.**
-    - I'm not sure if we'll bother styling more than two levels deep.
-    - Two is already too much, three is guaranteed to be a bad idea.
-    - If you nest four levels deep you belong in prison.
-3.  **Two items isn't really a list, three is good though.**
-    - Again please don't nest lists if you want people to actually read your content.
-    - Nobody wants to look at this.
-    - I'm upset that we even have to bother styling this.
-
-The most annoying thing about lists in Markdown is that `<li>` elements aren't given a child `<p>` tag unless there are multiple paragraphs in the list item. That means I have to worry about styling that annoying situation too.
-
-- **For example, here's another nested list.**
-
-  But this time with a second paragraph.
-
-  - These list items won't have `<p>` tags
-  - Because they are only one line each
-
-- **But in this second top-level list item, they will.**
-
-  This is especially annoying because of the spacing on this paragraph.
-
-  - As you can see here, because I've added a second line, this list item now has a `<p>` tag.
-
-    This is the second line I'm talking about by the way.
-
-  - Finally here's another list item so it's more like a list.
-
-- A closing list item, but with no nested list, because why not?
-
-And finally a sentence to close off this section.
-
-## There are other elements we need to style
-
-I almost forgot to mention links, like [this link to the Tailwind CSS website](https://tailwindcss.com). We almost made them blue but that's so yesterday, so we went with dark gray, feels edgier.
-
-We even included table styles, check it out:
-
-| Wrestler                | Origin       | Finisher           |
-| ----------------------- | ------------ | ------------------ |
-| Bret "The Hitman" Hart  | Calgary, AB  | Sharpshooter       |
-| Stone Cold Steve Austin | Austin, TX   | Stone Cold Stunner |
-| Randy Savage            | Sarasota, FL | Elbow Drop         |
-| Vader                   | Boulder, CO  | Vader Bomb         |
-| Razor Ramon             | Chuluota, FL | Razor's Edge       |
-
-We also need to make sure inline code looks good, like if I wanted to talk about `<span>` elements or tell you the good news about `@tailwindcss/typography`.
-
-### Sometimes I even use `code` in headings
-
-Even though it's probably a bad idea, and historically I've had a hard time making it look good. This _"wrap the code blocks in backticks"_ trick works pretty well though really.
-
-Another thing I've done in the past is put a `code` tag inside of a link, like if I wanted to tell you about the [`tailwindcss/docs`](https://github.com/tailwindcss/docs) repository. I don't love that there is an underline below the backticks but it is absolutely not worth the madness it would require to avoid it.
-
-#### We haven't used an `h4` yet
-
-But now we have. Please don't use `h5` or `h6` in your content, Medium only supports two heading levels for a reason, you animals. I honestly considered using a `before` pseudo-element to scream at you if you use an `h5` or `h6`.
-
-We don't style them at all out of the box because `h4` elements are already so small that they are the same size as the body copy. What are we supposed to do with an `h5`, make it _smaller_ than the body copy? No thanks.
-
-### We still need to think about stacked headings though.
-
-#### Let's make sure we don't screw that up with `h4` elements, either.
-
-Phew, with any luck we have styled the headings above this text and they look pretty good.
-
-Let's add a closing paragraph here so things end with a decently sized block of text. I can't explain why I want things to end that way but I have to assume it's because I think things will look weird or unbalanced if there is a heading too close to the end of the document.
-
-What I've written here is probably long enough, but adding this final sentence can't hurt.
-
-## GitHub Flavored Markdown
-
-I've also added support for GitHub Flavored Mardown using `remark-gfm`.
-
-With `remark-gfm`, we get a few extra features in our markdown. Example: autolink literals.
-
-A link like www.example.com or https://example.com would automatically be converted into an `a` tag.
-
-This works for email links too: contact@example.com.
