@@ -26,42 +26,32 @@ It creates a contribution graph from all the data it finds. Imagine each contrib
 
 If you have already stumbled upon Armitage roadmap, you probably saw that we also have plans to enable a feature that distributes "points" or tokens based on contribution scores, this, on the Sourcecred world, was called Cred distribution, which was generated and calculated from the graph of cred scores periodically as a stream of rewards. We have slightly different plans on how to utilize this functionality in Armitage, but this is for another deeper article!
 
-
 > Image of a weighted directed graph
 
->It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
+> It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
 
 Sourcecred needs rules to make sense of all the actions - like figuring out wether creating an issue on Github is more impactful than commenting on one. It uses special constants for this balancing act.
 
 Armitage also plans to let communities set their own rules for scoring contributions. It's like customizing the game rules to suit your team.
 
-#### Timestamps
 
-Because edges (connections between nodes) are associated with actions or events, they will always have a timestamp that corresponds to when the action or event occurred.
-Nodes don't need a timestamp since the edge will carry information about the moment of the contribution.
+### The CredRank algorithm
+
+The goal of CredRank is to calculate the relative importance of nodes based on our intricate map of interactions (contribution graph), imagine it like scoring points in a video game based on different actions.
+In particular, it includes adding some nodes for contribution calculation and converting weights in our contribution graph to probabilities, in order to eventually run PageRank, which uses a Markov chain (a set of states with probabilities describing the likelihood of transitioning between states).
 
 
-### Sourcecred CredRAnk algorithm
 
-The goal of CredRank is to calculate the relative importance of nodes based on our contribution graph, specifically the weights of the nodes and edges.
-We'll also cover some intermediate calculations shown in the figure below, which illustrates an expanded overview of SourceCred.
-In particular, it includes adding some nodes for cred calculation and converting weights in our contribution graph to probabilities, in order to eventually run PageRank, which uses a Markov chain (a set of states with probabilities describing the likelihood of transitioning between states)
+From the contribution graph, we want to calculate our contribution scores, which is the relative importance of nodes compared to each other.
+We start with the intuition that any contribution's importance is explicitly validated by future contributions, and the strenght of that validation is greater if it comes from contributions that are themselves more significant.
+Sourcecred isn't just about what you just did; it's also about when you did it. It's like getting points for both your current hit song and your old-school classics.
+If you have ever heard of Retro PGF (Retroactive Public Good Funding) you will immediately start noticing its similarities and how Sourcecred is a powerful tool to measure contributions.
 
-> https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/sourcecred_overview2.svg
-> An expanded illustration of the process by which Sourcecred gathers data from collaboration platforms, generates a contribution graph, and runs CredRank to generate scores. The CredTank algorithm is expanded in detail to distinguish steps of adding Markov nodes specific to SourceCred, generating a Markov Chain, and calculating the stationary distribution;
-
-[read the documentation](https://github.com/tailwindcss/typography/blob/master/README.md)
-
-Before going into those details, let's motivate the role of probabilities in calculating cred.
 ---
 
 #### Contribution importance as a stationary distribution
 
-Starting from our contribution graph, we want to calculate our contribution scores (cred), which is the relative importance of nodes compared to each other. 
-We start with the intuition that any contribution's importance is explicitly validated by future contributions, and the strenght of that validation is greater if it comes from contributions that are themselves more significant.
-If you have ever heard of RPGF (Retroactive Public Good Funding) you will immediately start noticing its similarities and how Sourcecred is a powerful tool to measure contributions.
-
-As a _metaphor_, we can visualize cred flowing through the graph as water flowing through a watershed ecosystem of creeks, springs and ponds:
+As a _metaphor_, we can visualize cred flowing through the graph as water flowing through an ecosystem of creeks, springs and ponds:
 
 - Water bubbles up at certain locations where there are springs feeding ponds. These correspond to actions that mint contribution scores (cred).
 - Water flows through streams connecting ponds. The flow to downstream nodes is proportional to the strength of the connection.
@@ -69,8 +59,7 @@ As a _metaphor_, we can visualize cred flowing through the graph as water flowin
 - Finally, the equilibrium water level in each pond is proportional to the relative importance of that node.
 
 The contribution graph tells us the size of various creek beds, but we want to know the distribution of destinations for the water that leaves each pond.
-We can calculate the paths a different water droplet can take to the transition probabilities in a Markov chain With these numbers, we can then calculate the equilibrium distribution of water, called the stationary distribution on a Markov chain.
-Before diving into the calculations, we need to understand the motivation for time-based contribution scores (or cred).
+We can calculate the paths a different water droplet can take to the transition probabilities in a Markov chain. With these numbers, we can then calculate the equilibrium distribution of water, called the stationary distribution on a Markov chain.
 
 *On the origin of cred*
 
@@ -90,61 +79,21 @@ should have new cred flow to it. In contrast, a buggy feature that was replaced 
 In order to accomodate these properties over time, soucecred adoped a model that creates "epoch nodes" that, in effect, act like time-bounded identities for each contributor for each time period.
 The evolution of a user's cred over time can then be quickly evaluated by summing over epoch nodes without having to recalculate a stationary state.
 
-### SourceCred's Credrank algorithm - calculation
+## How does Armitage uses Sourcecred
 
+Armitage is a living project, and it plans to evolve over time through its community. We firmly believe in open source software, and we definetely love the idea of [dogfooding](https://www.nytimes.com/2022/11/14/business/dogfooding.html#:~:text=In%20the%20world%20of%20tech,what%20needs%20to%20be%20fixed) :)
+This article is being written before the official release of Armitage, so you might find many new features by the time you are reading it! But don't worry, the foundation and the basis explained here will always stay the same!
 
-*The seed node*
+One could say that Armitage is simply a (very needed) client to facilitate and increase accessibility to sourcecred, which is correct, but it goes way beyond that!
 
-First, we add our flow from every node to replenish the groundwater. We create a `seed node` to which all nodes transfer cred at a rate `alpha`. Note taht, other than `alpha`, the contribution graph only has weights at this point.
-At the end of the next step, we'll convert all the weights to probabilities as well. Because the groundwater supplies the springs, we create edges from the seed node to the various nodes in the contribution graph, where the weight of the new edge is the weight of the node.
+Let's focus on that basis on a step by step process of what Armitage allows users to do:
 
+- Sign-in and create an account with Github
+- Search your github account for open-source repositories that you own
+- Register a repository that you own or maintain
+- Calculate contribution scores for the registered repositories
+- Display in an easy way the contribution scores for analysis
 
-*Time epochs and fibration*
+Behind the scenes, armitage creates a contribution graph and runs all calculations necessary to generate the contribution scores for each contributor on a specific repository using sourcecred.
 
-Then we add epoch nodes to facilitate our calculation of cred over time. To simplify the computational overhead and storage required to compute cred over time, SourceCred moved towards a fibration model where a node is added per contributor, per unit time (usually a week). In this model,
-epoch nodes intermediate flows to a user from any nodes during a period of time and have a fixed transition probability to the user's node `beta` (note that, like `alpha`, this is also a probability, not a weight).
-
-A giver user's epoch nodes are connected to each other with transition rates `gForward` and `gBackwards`, connecting forward and backward in time, respectively.
-These sets of edges in the Markov graph are referred to as "webbing" elsewhere. These transition rates are shown below.
-
-> https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/sourcecred_fibrations.svg
-> Original implementation of time-weighted cred (left), in which PageRank is recalculated at each time-step, incorporating only nodes from previous time intervals.
-> This is contrasted with the fibration model (right), in which an epoch node is added per epoch per contributor (orange), and cred flows to the contributor through the epoch nodes at rate `beta`.
-> Additionally, each epoch node connects to that user's epoch node one step forward and backward in time at rate `g`. The cred flows from each non-epoch node to the seed node at rate `alpha`, and from teh seed node according to the node weights (pink) are also shown.
-
-The motivation between these changes are two-fold. Firstly, your cred in the project should have some inertia over time, stabilized accross epochs. Additionally, 
-if you make a contribution at the beginning of one epoch, some if not most of the work likely took place in a previous epoch, and thus some cred should flow between epochs.
-
-
-*Finishing conversion to a Markov chain*
-
-Each node now has a mix of transition probabilities and edge weights. After checking that the transition probabilities sum to less than one, the remaining transition probability
-is then shared between the outbound edges in proportion to their weights. For example, a node with outbound transition rate `alpha`=0.3 and outbound edge weights of { 1, 1, 2, 4} will have 
-transition probabilities { 0.1125, 0.1125, 0.225, 0.45 } along those edges; note that probabilities preserve relative weights.
-
-At this point we can easily generate a pure Markov process from our modified contribution graph; all we have left to do is collapse any edges linking the same two nodes into one edge by summing the probabilities (i.e. two interactions that both flow cred from one node to another).
-
-
-*Solving for the stationary distribution*
-
-It should be reasonably clear that our goal is to calculate the equilibrium amount for each of the N nodes. We have N potential flows to all other nodes, all known.
-Since the total flow is conserved (flow in = flow out for each node), we can write N equations with N unknowns, which we could solve for the equilibrium cred.
-
-*Stationary distribution as an eigenvector*
-
-If you are familiar with linear algebra, you will be pleased to hear that the common way to compute this is to convert the graph to a matrix P where each entry `Puv`
-is the transition probability from node `u` to node `v`. Each dimension corresponds to a node, and the matrix maps from all nodes to all nodes.
-Finding the stationary distribution is the same as finding the eigenvector of the transition matrix that corresponds to eigenvalue 1; this eigenvector is the 
-distribution of value to each node such that, if value flowed down each edge in proportion to its weight, the resulting value distribution would remain the same.
-
-
-*Cred from a stationary distribution*
-
-Once we've computed the stationary distribution, we have a "raw score" assigned to every node in the graph. These scores form a probability distribution, so they sum to 1.
-However, we want cred scores, which means that the "total amount of cred" should sum to the total amount of cred minting, i.e. the total node weights.
-
-Therefore, we compute `m`, the sum of all node weights in the graph, and `s`, the sum of all raw scores received by "scoring node" (typically users). Then, for any node `n`, 
-its cred score `Cn` is derived from its raw score `Rn` by `Cn = Rx * m/s`. This ensures that the sum of all users cred is equal to the total amount of cred that was minted.
-The total amount of cred grows over time as the number of contributions that mint cred increases.
-
-
+If you want to learn more about Armitage future, the roadmap or how to contribute, we highly encourage you to read the `Contribute` and `Roadmap` pages.
