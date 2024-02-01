@@ -1,48 +1,22 @@
-import { Button, buttonVariants } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-//
-interface Recipe {
-  title: string;
-  image: string;
-  time: number;
-  description: string;
-  vegan: boolean;
-  id: string;
-}
 
-async function getRecipes(): Promise<Recipe[]> {
-  const result = await fetch("http://localhost:4000/recipes");
-  return result.json();
-}
+// interface Recipe {
+//   title: string;
+//   image: string;
+//   time: number;
+//   description: string;
+//   vegan: boolean;
+//   id: string;
+// }
+
+// async function getRecipes(): Promise<Recipe[]> {
+//   const result = await fetch("http://localhost:4000/recipes");
+//   return result.json();
+// }
 
 export default async function Home() {
-  const recipes = await getRecipes();
-
-  // {recipes.map((recipe) => (
-  //   <Card key={recipe.id} className="flex flex-col justify-between">
-  //     <CardHeader className="flex-row gap-4 items-center">
-  //       <div>
-  //         <CardTitle>{recipe.title}</CardTitle>
-  //         <CardDescription>{recipe.time} mins to cook</CardDescription>
-  //       </div>
-  //     </CardHeader>
-  //     <CardContent>
-  //       <p>{recipe.description}</p>
-  //     </CardContent>
-  //     <CardFooter className="flex justify-between">
-  //       <Button variant="default"> View Recipe </Button>
-  //       {recipe.vegan && <p>Vegan!</p>}
-  //     </CardFooter>
-  //   </Card>
-  // ))}
+  // const recipes = await getRecipes();
 
   return (
     <main>
