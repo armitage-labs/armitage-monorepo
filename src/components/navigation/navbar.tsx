@@ -71,7 +71,7 @@ export function Navbar({ session }: { session: Session | null }) {
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/docs" title="Introduction">
+              <ListItem href="/introduction" title="Introduction">
                 Understand how Armitage and Sourcecred works.
               </ListItem>
               <ListItem href="/docs/installation" title="Contribute">
