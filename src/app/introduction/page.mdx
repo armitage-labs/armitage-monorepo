@@ -7,6 +7,7 @@ import Badge from "@/components/ui/badge"
 
 <div className="container flex max-w-[64rem] flex-col items-center gap-4 pb-6">
 
+# Getting started with Armitage and Sourcecred
 
 <img
   src={"https://miro.medium.com/v2/resize:fit:720/format:webp/1*eYzE_8Ng1zvftXJVSdd8UA.png"}
@@ -36,7 +37,13 @@ It creates a contribution graph from all the data it finds. Imagine each contrib
 
 If you have already stumbled upon Armitage roadmap, you probably saw that we also have plans to enable a feature that distributes "points" or tokens based on contribution scores, this, on the Sourcecred world, was called Cred distribution, which was generated and calculated from the graph of cred scores periodically as a stream of rewards. We have slightly different plans on how to utilize this functionality in Armitage, but this is for another deeper article!
 
-> Image of a weighted directed graph
+<img
+  src={"https://media.licdn.com/dms/image/C4D12AQHDzO6N5xnqbw/article-cover_image-shrink_720_1280/0/1650719318434?e=2147483647&v=beta&t=uxW9_ZKqzZTa5OfLY_h9fQyK5Gvh8VjZy9Q5xUwswdU"}
+  width={700}
+  height={700}
+  alt={`introduction-main`}
+  priority={true}
+/>
 
 > It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
 
@@ -55,6 +62,7 @@ In particular, it includes adding some nodes for contribution calculation and co
 From the contribution graph, we want to calculate our contribution scores, which is the relative importance of nodes compared to each other.
 We start with the intuition that any contribution's importance is explicitly validated by future contributions, and the strenght of that validation is greater if it comes from contributions that are themselves more significant.
 Sourcecred isn't just about what you just did; it's also about when you did it. It's like getting points for both your current hit song and your old-school classics.
+
 If you have ever heard of Retro PGF (Retroactive Public Good Funding) you will immediately start noticing its similarities and how Sourcecred is a powerful tool to measure contributions.
 
 ---
@@ -71,17 +79,17 @@ As a _metaphor_, we can visualize cred flowing through the graph as water flowin
 The contribution graph tells us the size of various creek beds, but we want to know the distribution of destinations for the water that leaves each pond.
 We can calculate the paths a different water droplet can take to the transition probabilities in a Markov chain. With these numbers, we can then calculate the equilibrium distribution of water, called the stationary distribution on a Markov chain.
 
-*On the origin of cred*
+🌱 *On the origin of cred* 🌱
 
 The weights of the nodes are used to determine the amount of cred minted for each action (i.e. the rate at which each spring adds water). This newly-minted cred flows to connected nodes, but the total amount of cred minted by contributions will be the total amount received by contributors.
 In this way, the total amount of cred increases in proportion to the amount of cred generating activity on the project itself.
 
-*Cred-minting philosophy*
+🪙 *Cred-minting philosophy* 🪙 
 
 As a matter of design philosophy, sourcecred believes cred should be minted at moments when there is a review of an action rather than the action itself.
 This reduces the danger of spam and reinforces the idea that contributors dictate what is valuable.
 
-*Motivating time-based cred*
+🕒 *Motivating time-based cred* 🕒
 
 In sourcecred, contributions are valued based on their current impact, regardless of when the contribution was made. As a result, a past action that was recently found to be valuable in the present
 should have new cred flow to it. In contrast, a buggy feature that was replaced for not being easily maintained should have its cred decrease.
@@ -91,7 +99,7 @@ The evolution of a user's cred over time can then be quickly evaluated by summin
 
 ## How does Armitage uses Sourcecred
 
-Armitage is a living project, and it plans to evolve over time through its community. We firmly believe in open source software, and we definetely love the idea of [dogfooding](https://www.nytimes.com/2022/11/14/business/dogfooding.html#:~:text=In%20the%20world%20of%20tech,what%20needs%20to%20be%20fixed) :)
+Armitage is a living project, and it plans to evolve over time through its community. We firmly believe in open source software, and we definetely love the idea of <Link href="https://www.nytimes.com/2022/11/14/business/dogfooding.html#:~:text=In%20the%20world%20of%20tech,what%20needs%20to%20be%20fixed" target="_blank"> [dogfooding]() </Link> :)
 This article is being written before the official release of Armitage, so you might find many new features by the time you are reading it! But don't worry, the foundation and the basis explained here will always stay the same!
 
 One could say that Armitage is simply a (very needed) client to facilitate and increase accessibility to sourcecred, which is correct, but it goes way beyond that!
