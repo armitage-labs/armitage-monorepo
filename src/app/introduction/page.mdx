@@ -1,0 +1,113 @@
+import Image from "next/image";
+import Link from "next/link";
+import Badge from "@/components/ui/badge"
+
+
+<section className="pt-16 pb-6">
+
+<div className="container flex max-w-[64rem] flex-col items-center gap-4 pb-6">
+
+
+<img
+  src={"https://miro.medium.com/v2/resize:fit:720/format:webp/1*eYzE_8Ng1zvftXJVSdd8UA.png"}
+  width={700}
+  height={700}
+  alt={`introduction-main`}
+  priority={true}
+/>
+
+
+Hey there! Ready to dive into the world of Armitage and Sourcecred? It's like uncovering the secret sauce behind your favorite app. Even though Sourcecred is kind of like a retired superhero from the tech world, its legacy lives on with Armitage. And guess what? We're here to pump new energy into this old legend.
+We are also proudly inspired by the works of the Token Engineering Academy, and the Token Engineering commons, you should definetely check them out!
+
+> If Sourcecred sounds as mysterious as a ghost in your attic, I recommend checking out <Link href="https://www.youtube.com/watch?v=yVTqRLekRl4" target="_blank"> [Dandelion's 20-minute talk from SustainWeb3]()</Link>. It's like the ultimate beginner's guide.
+
+And don't worry, we're not gonna talk about math here, but think of it like being a detective piecing together a puzzle of nodes and edges - it's about mapping out the web of contributions.
+If you would like to dive deeper into the mechanics of Sourcecred, we highly encourage reading <Link href="https://research.protocol.ai/blog/2020/sourcecred-an-introduction-to-calculating-cred-and-grain/" target="_blank"> [this article]() </Link> from Evan Miyazono where goes in detail about Markov Chains, Stationary Distributions and all that jazz.
+
+## How sourcecred works its magic
+
+Sourcecred is like a techy fortune-teller; it predicts who or what will be the next big thing in a project. Imagine it rummaging through various sources (like GitHub), collecting data like a treasure hunter, and then crafting a map known as a `contribution-graph’. This map is a visual story of who did what and how much it matters.
+It creates a contribution graph from all the data it finds. Imagine each contribution or contributor as a dot (node) on a map, and the connections (edges) are the lines between them, showing how they're related.
+
+- Nodes: These are like the characters or items in a game, each with a unique address. They can be the people helping out (contributors) or the help they offer (contributions).
+- Weights: Both the characters and their connections have weights, like having different strengths or influence levels.
+- Timestamps: Every connection (edge) is marked with the time it happened, like a timestamp in a message.
+
+If you have already stumbled upon Armitage roadmap, you probably saw that we also have plans to enable a feature that distributes "points" or tokens based on contribution scores, this, on the Sourcecred world, was called Cred distribution, which was generated and calculated from the graph of cred scores periodically as a stream of rewards. We have slightly different plans on how to utilize this functionality in Armitage, but this is for another deeper article!
+
+> Image of a weighted directed graph
+
+> It's worth pausing for a moment to make a distinction. In graph theory, a weighted graph has weights on the edges, whereas the Sourcecred `contribution graph` has weights on both edges and nodes, together with some extra features.
+
+Sourcecred needs rules to make sense of all the actions - like figuring out wether creating an issue on Github is more impactful than commenting on one. It uses special constants for this balancing act.
+
+Armitage also plans to let communities set their own rules for scoring contributions. It's like customizing the game rules to suit your team.
+
+
+### The CredRank algorithm
+
+The goal of CredRank is to calculate the relative importance of nodes based on our intricate map of interactions (contribution graph), imagine it like scoring points in a video game based on different actions.
+In particular, it includes adding some nodes for contribution calculation and converting weights in our contribution graph to probabilities, in order to eventually run PageRank, which uses a Markov chain (a set of states with probabilities describing the likelihood of transitioning between states).
+
+
+
+From the contribution graph, we want to calculate our contribution scores, which is the relative importance of nodes compared to each other.
+We start with the intuition that any contribution's importance is explicitly validated by future contributions, and the strenght of that validation is greater if it comes from contributions that are themselves more significant.
+Sourcecred isn't just about what you just did; it's also about when you did it. It's like getting points for both your current hit song and your old-school classics.
+If you have ever heard of Retro PGF (Retroactive Public Good Funding) you will immediately start noticing its similarities and how Sourcecred is a powerful tool to measure contributions.
+
+---
+
+#### Contribution importance as a stationary distribution
+
+As a _metaphor_, we can visualize cred flowing through the graph as water flowing through an ecosystem of creeks, springs and ponds:
+
+- Water bubbles up at certain locations where there are springs feeding ponds. These correspond to actions that mint contribution scores (cred).
+- Water flows through streams connecting ponds. The flow to downstream nodes is proportional to the strength of the connection.
+- Additionally, water from all of these ponds seeps into the ground, replenishing the springs and providing a closed loop.
+- Finally, the equilibrium water level in each pond is proportional to the relative importance of that node.
+
+The contribution graph tells us the size of various creek beds, but we want to know the distribution of destinations for the water that leaves each pond.
+We can calculate the paths a different water droplet can take to the transition probabilities in a Markov chain. With these numbers, we can then calculate the equilibrium distribution of water, called the stationary distribution on a Markov chain.
+
+*On the origin of cred*
+
+The weights of the nodes are used to determine the amount of cred minted for each action (i.e. the rate at which each spring adds water). This newly-minted cred flows to connected nodes, but the total amount of cred minted by contributions will be the total amount received by contributors.
+In this way, the total amount of cred increases in proportion to the amount of cred generating activity on the project itself.
+
+*Cred-minting philosophy*
+
+As a matter of design philosophy, sourcecred believes cred should be minted at moments when there is a review of an action rather than the action itself.
+This reduces the danger of spam and reinforces the idea that contributors dictate what is valuable.
+
+*Motivating time-based cred*
+
+In sourcecred, contributions are valued based on their current impact, regardless of when the contribution was made. As a result, a past action that was recently found to be valuable in the present
+should have new cred flow to it. In contrast, a buggy feature that was replaced for not being easily maintained should have its cred decrease.
+
+In order to accomodate these properties over time, soucecred adoped a model that creates "epoch nodes" that, in effect, act like time-bounded identities for each contributor for each time period.
+The evolution of a user's cred over time can then be quickly evaluated by summing over epoch nodes without having to recalculate a stationary state.
+
+## How does Armitage uses Sourcecred
+
+Armitage is a living project, and it plans to evolve over time through its community. We firmly believe in open source software, and we definetely love the idea of [dogfooding](https://www.nytimes.com/2022/11/14/business/dogfooding.html#:~:text=In%20the%20world%20of%20tech,what%20needs%20to%20be%20fixed) :)
+This article is being written before the official release of Armitage, so you might find many new features by the time you are reading it! But don't worry, the foundation and the basis explained here will always stay the same!
+
+One could say that Armitage is simply a (very needed) client to facilitate and increase accessibility to sourcecred, which is correct, but it goes way beyond that!
+
+Let's focus on that basis on a step by step process of what Armitage allows users to do:
+
+- Sign-in and create an account with Github
+- Search your github account for open-source repositories that you own
+- Register a repository that you own or maintain
+- Calculate contribution scores for the registered repositories
+- Display in an easy way the contribution scores for analysis
+
+Behind the scenes, armitage creates a contribution graph and runs all calculations necessary to generate the contribution scores for each contributor on a specific repository using sourcecred.
+
+If you want to learn more about Armitage future, the roadmap or how to contribute, we highly encourage you to read the `Contribute` and `Roadmap` pages.
+
+</div>
+
+</section>
