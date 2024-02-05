@@ -2,10 +2,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { options } from "../api/auth/[...nextauth]/options";
 
-import SignInButton from "@/components/signInButton";
 import Image from "next/image";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { UserAuthForm } from "@/components/authentication/user-auth-form";
 
 const SignInPage = async () => {

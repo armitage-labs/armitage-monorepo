@@ -17,6 +17,7 @@ import Link from "next/link";
 
 export default async function Home() {
   // const recipes = await getRecipes();
+  // function that get recipes
 
   return (
     <main>
