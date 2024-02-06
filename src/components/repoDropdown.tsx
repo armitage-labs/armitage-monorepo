@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 
 const frameworks = [
   {
@@ -47,7 +48,7 @@ interface RepoListItem {
 }
 
 interface RepoDropdownProps {
-  repositories: RepoListItem[];
+  repositories: GithubRepoDto[];
 }
 
 export function RepoDropdown({ repositories }: RepoDropdownProps) {
@@ -64,20 +65,21 @@ export function RepoDropdown({ repositories }: RepoDropdownProps) {
           className="w-[200px] justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+            ? repositories.find((repository) => repository.name === value)
+                ?.html_url
+            : "Select repository..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder="Search repository..." />
+          <CommandEmpty>No repository found.</CommandEmpty>
           <CommandGroup>
-            {frameworks.map((framework) => (
+            {repositories.map((repository) => (
               <CommandItem
-                key={framework.value}
-                value={framework.value}
+                key={repository.id}
+                value={repository.name}
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? "" : currentValue);
                   setOpen(false);
@@ -86,10 +88,10 @@ export function RepoDropdown({ repositories }: RepoDropdownProps) {
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0",
+                    value === repository.name ? "opacity-100" : "opacity-0",
                   )}
                 />
-                {framework.label}
+                {repository.name}
               </CommandItem>
             ))}
           </CommandGroup>

@@ -15,14 +15,17 @@ export const options: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, profile }): Promise<JWT> {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.id = account.id;
+      if (token) {
+        if (account) {
+          token.accessToken = account.access_token;
+          token.id = account.id;
+        }
+        if (profile) {
+          token.githubLogin = transformProfile(profile);
+        }
+        return token;
       }
-      if (profile) {
-        token.githubLogin = transformProfile(profile);
-      }
-      return token;
+      return {};
     },
     async session({ session, token }) {
       if (token) {
