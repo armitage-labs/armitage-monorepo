@@ -1,5 +1,4 @@
 import { getServerSession } from "next-auth";
-import axios from "axios";
 import { options } from "../api/auth/[...nextauth]/options";
 import { RepoDropdown } from "@/components/repoDropdown";
 import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";

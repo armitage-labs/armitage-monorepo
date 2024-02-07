@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export type GitRepoView = {
   id: string;
@@ -26,12 +27,34 @@ export type GitRepoView = {
 
 export const columns: ColumnDef<GitRepoView>[] = [
   {
+    id: "select",
+    // header: ({ table }) => (
+    //   <Checkbox
+    //     checked={
+    //       table.getIsAllPageRowsSelected() ||
+    //       (table.getIsSomePageRowsSelected() && "indeterminate")
+    //     }
+    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //     aria-label="Select all"
+    //   />
+    // ),
+    header: () => <div className="text-left"> Is Registered </div>,
+    cell: ({ row }) => {
+      return (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      );
+    },
+  },
+  {
     accessorKey: "name",
     header: () => <div className="text-left"> Name </div>,
   },
   {
     accessorKey: "created_at",
-    // header: () => <div className="text-left">Created At </div>,
     header: ({ column }) => {
       return (
         <Button
