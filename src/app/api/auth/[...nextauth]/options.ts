@@ -1,6 +1,8 @@
 import type { AuthOptions } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GithubProvider from "next-auth/providers/github";
+import { GithubUserDto } from "./types/githubUser.dto";
+import { synchronizeUser } from "./syncUser";
 
 export const options: AuthOptions = {
   providers: [
@@ -21,7 +23,7 @@ export const options: AuthOptions = {
           token.id = account.id;
         }
         if (profile) {
-          token.githubLogin = transformProfile(profile);
+          token.githubLogin = transformProfile(profile)?.login;
         }
         return token;
       }
@@ -31,6 +33,12 @@ export const options: AuthOptions = {
       if (token) {
         session.accessToken = token.accessToken?.toString();
         session.githubLogin = token.githubLogin?.toString();
+        if (session.user?.email && session.githubLogin) {
+          session.userId = await synchronizeUser(
+            session.user?.email,
+            session.githubLogin,
+          );
+        }
       }
 
       return session;
@@ -38,8 +46,8 @@ export const options: AuthOptions = {
   },
 };
 
-export function transformProfile(profile: any): string | null {
+export function transformProfile(profile: any): GithubUserDto {
   const stringifiedProfile = JSON.stringify(profile);
-  const parsedProfile = JSON.parse(stringifiedProfile);
-  return parsedProfile["login"];
+  const parsedProfile = JSON.parse(stringifiedProfile) as GithubUserDto;
+  return parsedProfile;
 }

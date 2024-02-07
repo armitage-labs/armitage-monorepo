@@ -6,7 +6,6 @@ import { fetchPaginatedGithubRepoResult } from "../api/github/repo/fetchReposito
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
 
-// function to check if number is even or odd
 export default async function GitRepo() {
   const session = await getServerSession(options);
   let githubRepos: GithubRepoDto[] = [];

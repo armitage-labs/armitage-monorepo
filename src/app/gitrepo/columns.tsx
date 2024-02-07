@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
+import axios from "axios";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,22 +29,32 @@ export type GitRepoView = {
 export const columns: ColumnDef<GitRepoView>[] = [
   {
     id: "select",
-    // header: ({ table }) => (
-    //   <Checkbox
-    //     checked={
-    //       table.getIsAllPageRowsSelected() ||
-    //       (table.getIsSomePageRowsSelected() && "indeterminate")
-    //     }
-    //     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //     aria-label="Select all"
-    //   />
-    // ),
     header: () => <div className="text-left"> Is Registered </div>,
     cell: ({ row }) => {
+      const repo = row.original;
+      // const [open, setOpen] = useState(false);
+      // const [result, setResult] = useState<BasicIpfsData>();
+      // const note = row.original;
+      //
+      const handleRegisterRepo = async (register: boolean) => {
+        if (register) {
+          const { data } = await axios.post(`/api/github/repo`, {
+            name: repo.name,
+            full_name: repo.full_name,
+          });
+        }
+      };
+
       return (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            console.log("VALUE OF CHECKBOX:");
+            console.log(value);
+            console.log(row.getValue("name"));
+            handleRegisterRepo(!!value);
+            row.toggleSelected(!!value);
+          }}
           aria-label="Select row"
         />
       );

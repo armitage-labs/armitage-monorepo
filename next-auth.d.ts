@@ -14,5 +14,6 @@ declare module "next-auth" {
   interface Session {
     accessToken?: string;
     githubLogin?: string;
+    userId?: string;
   }
 }
