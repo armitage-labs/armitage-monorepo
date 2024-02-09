@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserCredDto } from './types/userCredDto';
 import { executeCommand } from './utils/bashCommand';
 
 @Injectable()
 export class SourceCredService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async calculateCredScores(userId: string): Promise<UserCredDto> {
+    // const userRegisteredRepos = await this.retrieveGitReposByUser(userId);
+    return;
+  }
 
   craftPluginConfigString(githubReposFullNames: string[]): string {
     let pluginConfigurationString = '';
