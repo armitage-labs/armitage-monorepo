@@ -3,7 +3,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { fetchPaginatedGithubRepoResult } from "./fetchRepositories";
 import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/options";
-import { register } from "module";
 
 export async function GET() {
   const session = await getServerSession(options);
@@ -42,16 +41,34 @@ export async function POST(req: NextRequest) {
             full_name: registerRepoDto.full_name,
           },
         });
-        console.log("criou");
         return NextResponse.json({ success: true, created: true });
       }
-      console.log("achou");
       return NextResponse.json({ success: true, created: false });
     }
-    console.log("falhou");
     return NextResponse.json({ success: false, created: false });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, created: false });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(options);
+    const deleteRepoFullName = req.nextUrl.searchParams.get("full_name");
+    if (session?.userId && deleteRepoFullName) {
+      await prisma.githubRepo.delete({
+        where: {
+          full_name: deleteRepoFullName,
+        },
+      });
+      return NextResponse.json({
+        success: true,
+        deleted: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false, deleted: false });
   }
 }
