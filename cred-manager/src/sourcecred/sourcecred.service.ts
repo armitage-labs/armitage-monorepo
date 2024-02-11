@@ -5,22 +5,13 @@ import {
   sourcecred as sc,
 } from 'sourcecred';
 import { GitRepoService } from 'src/gitrepo/gitrepo.service';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UserCredDto } from './types/userCredDto';
 import { executeCommand } from './utils/bashCommand';
 
 @Injectable()
 export class SourceCredService {
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly gitRepoService: GitRepoService,
-  ) {}
+  constructor(private readonly gitRepoService: GitRepoService) {}
 
-  /**
-   * Calculates Cred scores for registered github repositories given
-   * a user id, outputting cred scores for all users that contributed
-   * on the registered repositories
-   **/
   async calculateCredScores(userId: string): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByUser(userId);
     const pluginConfigString = this.craftPluginConfigString(
