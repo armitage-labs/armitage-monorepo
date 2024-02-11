@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { options } from "../api/auth/[...nextauth]/options";
-import { RepoDropdown } from "@/components/repoDropdown";
 import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
 import { fetchPaginatedGithubRepoResult } from "../api/github/repo/fetchRepositories";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
 import { fetchRegisteredGitRepos } from "../api/github/repo/registered/fetchRegisteredRepos";
+import { Button } from "@/components/ui/button";
 
 export default async function GitRepo() {
   const session = await getServerSession(options);
@@ -86,6 +86,7 @@ export default async function GitRepo() {
                     columns={columns}
                     data={githubRepoColumnData}
                   ></DataTable>
+                  <Button className="w-full">Generate</Button>
                 </div>
               </div>
             ) : (
