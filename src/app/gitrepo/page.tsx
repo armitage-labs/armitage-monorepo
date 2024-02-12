@@ -4,20 +4,24 @@ import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
 import { fetchPaginatedGithubRepoResult } from "../api/github/repo/fetchRepositories";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
-import { fetchRegisteredGitRepos } from "../api/github/repo/registered/fetchRegisteredRepos";
-import { Button } from "@/components/ui/button";
+import {
+  RegisteredGitRepo,
+  fetchRegisteredGitRepos,
+} from "../api/github/repo/registered/fetchRegisteredRepos";
+import { GenerateCalculations } from "@/components/generateCalculationsDrawer";
 
 export default async function GitRepo() {
   const session = await getServerSession(options);
   let githubRepos: GithubRepoDto[] = [];
   let githubRepoColumnData: GitRepoView[] = [];
+  let registeredGitRepos: RegisteredGitRepo[] = [];
 
   if (session?.accessToken && session.githubLogin && session.userId) {
     githubRepos = await fetchPaginatedGithubRepoResult(
       session.accessToken,
       session.githubLogin,
     );
-    const registeredGitRepos = await fetchRegisteredGitRepos(session.userId);
+    registeredGitRepos = await fetchRegisteredGitRepos(session.userId);
     if (githubRepos.length > 1) {
       // match githubRepos into githubRepoColumnData on a map function
       githubRepoColumnData = githubRepos.map((githubRepoDto) => ({
@@ -79,14 +83,16 @@ export default async function GitRepo() {
             </ol>
           </div>
           <div className="flex justify-center">
-            {githubRepos ? (
+            {githubRepos && registeredGitRepos ? (
               <div>
                 <div className="pt-6">
                   <DataTable
                     columns={columns}
                     data={githubRepoColumnData}
                   ></DataTable>
-                  <Button className="w-full">Generate</Button>
+                  <GenerateCalculations
+                    registeredGitRepos={registeredGitRepos}
+                  ></GenerateCalculations>
                 </div>
               </div>
             ) : (

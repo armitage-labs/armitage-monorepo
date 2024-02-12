@@ -109,26 +109,22 @@ export function Navbar({ session }: { session: Session | null }) {
 
         {!session ? (
           <NavigationMenuItem>
-            <Link href="">
-              <NavigationMenuLink
-                className={navigationMenuTriggerStyle()}
-                onClick={() => signIn("github", { callbackUrl: "/" })}
-              >
-                Sign-In
-              </NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              onClick={() => signIn("github", { callbackUrl: "/" })}
+            >
+              Sign-In
+            </NavigationMenuLink>
           </NavigationMenuItem>
         ) : (
           <>
             <NavigationMenuItem>
-              <Link href="">
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                >
-                  Sign-out
-                </NavigationMenuLink>
-              </Link>
+              <NavigationMenuLink
+                className={navigationMenuTriggerStyle()}
+                onClick={() => signOut({ callbackUrl: "/" })}
+              >
+                Sign-out
+              </NavigationMenuLink>
             </NavigationMenuItem>
           </>
         )}
