@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GithubRepoDto } from './types/githuRepo.dto';
+import { GithubRepoDto } from './types/githubRepo.dto';
 
 @Injectable()
 export class GitRepoService {
