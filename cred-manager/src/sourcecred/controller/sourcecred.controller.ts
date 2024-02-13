@@ -36,4 +36,26 @@ export class SourceCredController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  /**
+   * Fetch users cred score
+   **/
+  @Get('/user/:userId')
+  async fetchUsersCredScores(
+    @Res() response: Response,
+    @Param('userId') userId: string,
+  ): Promise<Response> {
+    console.log(
+      `Fetching CRED scores for user ${userId}`,
+    );
+    try {
+      const credScoresArray = await this.sourceCredService.fetchScoreForUser(
+        userId,
+      );
+      return response.send(credScoresArray);
+    } catch (error) {
+      console.error('Failed calculating CRED scores', error);
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

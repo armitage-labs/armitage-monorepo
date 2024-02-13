@@ -32,40 +32,6 @@ export class SourceCredService {
     return userCredDtoArray;
   }
 
-  async saveContribution(userId: string): Promise<ContributionRepoDto> {
-    try {
-      const contribution = await this.prismaService.contribution.create({
-        data: {
-          user_id: userId,
-          created_at: new Date(),
-        }
-      });
-      return contribution;
-    } catch (error) {
-      console.error('Error creating contribution run', error);
-      throw error;
-    }
-  }
-
-  async saveUserScore(contributionId: string, userCredDtos: UserCredDto[]) {
-    try {
-      return await this.prismaService.userScore.createMany({
-        data: userCredDtos.map(userCredDto => {
-          return {
-            username: userCredDto.userName,
-            user_type: userCredDto.type,
-            score: userCredDto.totalCred,
-            created_at: new Date(),
-            contribution_id: contributionId
-          }
-        })
-      });
-    } catch (error) {
-      console.error('Error creating users scores', error);
-      throw error;
-    }
-  }
-
   craftPluginConfigString(githubReposFullNames: string[]): string {
     let pluginConfigurationString = '';
     for (const gitRepoFullName of githubReposFullNames) {
@@ -132,6 +98,75 @@ export class SourceCredService {
     return userDtoArray.sort((a, b) => b.totalCred - a.totalCred);
   }
 
+  async saveContribution(userId: string): Promise<ContributionRepoDto> {
+    try {
+      const contribution = await this.prismaService.contribution.create({
+        data: {
+          user_id: userId,
+          created_at: new Date(),
+        }
+      });
+      return contribution;
+    } catch (error) {
+      console.error('Error creating contribution run', error);
+      throw error;
+    }
+  }
 
+  async saveUserScore(contributionId: string, userCredDtos: UserCredDto[]) {
+    try {
+      return await this.prismaService.userScore.createMany({
+        data: userCredDtos.map(userCredDto => {
+          return {
+            username: userCredDto.userName,
+            user_type: userCredDto.type,
+            score: userCredDto.totalCred,
+            created_at: new Date(),
+            contribution_id: contributionId
+          }
+        })
+      });
+    } catch (error) {
+      console.error('Error creating users scores', error);
+      throw error;
+    }
+  }
+
+  async fetchScoreForUser (userId: string): Promise<UserCredDto[]> {
+    try {
+      const contribution = await this.fetchContribution(userId);
+      const scores = await this.fetchUserScore(contribution.id);
+      return scores.map(score => {
+        return new UserCredDto(score.score.toNumber(), score.username, score.user_type);
+      })
+    } catch (error) {
+      console.error('Error fetching users scores', error);
+      throw error;
+    }
+  }
+
+  async fetchContribution (userId: string): Promise<ContributionRepoDto> {
+    try {
+      return await this.prismaService.contribution.findFirst({
+        where: { user_id: userId },
+      });
+    } catch (error) {
+      console.error('Error fetching users scores', error);
+      throw error;
+    }
+  }
+
+  async fetchUserScore (contributionId: string): Promise<UserScoreRepoDto[]> {
+    try {
+      const foundScores = await this.prismaService.userScore.findMany({
+        where: { contribution_id: contributionId },
+      });
+      return foundScores;
+    } catch (error) {
+      console.error('Error fetching users scores', error);
+      throw error;
+    }
+  }
+  
 
 }
