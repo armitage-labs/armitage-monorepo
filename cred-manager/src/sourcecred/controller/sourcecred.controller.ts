@@ -7,7 +7,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { SourceCredService } from './sourcecred.service';
+import { SourceCredService } from '../service/sourcecred.service';
 
 @Controller('/cred')
 export class SourceCredController {

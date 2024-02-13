@@ -4,23 +4,66 @@ import {
   ParticipantCredGrain,
   sourcecred as sc,
 } from 'sourcecred';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { GitRepoService } from 'src/gitrepo/gitrepo.service';
-import { UserCredDto } from './types/userCredDto';
-import { executeCommand } from './utils/bashCommand';
+import { UserCredDto } from '../types/userCredDto';
+import { ContributionRepoDto } from '../types/contributionRepo.dto';
+import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
+import { executeCommand } from '../utils/bashCommand';
 
 @Injectable()
 export class SourceCredService {
-  constructor(private readonly gitRepoService: GitRepoService) {}
+  constructor(
+    private readonly gitRepoService: GitRepoService,
+    private readonly prismaService: PrismaService
+  ) { }
 
   async calculateCredScores(userId: string): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByUser(userId);
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
     );
+    const contribution = await this.saveContribution(userId);
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.loadSourceCredPlugins();
     const userCredDtoArray = await this.loadLocalScInstance();
+    await this.saveUserScore(contribution.id, userCredDtoArray)
+
     return userCredDtoArray;
+  }
+
+  async saveContribution(userId: string): Promise<ContributionRepoDto> {
+    try {
+      const contribution = await this.prismaService.contribution.create({
+        data: {
+          user_id: userId,
+          created_at: new Date(),
+        }
+      });
+      return contribution;
+    } catch (error) {
+      console.error('Error creating contribution run', error);
+      throw error;
+    }
+  }
+
+  async saveUserScore(contributionId: string, userCredDtos: UserCredDto[]) {
+    try {
+      return await this.prismaService.userScore.createMany({
+        data: userCredDtos.map(userCredDto => {
+          return {
+            username: userCredDto.userName,
+            user_type: userCredDto.type,
+            score: userCredDto.totalCred,
+            created_at: new Date(),
+            contribution_id: contributionId
+          }
+        })
+      });
+    } catch (error) {
+      console.error('Error creating users scores', error);
+      throw error;
+    }
   }
 
   craftPluginConfigString(githubReposFullNames: string[]): string {
@@ -88,4 +131,7 @@ export class SourceCredService {
   orderUserByCred(userDtoArray: UserCredDto[]): UserCredDto[] {
     return userDtoArray.sort((a, b) => b.totalCred - a.totalCred);
   }
+
+
+
 }

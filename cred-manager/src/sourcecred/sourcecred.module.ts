@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GitRepoModule } from 'src/gitrepo/gitrepo.module';
-import { SourceCredController } from './sourcecred.controller';
-import { SourceCredService } from './sourcecred.service';
+import { SourceCredController } from './controller/sourcecred.controller';
+import { SourceCredService } from './service/sourcecred.service';
 
 @Module({
   imports: [GitRepoModule],
