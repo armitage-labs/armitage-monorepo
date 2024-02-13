@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Circles } from "react-loader-spinner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import { Copy } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -14,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
 
 type LoadingCalculationsProps = {
   onSubmit: () => void;

@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -18,28 +16,39 @@ import { useState } from "react";
 import { UserCredDto } from "@/app/api/credmanager/route";
 import axios from "axios";
 import { LoadingCalculations } from "./calculationLoadingDialog";
+import { Circles } from "react-loader-spinner";
 
 interface GenerateCalculationsProps {
   registeredGitRepos: RegisteredGitRepo[];
+  handleCalculationResult: (result: UserCredDto[]) => void;
+  refreshRegistered: () => void;
 }
 
 export function GenerateCalculations({
   registeredGitRepos,
+  handleCalculationResult,
+  refreshRegistered,
 }: GenerateCalculationsProps) {
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
+  // const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
 
   const handleFetch = async () => {
     setLoading(true);
     const { data } = await axios.get(`/api/credmanager`);
     if (data && data.success) {
-      setUserCredDtos(data["userCredDtos"] as UserCredDto[]);
+      handleCalculationResult(data["userCredDtos"] as UserCredDto[]);
     }
     setLoading(false);
   };
 
+  const handleOpen = async () => {
+    setLoading(true);
+    refreshRegistered();
+    setLoading(false);
+  };
+
   return (
-    <Drawer>
+    <Drawer onOpenChange={handleOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline">Generate Calculations</Button>
       </DrawerTrigger>
@@ -53,24 +62,26 @@ export function GenerateCalculations({
             </DrawerDescription>
           </DrawerHeader>
           <div className="items-center pt-6 pb-6">
-            <ScrollArea className="h-72 rounded-md border items-center ">
-              <div className="p-4">
-                <h4 className="mb-4 text-sm font-medium leading-none items-center">
-                  Name
-                </h4>
-                {registeredGitRepos.map((gitRepo) => (
-                  <>
-                    <div
-                      key={gitRepo.full_name}
-                      className="text-sm text-center"
-                    >
-                      {gitRepo.name}
-                    </div>
-                    <Separator className="my-2" />
-                  </>
-                ))}
-              </div>
-            </ScrollArea>
+            <div>
+              <ScrollArea className="h-72 rounded-md border items-center ">
+                <div className="p-4">
+                  <h4 className="mb-4 text-sm font-medium leading-none items-center">
+                    Name
+                  </h4>
+                  {registeredGitRepos.map((gitRepo) => (
+                    <>
+                      <div
+                        key={gitRepo.full_name}
+                        className="text-sm text-center"
+                      >
+                        {gitRepo.name}
+                      </div>
+                      <Separator className="my-2" />
+                    </>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
           </div>
           <DrawerFooter>
             <Button onClick={handleFetch}>Submit</Button>
