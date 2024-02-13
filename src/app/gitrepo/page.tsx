@@ -1,30 +1,55 @@
-import { getServerSession } from "next-auth";
-import { options } from "../api/auth/[...nextauth]/options";
+"use client";
+
 import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
-import { fetchPaginatedGithubRepoResult } from "../api/github/repo/fetchRepositories";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
-import {
-  RegisteredGitRepo,
-  fetchRegisteredGitRepos,
-} from "../api/github/repo/registered/fetchRegisteredRepos";
+import { RegisteredGitRepo } from "../api/github/repo/registered/fetchRegisteredRepos";
 import { GenerateCalculations } from "@/components/generateCalculationsDrawer";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default async function GitRepo() {
-  const session = await getServerSession(options);
-  let githubRepos: GithubRepoDto[] = [];
-  let githubRepoColumnData: GitRepoView[] = [];
-  let registeredGitRepos: RegisteredGitRepo[] = [];
+export default function GitRepo() {
+  const { data: session } = useSession();
+  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
+  const [githubRepoColumnData, setGithubRepoColumnData] = useState<
+    GitRepoView[]
+  >([]);
+  const [registeredGitRepos, setRegisteredGitRepos] = useState<
+    RegisteredGitRepo[]
+  >([]);
 
-  if (session?.accessToken && session.githubLogin && session.userId) {
-    githubRepos = await fetchPaginatedGithubRepoResult(
-      session.accessToken,
-      session.githubLogin,
-    );
-    registeredGitRepos = await fetchRegisteredGitRepos(session.userId);
-    if (githubRepos.length > 1) {
-      // match githubRepos into githubRepoColumnData on a map function
-      githubRepoColumnData = githubRepos.map((githubRepoDto) => ({
+  const handleFetchGithubRepos = async () => {
+    const { data } = await axios.get("/api/github/repo");
+    if (data.success) {
+      setGithubRepos(data.gitRepos);
+    }
+  };
+
+  const handleFetchRegisteredRepos = async () => {
+    const { data } = await axios.get("/api/github/repo/registered");
+    if (data.success) {
+      setRegisteredGitRepos(data.registeredRepos);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      session?.accessToken &&
+      session.githubLogin &&
+      session.userId &&
+      githubRepos.length < 1
+    ) {
+      handleFetchGithubRepos();
+      handleFetchRegisteredRepos();
+    }
+  }, [session]);
+
+  useEffect(() => {
+    console.log("ON FINAL USEEFFECT");
+    if (registeredGitRepos.length > 1 && githubRepos.length > 1) {
+      console.log("ON CONDITION");
+      const columnData = githubRepos.map((githubRepoDto) => ({
         id: githubRepoDto.id,
         name: githubRepoDto.name,
         full_name: githubRepoDto.full_name,
@@ -38,8 +63,9 @@ export default async function GitRepo() {
             registeredRepo.full_name === githubRepoDto.full_name,
         ),
       }));
+      setGithubRepoColumnData(columnData);
     }
-  }
+  }, [registeredGitRepos, githubRepos]);
 
   return (
     <main>
