@@ -43,6 +43,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
             full_name: repo.full_name,
           });
           if (data.success) {
+            repo.initially_registered = true;
             setChecked(true);
           }
         } else {
@@ -50,6 +51,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
             `/api/github/repo?full_name=${repo.full_name}`,
           );
           if (data.success) {
+            repo.initially_registered = false;
             setChecked(false);
           }
         }

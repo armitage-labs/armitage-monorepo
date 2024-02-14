@@ -9,7 +9,6 @@ export interface UserCredDto {
 }
 
 export async function GET() {
-  console.log("ENTERED ON ROUTE");
   try {
     const session = await getServerSession(options);
     if (session?.userId) {

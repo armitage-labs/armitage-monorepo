@@ -1,24 +1,7 @@
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
-// interface Recipe {
-//   title: string;
-//   image: string;
-//   time: number;
-//   description: string;
-//   vegan: boolean;
-//   id: string;
-// }
-
-// async function getRecipes(): Promise<Recipe[]> {
-//   const result = await fetch("http://localhost:4000/recipes");
-//   return result.json();
-// }
-
 export default async function Home() {
-  // const recipes = await getRecipes();
-  // function that get recipes
-
   return (
     <main>
       <section className="pt-16">

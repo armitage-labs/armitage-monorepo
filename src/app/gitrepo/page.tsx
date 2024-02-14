@@ -1,30 +1,57 @@
-import { getServerSession } from "next-auth";
-import { options } from "../api/auth/[...nextauth]/options";
+"use client";
+
+import { Circles } from "react-loader-spinner";
 import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
-import { fetchPaginatedGithubRepoResult } from "../api/github/repo/fetchRepositories";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
-import {
-  RegisteredGitRepo,
-  fetchRegisteredGitRepos,
-} from "../api/github/repo/registered/fetchRegisteredRepos";
+import { RegisteredGitRepo } from "../api/github/repo/registered/fetchRegisteredRepos";
 import { GenerateCalculations } from "@/components/generateCalculationsDrawer";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { UserCredDto } from "../api/credmanager/route";
+import { CalculationResult } from "./calculationResults";
 
-export default async function GitRepo() {
-  const session = await getServerSession(options);
-  let githubRepos: GithubRepoDto[] = [];
-  let githubRepoColumnData: GitRepoView[] = [];
-  let registeredGitRepos: RegisteredGitRepo[] = [];
+export default function GitRepo() {
+  const { data: session } = useSession();
+  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
+  const [githubRepoColumnData, setGithubRepoColumnData] = useState<
+    GitRepoView[]
+  >([]);
+  const [registeredGitRepos, setRegisteredGitRepos] = useState<
+    RegisteredGitRepo[]
+  >([]);
+  const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
 
-  if (session?.accessToken && session.githubLogin && session.userId) {
-    githubRepos = await fetchPaginatedGithubRepoResult(
-      session.accessToken,
-      session.githubLogin,
-    );
-    registeredGitRepos = await fetchRegisteredGitRepos(session.userId);
-    if (githubRepos.length > 1) {
-      // match githubRepos into githubRepoColumnData on a map function
-      githubRepoColumnData = githubRepos.map((githubRepoDto) => ({
+  const handleFetchGithubRepos = async () => {
+    const { data } = await axios.get("/api/github/repo");
+    if (data.success) {
+      setGithubRepos(data.gitRepos);
+    }
+  };
+
+  const handleFetchRegisteredRepos = async () => {
+    const { data } = await axios.get("/api/github/repo/registered");
+    if (data.success) {
+      setRegisteredGitRepos(data.registeredRepos);
+    }
+  };
+
+  useEffect(() => {
+    if (
+      session?.accessToken &&
+      session.githubLogin &&
+      session.userId &&
+      githubRepos.length < 1
+    ) {
+      handleFetchGithubRepos();
+      handleFetchRegisteredRepos();
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (registeredGitRepos.length > 0 && githubRepos.length > 0) {
+      const columnData = githubRepos.map((githubRepoDto) => ({
         id: githubRepoDto.id,
         name: githubRepoDto.name,
         full_name: githubRepoDto.full_name,
@@ -38,8 +65,9 @@ export default async function GitRepo() {
             registeredRepo.full_name === githubRepoDto.full_name,
         ),
       }));
+      setGithubRepoColumnData(columnData);
     }
-  }
+  }, [registeredGitRepos, githubRepos]);
 
   return (
     <main>
@@ -83,20 +111,32 @@ export default async function GitRepo() {
             </ol>
           </div>
           <div className="flex justify-center">
-            {githubRepos && registeredGitRepos ? (
+            {githubRepos.length > 0 && registeredGitRepos ? (
               <div>
-                <div className="pt-6">
-                  <DataTable
-                    columns={columns}
-                    data={githubRepoColumnData}
-                  ></DataTable>
-                  <GenerateCalculations
-                    registeredGitRepos={registeredGitRepos}
-                  ></GenerateCalculations>
-                </div>
+                {userCredDtos.length > 0 ? (
+                  <CalculationResult
+                    userCredDtoList={userCredDtos}
+                  ></CalculationResult>
+                ) : (
+                  <div>
+                    <div className="pt-6">
+                      <DataTable
+                        columns={columns}
+                        data={githubRepoColumnData}
+                      ></DataTable>
+                      <GenerateCalculations
+                        handleCalculationResult={setUserCredDtos}
+                        registeredGitRepos={registeredGitRepos}
+                        refreshRegistered={handleFetchRegisteredRepos}
+                      ></GenerateCalculations>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
-              <div>loading</div>
+              <div className="pt-36 flex justify-center">
+                <Circles />
+              </div>
             )}
           </div>
         </div>

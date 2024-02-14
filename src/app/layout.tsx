@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/navigation/navbar";
 import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
+import { NextAuthProvider } from "./nextAuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,13 +21,15 @@ export default async function RootLayout({
   const session = await getServerSession(options);
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <nav>
-          <Navbar session={session}></Navbar>
-        </nav>
-        {children}
-      </body>
-    </html>
+    <NextAuthProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <nav>
+            <Navbar session={session}></Navbar>
+          </nav>
+          {children}
+        </body>
+      </html>
+    </NextAuthProvider>
   );
 }
