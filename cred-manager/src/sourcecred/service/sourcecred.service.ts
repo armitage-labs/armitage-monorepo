@@ -15,8 +15,8 @@ import { executeCommand } from '../utils/bashCommand';
 export class SourceCredService {
   constructor(
     private readonly gitRepoService: GitRepoService,
-    private readonly prismaService: PrismaService
-  ) { }
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async calculateCredScores(userId: string): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByUser(userId);
@@ -27,7 +27,7 @@ export class SourceCredService {
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.loadSourceCredPlugins();
     const userCredDtoArray = await this.loadLocalScInstance();
-    await this.saveUserScore(contribution.id, userCredDtoArray)
+    await this.saveUserScore(contribution.id, userCredDtoArray);
 
     return userCredDtoArray;
   }
@@ -104,7 +104,7 @@ export class SourceCredService {
         data: {
           user_id: userId,
           created_at: new Date(),
-        }
+        },
       });
       return contribution;
     } catch (error) {
@@ -116,15 +116,15 @@ export class SourceCredService {
   async saveUserScore(contributionId: string, userCredDtos: UserCredDto[]) {
     try {
       return await this.prismaService.userScore.createMany({
-        data: userCredDtos.map(userCredDto => {
+        data: userCredDtos.map((userCredDto) => {
           return {
             username: userCredDto.userName,
             user_type: userCredDto.type,
             score: userCredDto.totalCred,
             created_at: new Date(),
-            contribution_id: contributionId
-          }
-        })
+            contribution_id: contributionId,
+          };
+        }),
       });
     } catch (error) {
       console.error('Error creating users scores', error);
@@ -132,20 +132,24 @@ export class SourceCredService {
     }
   }
 
-  async fetchScoreForUser (userId: string): Promise<UserCredDto[]> {
+  async fetchScoreForUser(userId: string): Promise<UserCredDto[]> {
     try {
       const contribution = await this.fetchContribution(userId);
       const scores = await this.fetchUserScore(contribution.id);
-      return scores.map(score => {
-        return new UserCredDto(score.score.toNumber(), score.username, score.user_type);
-      })
+      return scores.map((score) => {
+        return new UserCredDto(
+          score.score.toNumber(),
+          score.username,
+          score.user_type,
+        );
+      });
     } catch (error) {
       console.error('Error fetching users scores', error);
       throw error;
     }
   }
 
-  async fetchContribution (userId: string): Promise<ContributionRepoDto> {
+  async fetchContribution(userId: string): Promise<ContributionRepoDto> {
     try {
       return await this.prismaService.contribution.findFirst({
         where: { user_id: userId },
@@ -156,7 +160,7 @@ export class SourceCredService {
     }
   }
 
-  async fetchUserScore (contributionId: string): Promise<UserScoreRepoDto[]> {
+  async fetchUserScore(contributionId: string): Promise<UserScoreRepoDto[]> {
     try {
       const foundScores = await this.prismaService.userScore.findMany({
         where: { contribution_id: contributionId },
@@ -167,6 +171,4 @@ export class SourceCredService {
       throw error;
     }
   }
-  
-
 }
