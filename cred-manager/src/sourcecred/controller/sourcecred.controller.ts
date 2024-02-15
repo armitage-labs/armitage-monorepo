@@ -41,17 +41,14 @@ export class SourceCredController {
    * Fetch users cred score
    **/
   @Get('/user/:userId')
-  async fetchUsersCredScores(
+  async fetchPreviousCredScoresFromUserLastContribution(
     @Res() response: Response,
     @Param('userId') userId: string,
   ): Promise<Response> {
-    console.log(
-      `Fetching CRED scores for user ${userId}`,
-    );
+    console.log(`Fetching CRED scores for user ${userId}`);
     try {
-      const credScoresArray = await this.sourceCredService.fetchScoreForUser(
-        userId,
-      );
+      const credScoresArray =
+        await this.sourceCredService.fetchLastContributionScoreForUser(userId);
       return response.send(credScoresArray);
     } catch (error) {
       console.error('Failed calculating CRED scores', error);

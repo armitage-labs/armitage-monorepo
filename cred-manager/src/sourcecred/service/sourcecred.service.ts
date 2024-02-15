@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import {
   CredGrainView,
   ParticipantCredGrain,
@@ -10,13 +10,29 @@ import { UserCredDto } from '../types/userCredDto';
 import { ContributionRepoDto } from '../types/contributionRepo.dto';
 import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
 import { executeCommand } from '../utils/bashCommand';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SourceCredService {
+export class SourceCredService implements OnModuleInit {
+  private readonly sourceCredPath: string;
   constructor(
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
+  }
+
+  async onModuleInit() {
+    try {
+      await executeCommand(
+        `cd ${this.sourceCredPath} \
+          && yarn sourcecred go`,
+      );
+    } catch (error) {
+      console.error('Initializing instance failed', error);
+    }
+  }
 
   async calculateCredScores(userId: string): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByUser(userId);
@@ -49,7 +65,7 @@ export class SourceCredService {
   async configureSourcecredGithubPlugin(pluginConfigurationString: string) {
     try {
       await executeCommand(
-        `echo \'{\"repositories\": [${pluginConfigurationString}]}\' > /Users/sudoferraz/Personal/source-cred/source-cred-instance/config/plugins/sourcecred/github/config.json`,
+        `echo \'{\"repositories\": [${pluginConfigurationString}]}\' > ${this.sourceCredPath}/config/plugins/sourcecred/github/config.json`,
       );
     } catch (error) {
       console.error('configure repos command failed', error);
@@ -59,11 +75,11 @@ export class SourceCredService {
   async loadSourceCredPlugins() {
     try {
       await executeCommand(
-        "cd /Users/sudoferraz/Personal/source-cred/source-cred-instance \
+        `cd ${this.sourceCredPath} \
           && yarn clean-all \
           && rm -r data/ledger.json \
           && sed -i '' '5d' config/dependencies.json \
-          && yarn sourcecred go",
+          && yarn sourcecred go`,
       );
     } catch (error) {
       console.error('execute command failed', error);
@@ -71,8 +87,9 @@ export class SourceCredService {
   }
 
   async loadLocalScInstance(): Promise<UserCredDto[]> {
-    const HARDCODED_DIR =
-      '/Users/sudoferraz/Personal/source-cred/source-cred-instance';
+    // const HARDCODED_DIR =
+    //   '/Users/sudoferraz/Personal/source-cred/source-cred-instance';
+    const HARDCODED_DIR = this.sourceCredPath;
     const localInstance = await new sc.instance.LocalInstance(HARDCODED_DIR);
     const graph: CredGrainView = await localInstance.readCredGrainView();
     const userDataArray = this.processUserData(graph);
@@ -132,7 +149,9 @@ export class SourceCredService {
     }
   }
 
-  async fetchScoreForUser(userId: string): Promise<UserCredDto[]> {
+  async fetchLastContributionScoreForUser(
+    userId: string,
+  ): Promise<UserCredDto[]> {
     try {
       const contribution = await this.fetchContribution(userId);
       const scores = await this.fetchUserScore(contribution.id);

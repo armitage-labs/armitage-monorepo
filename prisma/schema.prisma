@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,35 +12,32 @@ model User {
   username     String         @db.VarChar(255)
   email        String         @unique
   created_at   DateTime       @default(now()) @db.Timestamp(6)
-  GithubRepo   GithubRepo[]
   Contribution Contribution[]
+  GithubRepo   GithubRepo[]
 }
 
 model GithubRepo {
   id        String @id @default(uuid())
   user_id   String
-  user      User   @relation(fields: [user_id], references: [id])
   name      String
   full_name String @unique
+  user      User   @relation(fields: [user_id], references: [id])
 }
 
-// we should have it based on a run i think
-// what if we need todo based on org
-// how do we know what repos are includeed
 model Contribution {
   id         String      @id @default(uuid())
   user_id    String
+  created_at DateTime    @default(now()) @db.Timestamp(6)
   user       User        @relation(fields: [user_id], references: [id])
   UserScore  UserScore[]
-  created_at DateTime    @default(now()) @db.Timestamp(6)
 }
 
 model UserScore {
   id              String       @id @default(uuid())
   contribution_id String
-  contribution    Contribution @relation(fields: [contribution_id], references: [id])
   username        String       @db.VarChar(255)
   user_type       String       @db.VarChar(255)
   score           Decimal      @db.Decimal
   created_at      DateTime     @default(now()) @db.Timestamp(6)
+  contribution    Contribution @relation(fields: [contribution_id], references: [id])
 }

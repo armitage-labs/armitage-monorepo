@@ -50,7 +50,7 @@ export default function GitRepo() {
   }, [session]);
 
   useEffect(() => {
-    if (registeredGitRepos.length > 0 && githubRepos.length > 0) {
+    if (githubRepos.length > 0) {
       const columnData = githubRepos.map((githubRepoDto) => ({
         id: githubRepoDto.id,
         name: githubRepoDto.name,
