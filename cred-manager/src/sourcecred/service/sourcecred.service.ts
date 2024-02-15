@@ -71,14 +71,14 @@ export class SourceCredService implements OnModuleInit {
       console.error('configure repos command failed', error);
     }
   }
-
+  // && yarn clean-all \
+  // && rm -r data/ledger.json \
+  // && sed -i '' '5d' config/dependencies.json \
+  //
   async loadSourceCredPlugins() {
     try {
       await executeCommand(
         `cd ${this.sourceCredPath} \
-          && yarn clean-all \
-          && rm -r data/ledger.json \
-          && sed -i '' '5d' config/dependencies.json \
           && yarn sourcecred go`,
       );
     } catch (error) {
