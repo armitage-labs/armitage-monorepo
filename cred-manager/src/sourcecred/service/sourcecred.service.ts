@@ -15,12 +15,14 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class SourceCredService implements OnModuleInit {
   private readonly sourceCredPath: string;
+  private readonly sedCommand: string;
   constructor(
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
+    this.sedCommand = this.configService.get('SED_COMMAND');
   }
 
   async onModuleInit() {
@@ -71,17 +73,14 @@ export class SourceCredService implements OnModuleInit {
       console.error('configure repos command failed', error);
     }
   }
-  // && yarn clean-all \
-  // && rm -r data/ledger.json \
-  // && sed -i '' '5d' config/dependencies.json \
-  //
+
   async loadSourceCredPlugins() {
     try {
       await executeCommand(
         `cd ${this.sourceCredPath} \
           && yarn clean-all \
           && rm -r data/ledger.json \
-          && sed -i '5d' config/dependencies.json \
+          && ${this.sedCommand} \
           && yarn sourcecred go`,
       );
     } catch (error) {
