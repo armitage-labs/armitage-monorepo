@@ -79,6 +79,9 @@ export class SourceCredService implements OnModuleInit {
     try {
       await executeCommand(
         `cd ${this.sourceCredPath} \
+          && yarn clean-all \
+          && rm -r data/ledger.json \
+          && sed -i '5d' config/dependencies.json \
           && yarn sourcecred go`,
       );
     } catch (error) {
