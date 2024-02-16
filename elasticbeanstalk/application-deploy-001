@@ -1,0 +1,9 @@
+{
+ "AWSEBDockerrunVersion": "1",
+ "Image": {
+    "Name": "339712812155.dkr.ecr.eu-central-1.amazonaws.com/armitage"
+ },
+ "Ports": [{
+    "ContainerPort": "8080"
+ }]
+}
