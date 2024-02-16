@@ -1,3 +1,3 @@
 build:
   docker:
-    backend: cred-manager/Dockerfile
+    backend: Dockerfile
