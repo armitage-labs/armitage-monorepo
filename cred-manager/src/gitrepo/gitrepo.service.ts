@@ -6,10 +6,10 @@ import { GithubRepoDto } from './types/githubRepo.dto';
 export class GitRepoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getByUser(userId: string): Promise<GithubRepoDto[]> {
+  async getByTeam(teamId: string): Promise<GithubRepoDto[]> {
     try {
       const foundRepos = await this.prismaService.githubRepo.findMany({
-        where: { user_id: userId },
+        where: { team_id: teamId },
       });
       return foundRepos;
     } catch (error) {

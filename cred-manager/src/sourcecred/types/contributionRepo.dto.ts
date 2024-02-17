@@ -1,7 +1,7 @@
-export class ContributionRepoDto {
-    constructor(
-      public id: string,
-      public user_id: string,
-      public created_at: Date
-    ) {}
-  }
+export class ContributionCalculationDto {
+  constructor(
+    public id: string,
+    public team_id: string,
+    public created_at: Date,
+  ) {}
+}

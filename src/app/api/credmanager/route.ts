@@ -1,6 +1,4 @@
-import { getServerSession } from "next-auth";
-import { options } from "../auth/[...nextauth]/options";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export interface UserCredDto {
   totalCred: number;
@@ -8,12 +6,13 @@ export interface UserCredDto {
   type: string;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(options);
-    if (session?.userId) {
+    console.log("ROUTE");
+    const teamId = req.nextUrl.searchParams.get("team_id");
+    if (teamId) {
       const calculatedUserCredDtos = await fetch(
-        `http://localhost:8080/cred/user/${session?.userId}`,
+        `http://localhost:8080/cred/team/${teamId}`,
         {
           method: "GET",
         },

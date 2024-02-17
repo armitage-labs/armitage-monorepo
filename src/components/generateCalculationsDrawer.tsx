@@ -16,25 +16,26 @@ import { useState } from "react";
 import { UserCredDto } from "@/app/api/credmanager/route";
 import axios from "axios";
 import { LoadingCalculations } from "./calculationLoadingDialog";
-import { Circles } from "react-loader-spinner";
 
 interface GenerateCalculationsProps {
   registeredGitRepos: RegisteredGitRepo[];
   handleCalculationResult: (result: UserCredDto[]) => void;
   refreshRegistered: () => void;
+  teamId: string | undefined;
 }
 
 export function GenerateCalculations({
   registeredGitRepos,
   handleCalculationResult,
   refreshRegistered,
+  teamId,
 }: GenerateCalculationsProps) {
   const [isLoading, setLoading] = useState<boolean>(false);
   // const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
 
   const handleFetch = async () => {
     setLoading(true);
-    const { data } = await axios.get(`/api/credmanager`);
+    const { data } = await axios.get(`/api/credmanager?team_id=${teamId}`);
     if (data && data.success) {
       handleCalculationResult(data["userCredDtos"] as UserCredDto[]);
     }
@@ -69,15 +70,10 @@ export function GenerateCalculations({
                     Name
                   </h4>
                   {registeredGitRepos.map((gitRepo) => (
-                    <>
-                      <div
-                        key={gitRepo.full_name}
-                        className="text-sm text-center"
-                      >
-                        {gitRepo.name}
-                      </div>
+                    <div key={gitRepo.id}>
+                      <div className="text-sm text-center">{gitRepo.name}</div>
                       <Separator className="my-2" />
-                    </>
+                    </div>
                   ))}
                 </div>
               </ScrollArea>

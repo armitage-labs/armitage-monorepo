@@ -23,20 +23,19 @@ const components: { title: string; href: string; description: string }[] = [
     description: "Register and manage Github Repositories on your account.",
   },
   {
-    title: "Cred Scores",
-    href: "/scores",
-    description:
-      "Generate new contribution scores from registered repositories.",
+    title: "Teams",
+    href: "/teams",
+    description: "Manage teams and their contributions.",
   },
   {
-    title: "Credits",
-    href: "/credits",
-    description: "Buy credits to calculate new scores or add new repositories.",
+    title: "Create a Team",
+    href: "/create-team",
+    description: "Create a new team to assign repositories.",
   },
   {
-    title: "History",
-    href: "/history",
-    description: "Analyse previous calculated scores and data.",
+    title: "Calculate",
+    href: "/calculate",
+    description: "Generate calculations for teams.",
   },
 ];
 
