@@ -1,13 +1,14 @@
 "use client";
 
 import { Circles } from "react-loader-spinner";
-import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
-import { RegisteredGitRepo } from "../api/github/repo/registered/fetchRegisteredRepos";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { UserCredDto } from "../api/credmanager/route";
+// import { UserCredDto } from "../api/credmanager/route";
 import { CreateTeamCard } from "@/components/teams/createTeam";
+import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
+import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
+import { UserCredDto } from "@/app/api/credmanager/route";
 
 export default function GitRepo() {
   const { data: session } = useSession();

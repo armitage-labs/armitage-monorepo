@@ -1,3 +1,4 @@
+import { UserCredDto } from "@/app/api/credmanager/route";
 import * as React from "react";
 import {
   Bar,
@@ -7,8 +8,6 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-
-import { UserCredDto } from "../api/credmanager/route";
 
 interface CalculationResultProps {
   userCredDtoList: UserCredDto[];

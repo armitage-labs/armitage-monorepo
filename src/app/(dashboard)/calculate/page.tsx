@@ -1,11 +1,10 @@
 "use client";
 
-import { Circles } from "react-loader-spinner";
-import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
-import { RegisteredGitRepo } from "../api/github/repo/registered/fetchRegisteredRepos";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
+import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
 
 export default function GitRepo() {
   const { data: session } = useSession();

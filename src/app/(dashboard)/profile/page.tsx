@@ -1,6 +1,6 @@
+import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
-import { options } from "../api/auth/[...nextauth]/options";
 
 const ProfilePage = async () => {
   const session = await getServerSession(options);

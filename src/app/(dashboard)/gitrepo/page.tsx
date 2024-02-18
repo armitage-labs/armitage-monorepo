@@ -1,16 +1,16 @@
 "use client";
 
 import { Circles } from "react-loader-spinner";
-import { GithubRepoDto } from "../api/github/repo/types/githubRepo.dto";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
-import { RegisteredGitRepo } from "../api/github/repo/registered/fetchRegisteredRepos";
 import { GenerateCalculations } from "@/components/generateCalculationsDrawer";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { UserCredDto } from "../api/credmanager/route";
 import { CalculationResult } from "./calculationResults";
+import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
+import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
+import { UserCredDto } from "@/app/api/credmanager/route";
 
 export default function GitRepo() {
   const { data: session } = useSession();
@@ -125,6 +125,7 @@ export default function GitRepo() {
                         data={githubRepoColumnData}
                       ></DataTable>
                       <GenerateCalculations
+                        teamId=""
                         handleCalculationResult={setUserCredDtos}
                         registeredGitRepos={registeredGitRepos}
                         refreshRegistered={handleFetchRegisteredRepos}
