@@ -5,6 +5,8 @@ import { Navbar } from "@/components/navigation/navbar";
 import { getServerSession } from "next-auth";
 import { options } from "./api/auth/[...nextauth]/options";
 import { NextAuthProvider } from "./nextAuthProvider";
+import Header from "@/components/navigation/header";
+import Sidebar from "@/components/navigation/sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,18 +20,39 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(options);
-
   return (
-    <NextAuthProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <nav>
-            <Navbar session={session}></Navbar>
-          </nav>
+    <html lang="en">
+      <body className={`${inter.className} overflow-hidden`}>
+        <NextAuthProvider>
+          <Header />
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <main className="w-full pt-16">{children}</main>
+          </div>
           {children}
-        </body>
-      </html>
-    </NextAuthProvider>
+        </NextAuthProvider>
+      </body>
+    </html>
   );
+
+  // return (
+  //   <NextAuthProvider>
+  //     <html lang="en">
+  //       <body className={inter.className}>
+  //         <nav>
+  //           <Navbar session={session}></Navbar>
+  //         </nav>
+  //         {children}
+  //       </body>
+  //     </html>
+  //   </NextAuthProvider>
+  // );
 }
+
+// <>
+//   <Header />
+//   <div className="flex h-screen overflow-hidden">
+//     <Sidebar />
+//     <main className="w-full pt-16">{children}</main>
+//   </div>
+// </>

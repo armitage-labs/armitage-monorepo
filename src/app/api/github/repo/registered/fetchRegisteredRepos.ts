@@ -1,17 +1,17 @@
 export type RegisteredGitRepo = {
   id: string;
-  user_id: string;
+  team_id: string;
   name: string;
   full_name: string;
 };
 
 export async function fetchRegisteredGitRepos(
-  userId: string,
+  teamId: string,
 ): Promise<RegisteredGitRepo[]> {
   try {
     const foundRegisteredRepos = await prisma.githubRepo.findMany({
       where: {
-        user_id: userId,
+        team_id: teamId,
       },
     });
     return foundRegisteredRepos as RegisteredGitRepo[];

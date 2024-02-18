@@ -19,6 +19,7 @@ export async function GET() {
 export type GitRepoRegisterDto = {
   name: string;
   full_name: string;
+  team_id: string;
 };
 
 export async function POST(req: NextRequest) {
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
     if (session?.userId) {
       const foundRepo = await prisma.githubRepo.findFirst({
         where: {
-          user_id: session.userId,
+          team_id: registerRepoDto.team_id,
           name: registerRepoDto.name,
           full_name: registerRepoDto.full_name,
         },
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
       if (!foundRepo) {
         await prisma.githubRepo.create({
           data: {
-            user_id: session.userId,
+            team_id: registerRepoDto.team_id,
             name: registerRepoDto.name,
             full_name: registerRepoDto.full_name,
           },
@@ -54,12 +55,15 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession(options);
     const deleteRepoFullName = req.nextUrl.searchParams.get("full_name");
-    if (session?.userId && deleteRepoFullName) {
+    const teamId = req.nextUrl.searchParams.get("team_id");
+    if (deleteRepoFullName && teamId) {
       await prisma.githubRepo.delete({
         where: {
-          full_name: deleteRepoFullName,
+          team_id_full_name: {
+            team_id: teamId,
+            full_name: deleteRepoFullName,
+          },
         },
       });
       return NextResponse.json({

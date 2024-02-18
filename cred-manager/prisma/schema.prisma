@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,39 +8,46 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(uuid())
-  username     String         @db.VarChar(255)
-  email        String         @unique
-  created_at   DateTime       @default(now()) @db.Timestamp(6)
-  GithubRepo   GithubRepo[]
-  Contribution Contribution[]
+  id                      String                    @id @default(uuid())
+  username                String                    @db.VarChar(255)
+  email                   String                    @unique
+  created_at              DateTime                  @default(now()) @db.Timestamp(6)
+  Team                    Team[]
 }
 
 model GithubRepo {
   id        String @id @default(uuid())
-  user_id   String
-  user      User   @relation(fields: [user_id], references: [id])
+  team_id   String
+  Team      Team   @relation(fields: [team_id], references: [id])
   name      String
-  full_name String @unique
+  full_name String
+  @@unique([team_id, full_name])
 }
 
-// we should have it based on a run i think
-// what if we need todo based on org
-// how do we know what repos are includeed
-model Contribution {
-  id         String      @id @default(uuid())
-  user_id    String
-  user       User        @relation(fields: [user_id], references: [id])
-  UserScore  UserScore[]
-  created_at DateTime    @default(now()) @db.Timestamp(6)
+model Team {
+  id                      String                    @id @default(uuid())
+  owner_user_id           String
+  owner                   User                      @relation(fields: [owner_user_id], references: [id])
+  name                    String                    @db.VarChar(255)
+  GithubRepo              GithubRepo[]
+  ContributionCalculation ContributionCalculation[]
+  created_at              DateTime                  @default(now()) @db.Timestamp(6)
+}
+
+model ContributionCalculation {
+  id                 String      @id @default(uuid())
+  team_id            String
+  Team               Team        @relation(fields: [team_id], references: [id])
+  UserScore          UserScore[]
+  created_at         DateTime    @default(now()) @db.Timestamp(6)
 }
 
 model UserScore {
-  id              String       @id @default(uuid())
-  contribution_id String
-  contribution    Contribution @relation(fields: [contribution_id], references: [id])
-  username        String       @db.VarChar(255)
-  user_type       String       @db.VarChar(255)
-  score           Decimal      @db.Decimal
-  created_at      DateTime     @default(now()) @db.Timestamp(6)
+  id                          String                  @id @default(uuid())
+  contribution_calculation_id String
+  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id])
+  username                    String                  @db.VarChar(255)
+  user_type                   String                  @db.VarChar(255)
+  score                       String                  @db.VarChar(255)
+  created_at                  DateTime                @default(now()) @db.Timestamp(6)
 }

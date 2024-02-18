@@ -15,40 +15,21 @@ export class SourceCredController {
 
   /**
    * Calculates Cred scores for registered github repositories given
-   * a user id, outputting cred scores for all users that contributed
+   * a team id, outputting cred scores for all users that contributed
    * on the registered repositories
    **/
-  @Get('/user/:userId')
+  @Get('/team/:teamId')
   async calculateCredScores(
     @Res() response: Response,
-    @Param('userId') userId: string,
+    @Param('teamId') teamId: string,
   ): Promise<Response> {
     console.log(
-      `Calculating CRED scores for repos registered for user ${userId}`,
+      `Calculating CRED scores for repos registered for user ${teamId}`,
     );
     try {
       const credScoresArray = await this.sourceCredService.calculateCredScores(
-        userId,
+        teamId,
       );
-      return response.send(credScoresArray);
-    } catch (error) {
-      console.error('Failed calculating CRED scores', error);
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  /**
-   * Fetch users cred score
-   **/
-  @Get('/user/:userId')
-  async fetchPreviousCredScoresFromUserLastContribution(
-    @Res() response: Response,
-    @Param('userId') userId: string,
-  ): Promise<Response> {
-    console.log(`Fetching CRED scores for user ${userId}`);
-    try {
-      const credScoresArray =
-        await this.sourceCredService.fetchLastContributionScoreForUser(userId);
       return response.send(credScoresArray);
     } catch (error) {
       console.error('Failed calculating CRED scores', error);
