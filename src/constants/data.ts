@@ -20,7 +20,7 @@ export const signedInNavItems: NavItem[] = [
     label: "employee",
   },
   {
-    title: "Profile",
+    title: "Create a team",
     href: "/create-team",
     icon: "profile",
     label: "profile",
