@@ -25,18 +25,6 @@ export const signedInNavItems: NavItem[] = [
     icon: "profile",
     label: "profile",
   },
-  {
-    title: "Info",
-    href: "/introduction",
-    icon: "kanban",
-    label: "kanban",
-  },
-  {
-    title: "Logout",
-    href: "/sign-out",
-    icon: "close",
-    label: "logout",
-  },
 ];
 
 export const signedOutNavItems: NavItem[] = [
