@@ -56,6 +56,10 @@ export default function GitRepo() {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+  }, []);
+
+  useEffect(() => {
     if (
       session?.accessToken &&
       session.githubLogin &&
@@ -69,8 +73,8 @@ export default function GitRepo() {
   }, [session]);
 
   useEffect(() => {
-    setIsLoading(true);
     if (selectedTeam !== undefined) {
+      setIsLoading(true);
       handleFetchRegisteredRepos();
     }
   }, [selectedTeam]);
@@ -148,8 +152,14 @@ export default function GitRepo() {
                 </div>
               </div>
             ) : (
-              <div className="pt-36 flex justify-center">
-                <Circles />
+              <div>
+                {isLoading ? (
+                  <div className="pt-36 flex justify-center">
+                    <Circles />
+                  </div>
+                ) : (
+                  <p> Please create a new team first</p>
+                )}
               </div>
             )}
           </div>

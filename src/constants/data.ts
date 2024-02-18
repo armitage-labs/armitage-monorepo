@@ -1,6 +1,6 @@
 import { NavItem } from "@/types";
 
-export const navItems: NavItem[] = [
+export const signedInNavItems: NavItem[] = [
   {
     title: "Dashboard",
     href: "/",
@@ -31,6 +31,15 @@ export const navItems: NavItem[] = [
     icon: "kanban",
     label: "kanban",
   },
+  {
+    title: "Logout",
+    href: "/sign-out",
+    icon: "close",
+    label: "logout",
+  },
+];
+
+export const signedOutNavItems: NavItem[] = [
   {
     title: "Login",
     href: "/sign-in",
