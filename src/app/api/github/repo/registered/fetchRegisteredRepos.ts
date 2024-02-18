@@ -1,3 +1,5 @@
+import prisma from "db";
+
 export type RegisteredGitRepo = {
   id: string;
   team_id: string;

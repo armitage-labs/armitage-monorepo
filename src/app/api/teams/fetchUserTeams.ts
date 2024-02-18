@@ -1,3 +1,5 @@
+import prisma from "db";
+
 export type Team = {
   id: string;
   owner_user_id: string;

@@ -1,4 +1,5 @@
 import { Team } from "@prisma/client";
+import prisma from "db";
 
 export async function registerUserTeam(
   userId: string,
