@@ -9,7 +9,6 @@ COPY cred-manager/yarn.lock /app/yarn.lock
 RUN yarn install --ignore-scripts --frozen-lockfile
 
 COPY cred-manager/ /app/
-COPY cred-manager/.env.docker /app/.env
 
 RUN yarn prisma db push
 RUN yarn build
