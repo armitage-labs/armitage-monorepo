@@ -10,11 +10,13 @@ RUN yarn install --ignore-scripts --frozen-lockfile
 
 COPY cred-manager/ /app/
 
+COPY .env /app/.env
+
 RUN yarn prisma db push
 RUN yarn build
 
 RUN git clone -b backup https://github.com/sudoFerraz/source-cred-instance /instance
-COPY cred-manager/.env.docker /instance/.env
+COPY .env /instance/.env
 
 WORKDIR /instance
 RUN yarn install
