@@ -8,7 +8,6 @@ export interface UserCredDto {
 
 export async function GET(req: NextRequest) {
   try {
-    console.log("ROUTE");
     const teamId = req.nextUrl.searchParams.get("team_id");
     if (teamId) {
       const calculatedUserCredDtos = await fetch(
