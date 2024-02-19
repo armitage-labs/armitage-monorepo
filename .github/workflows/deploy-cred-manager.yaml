@@ -1,7 +1,8 @@
 name: Basic deploy
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   EC2-Deploy:
