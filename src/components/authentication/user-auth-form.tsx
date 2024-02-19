@@ -35,7 +35,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             className="w-full"
             variant="outline"
             type="button"
-            onClick={() => signIn("github", { callbackUrl: "/teams" })}
+            onClick={() => signIn("github", { callbackUrl: "/overview" })}
           >
             <Icons.gitHub className="mr-2 h-4 w-4" />
             Continue with Github
