@@ -10,22 +10,10 @@ import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
 import { UserCredDto } from "@/app/api/credmanager/route";
 
-export default function GitRepo() {
+export default function CreateTeam() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
-  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
-  const [registeredGitRepos, setRegisteredGitRepos] = useState<
-    RegisteredGitRepo[]
-  >([]);
-  const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
-
-  const handleFetchGithubRepos = async () => {
-    const { data } = await axios.get("/api/github/repo");
-    if (data.success) {
-      setGithubRepos(data.gitRepos);
-    }
-  };
 
   const handleCreateTeam = async () => {
     setIsLoading(true);
@@ -35,62 +23,21 @@ export default function GitRepo() {
     }
   };
 
-  const handleFetchUserTeams = async () => {
-    setIsLoading(true);
-    const { data } = await axios.get("/api/teams");
-    if (data.success) {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFetchRegisteredRepos = async () => {
-    const { data } = await axios.get("/api/github/repo/registered");
-    if (data.success) {
-      setRegisteredGitRepos(data.registeredRepos);
-    }
-  };
-
   useEffect(() => {
-    if (
-      session?.accessToken &&
-      session.githubLogin &&
-      session.userId &&
-      githubRepos.length < 1
-    ) {
-      handleFetchGithubRepos();
-      handleFetchRegisteredRepos();
+    setIsLoading(true);
+    if (session?.userId) {
+      setIsLoading(false);
+    
     }
   }, [session]);
-
-  useEffect(() => {
-    if (githubRepos.length > 0) {
-      const columnData = githubRepos.map((githubRepoDto) => ({
-        id: githubRepoDto.id,
-        name: githubRepoDto.name,
-        full_name: githubRepoDto.full_name,
-        stars: githubRepoDto.stargazers_count,
-        owner: githubRepoDto.owner.login,
-        forks: githubRepoDto.forks_count,
-        created_at: githubRepoDto.created_at,
-        html_url: githubRepoDto.html_url,
-        initially_registered: registeredGitRepos.some(
-          (registeredRepo) =>
-            registeredRepo.full_name === githubRepoDto.full_name,
-        ),
-      }));
-    }
-  }, [registeredGitRepos, githubRepos]);
 
   return (
     <main>
       <section className="pt-6">
         <div className="container flex max-w-[64rem] flex-col items-center gap-4 pb-6">
           <div className="flex justify-center">
-            {githubRepos.length > 0 && registeredGitRepos ? (
+            {!isLoading ? (
               <div>
-                {userCredDtos.length > 0 ? (
-                  <div></div>
-                ) : (
                   <div>
                     <div className="pt-6"></div>
                     <div className="pt-6">
@@ -100,7 +47,6 @@ export default function GitRepo() {
                       ></CreateTeamCard>
                     </div>
                   </div>
-                )}
               </div>
             ) : (
               <div className="pt-36 flex justify-center">
