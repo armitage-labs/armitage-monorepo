@@ -13,7 +13,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-export default function DashboardPage() {
+export default function OverviewPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
 
