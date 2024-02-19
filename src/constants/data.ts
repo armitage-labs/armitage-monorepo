@@ -3,7 +3,7 @@ import { NavItem } from "@/types";
 export const signedInNavItems: NavItem[] = [
   {
     title: "Dashboard",
-    href: "/",
+    href: "/overview",
     icon: "dashboard",
     label: "Dashboard",
   },
