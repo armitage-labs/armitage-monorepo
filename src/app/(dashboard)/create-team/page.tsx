@@ -6,9 +6,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 // import { UserCredDto } from "../api/credmanager/route";
 import { CreateTeamCard } from "@/components/teams/createTeam";
-import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
-import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
-import { UserCredDto } from "@/app/api/credmanager/route";
 
 export default function CreateTeam() {
   const { data: session } = useSession();
@@ -27,7 +24,6 @@ export default function CreateTeam() {
     setIsLoading(true);
     if (session?.userId) {
       setIsLoading(false);
-    
     }
   }, [session]);
 
@@ -38,15 +34,15 @@ export default function CreateTeam() {
           <div className="flex justify-center">
             {!isLoading ? (
               <div>
-                  <div>
-                    <div className="pt-6"></div>
-                    <div className="pt-6">
-                      <CreateTeamCard
-                        handleCreateTeam={handleCreateTeam}
-                        setCreateTeamName={setCreateTeamName}
-                      ></CreateTeamCard>
-                    </div>
+                <div>
+                  <div className="pt-6"></div>
+                  <div className="pt-6">
+                    <CreateTeamCard
+                      handleCreateTeam={handleCreateTeam}
+                      setCreateTeamName={setCreateTeamName}
+                    ></CreateTeamCard>
                   </div>
+                </div>
               </div>
             ) : (
               <div className="pt-36 flex justify-center">
