@@ -19,7 +19,7 @@ services:
       - NODE_ENV=development
       - SOURCECRED_GITHUB_TOKEN=
     env_file:
-      - ./cred-manager/.env.docker
+      - .env
     ports:
       - 8080:8080
   # web:
