@@ -13,6 +13,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { Team } from "@/app/api/teams/fetchUserTeams";
+import { useRouter } from "next/navigation";
 
 export const teamsColumns: ColumnDef<Team>[] = [
   {
@@ -48,7 +49,7 @@ export const teamsColumns: ColumnDef<Team>[] = [
     },
   },
   {
-    id: "calculate",
+    id: "measure",
     cell: () => {
       return (
         <div>
@@ -59,7 +60,9 @@ export const teamsColumns: ColumnDef<Team>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const router = useRouter();
+      const team = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -71,7 +74,13 @@ export const teamsColumns: ColumnDef<Team>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View team details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(`/teams/${team.id}`);
+              }}
+            >
+              View team details
+            </DropdownMenuItem>
             <DropdownMenuItem>Calculate contributions</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
