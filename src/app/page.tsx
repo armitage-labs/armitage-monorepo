@@ -21,7 +21,7 @@ export default async function Home() {
             all contributors of an open source project, easy as drag and drop.
           </p>
           <div className="space-x-4">
-            <Link href="/login" className={buttonVariants({ size: "lg" })}>
+            <Link href="/sign-in" className={buttonVariants({ size: "lg" })}>
               Get Started
             </Link>
             <Link

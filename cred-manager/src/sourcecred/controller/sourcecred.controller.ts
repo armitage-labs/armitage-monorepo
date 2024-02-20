@@ -18,10 +18,11 @@ export class SourceCredController {
    * a team id, outputting cred scores for all users that contributed
    * on the registered repositories
    **/
-  @Get('/team/:teamId')
+  @Get('/team/:teamId/:gitHubToken')
   async calculateCredScores(
     @Res() response: Response,
     @Param('teamId') teamId: string,
+    @Param('gitHubToken') gitHubToken: string,
   ): Promise<Response> {
     console.log(
       `Calculating CRED scores for repos registered for user ${teamId}`,
@@ -29,6 +30,7 @@ export class SourceCredController {
     try {
       const credScoresArray = await this.sourceCredService.calculateCredScores(
         teamId,
+        gitHubToken
       );
       return response.send(credScoresArray);
     } catch (error) {
