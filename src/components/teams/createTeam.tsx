@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
 
 interface CreateTeamCardProps {
   handleCreateTeam: () => void;
@@ -20,8 +19,6 @@ export function CreateTeamCard({
   handleCreateTeam,
   setCreateTeamName,
 }: CreateTeamCardProps) {
-  const [isLoading, setLoading] = useState<boolean>(false);
-
   return (
     <Card className="w-[350px]">
       <CardHeader>

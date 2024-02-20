@@ -8,22 +8,16 @@ export const signedInNavItems: NavItem[] = [
     label: "Dashboard",
   },
   {
-    title: "GitRepo",
-    href: "/gitrepo",
-    icon: "user",
-    label: "user",
-  },
-  {
     title: "Teams",
     href: "/teams",
-    icon: "employee",
+    icon: "users",
     label: "employee",
   },
   {
-    title: "Create a team",
-    href: "/create-team",
-    icon: "profile",
-    label: "profile",
+    title: "Backup",
+    href: "/team",
+    icon: "kanban",
+    label: "employee",
   },
 ];
 
