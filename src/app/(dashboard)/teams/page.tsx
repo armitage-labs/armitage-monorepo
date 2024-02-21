@@ -54,6 +54,7 @@ export default function GitRepo() {
           </Button>
         </div>
         <Separator />
+
         {isLoading ? (
           <div className="pt-36 flex justify-center">
             <Circles color="black" />
