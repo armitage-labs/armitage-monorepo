@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  LineChart,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -57,6 +58,7 @@ export const Icons = {
   user: User,
   arrowRight: ArrowRight,
   help: HelpCircle,
+  lineChart: LineChart,
   pizza: Pizza,
   users: Users,
   sun: SunMedium,

@@ -14,8 +14,8 @@ export const signedInNavItems: NavItem[] = [
     label: "employee",
   },
   {
-    title: "Backup",
-    href: "/team",
+    title: "Contributors",
+    href: "/contributors",
     icon: "kanban",
     label: "employee",
   },
