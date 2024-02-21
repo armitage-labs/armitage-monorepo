@@ -2,19 +2,29 @@ import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { fetchUserTeams } from "./fetchUserTeams";
+import { fetchUserTeam } from "./fetchTeam";
 import { TeamRegisterDto } from "./types/team.dto";
 import { registerUserTeam } from "./registerUserTeam";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
+  const teamId = req.nextUrl.searchParams.get("team_id");
   if (session?.userId) {
-    const userTeams = await fetchUserTeams(session.userId);
-    return NextResponse.json({
-      success: true,
-      userTeams: userTeams,
-    });
+    if (teamId == null) {
+      const userTeams = await fetchUserTeams(session.userId);
+      return NextResponse.json({
+        success: true,
+        userTeams: userTeams,
+      });
+    } else {
+      const userTeam = await fetchUserTeam(session.userId, teamId);
+      return NextResponse.json({
+        success: true,
+        userTeams: userTeam,
+      });
+    }
   }
-  return NextResponse.json({ success: false, userTeams: [] });
+  return NextResponse.json({ success: true, userTeams: [] });
 }
 
 export async function POST(req: NextRequest) {

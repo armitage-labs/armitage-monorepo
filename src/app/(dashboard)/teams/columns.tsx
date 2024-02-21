@@ -49,16 +49,6 @@ export const teamsColumns: ColumnDef<Team>[] = [
     },
   },
   {
-    id: "measure",
-    cell: () => {
-      return (
-        <div>
-          <Button variant={"outline"}> Measure </Button>
-        </div>
-      );
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       const router = useRouter();
