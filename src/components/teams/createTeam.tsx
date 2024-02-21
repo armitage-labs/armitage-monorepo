@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface CreateTeamCardProps {
   handleCreateTeam: () => void;
@@ -20,8 +20,7 @@ export function CreateTeamCard({
   handleCreateTeam,
   setCreateTeamName,
 }: CreateTeamCardProps) {
-  const [isLoading, setLoading] = useState<boolean>(false);
-
+  const router = useRouter();
   return (
     <Card className="w-[350px]">
       <CardHeader>
@@ -44,7 +43,14 @@ export function CreateTeamCard({
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
+        <Button
+          variant="outline"
+          onClick={() => {
+            router.push("/teams");
+          }}
+        >
+          Cancel
+        </Button>
         <Button onClick={handleCreateTeam}>Create</Button>
       </CardFooter>
     </Card>
