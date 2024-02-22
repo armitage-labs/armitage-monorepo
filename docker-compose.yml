@@ -17,7 +17,6 @@ services:
     environment:
       - NEW_RELIC_APP_NAME=ENROLLMENT_LOCAL
       - NODE_ENV=development
-      - SOURCECRED_GITHUB_TOKEN=
     env_file:
       - .env
     ports:

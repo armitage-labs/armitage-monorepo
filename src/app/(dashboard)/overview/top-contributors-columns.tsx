@@ -1,15 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +9,6 @@ export const topContributorsColumns: ColumnDef<ContributorDto>[] = [
     id: "rank",
     header: () => <div className="text-left"> # </div>,
     cell: ({ row }) => {
-      const contributor = row.original;
       const rank = row.index;
       return (
         <div className="text-2xl">
@@ -59,6 +48,14 @@ export const topContributorsColumns: ColumnDef<ContributorDto>[] = [
   },
   {
     accessorKey: "contributionScore",
-    header: () => <div className="text-left"> ContributionScore </div>,
+    header: () => <div className="text-left"> Impact </div>,
+    cell: ({ row }) => {
+      const contributor = row.original;
+      return (
+        <div className="text-xl font-bold">
+          {contributor.contributionScore.toFixed(2) + "%"}
+        </div>
+      );
+    },
   },
 ];

@@ -28,6 +28,7 @@ import {
   Trash,
   XIcon,
   User,
+  GitBranch,
   User2Icon,
   UserX2Icon,
   X,
@@ -37,6 +38,7 @@ export type Icon = LucideIcon;
 
 export const Icons = {
   dashboard: LayoutDashboardIcon,
+  gitBranch: GitBranch,
   logo: Command,
   login: LogIn,
   close: X,

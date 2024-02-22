@@ -8,6 +8,11 @@ First, run the development server:
 yarn dev
 ```
 
+## Connecting to database: 
+
+```bash
+supabase link --project-ref $PROJECT_REF
+```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

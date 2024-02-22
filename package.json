@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --fix",
     "postinstall": "prisma generate",
     "lint:fix": "eslint \"{src/components,src/app}/*/\" --ext=.ts,.tsx --fix"
   },
