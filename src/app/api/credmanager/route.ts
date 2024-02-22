@@ -13,9 +13,9 @@ export async function GET(req: NextRequest) {
     const teamId = req.nextUrl.searchParams.get("team_id");
     const session = await getServerSession(options);
     if (teamId) {
-      // process.
+      const CRED_MANAGER_ROUTE = process.env.CRED_MANAGER_ROUTE;
       const calculatedUserCredDtos = await fetch(
-        `http://localhost:8080/cred/team/${teamId}/${session?.accessToken}`,
+        `${CRED_MANAGER_ROUTE}/cred/team/${teamId}/${session?.accessToken}`,
         {
           method: "GET",
         },
