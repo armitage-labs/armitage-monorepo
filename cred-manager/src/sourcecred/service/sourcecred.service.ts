@@ -36,7 +36,10 @@ export class SourceCredService implements OnModuleInit {
     }
   }
 
-  async calculateCredScores(teamId: string, gitHubToken: string): Promise<UserCredDto[]> {
+  async calculateCredScores(
+    teamId: string,
+    gitHubToken: string,
+  ): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByTeam(teamId);
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
@@ -75,20 +78,29 @@ export class SourceCredService implements OnModuleInit {
   }
 
   async loadSourceCredPlugins(gitHubToken: string) {
-    try {
-      const cmd =  `cd ${this.sourceCredPath} \
-        && yarn clean-all \
-        && rm -r data/ledger.json \
-        && ${this.sedCommand} \
-        && export SOURCECRED_GITHUB_TOKEN=${gitHubToken} \
-        && yarn sourcecred go`;
-      console.log(`Executing cmd: ${cmd}`);
-      await executeCommand(
-        cmd,
-      );
-    } catch (error) {
-      console.error('execute command failed', error);
+    let success = true;
+    const cmdList = [
+      `cd ${this.sourceCredPath} && yarn clean-all`,
+      `rm -r ${this.sourceCredPath}/data/ledger.json`,
+      `cd ${this.sourceCredPath} && ${this.sedCommand}`,
+      `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
+    ];
+    // const cmd =  `cd ${this.sourceCredPath} \
+    // && yarn clean-all \
+    // && rm -r data/ledger.json \
+    // && ${this.sedCommand} \
+    // && export SOURCECRED_GITHUB_TOKEN=${gitHubToken} \
+    // && yarn sourcecred go`;
+    for (let i = 0; i < cmdList.length; i++) {
+      try {
+        console.log(`Executing cmd: ${cmdList[i]}`);
+        await executeCommand(cmdList[i]);
+      } catch (error) {
+        console.error('execute command failed', error);
+        success = false;
+      }
     }
+    return success;
   }
 
   async loadLocalScInstance(): Promise<UserCredDto[]> {
