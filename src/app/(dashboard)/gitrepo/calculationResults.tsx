@@ -1,4 +1,5 @@
 import { UserCredDto } from "@/app/api/credmanager/route";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import * as React from "react";
 import {
   Bar,
@@ -7,6 +8,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from "recharts";
 
 interface CalculationResultProps {
@@ -15,42 +17,39 @@ interface CalculationResultProps {
 
 export function CalculationResult({ userCredDtoList }: CalculationResultProps) {
   return (
-    <div className="p-4 pb-0">
-      <div className="flex items-center"></div>
-      <div className="pt-16 mt-3 h-[420px] w-[800px]">
-        <ResponsiveContainer>
-          <BarChart
-            data={userCredDtoList}
-            barGap="10%"
-            barCategoryGap="10%"
-            height={420}
-            width={800}
-            margin={{
-              top: 5,
-              right: 50,
-              left: 50,
-              bottom: 5,
-            }}
-          >
-            <XAxis
-              dataKey="userName"
-              scale="point"
-              padding={{ left: 10, right: 10 }}
-            />
-            <CartesianGrid strokeDasharray="3 3" />
-            <Tooltip></Tooltip>
-            <Bar
-              name="totalCred"
-              dataKey="totalCred"
-              style={
-                {
-                  fill: "hsl(var(--foreground))",
-                  opacity: 0.9,
-                } as React.CSSProperties
-              }
-            ></Bar>
-          </BarChart>
-        </ResponsiveContainer>
+    <div className="">
+      <div className=""></div>
+      <div className="h-[450px] w-[800px]">
+
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="pl-2">
+
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={userCredDtoList}>
+                <XAxis
+                  dataKey="userName"
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="#888888"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => `${value}`}
+                />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Tooltip></Tooltip>
+                <Bar dataKey="totalCred" fill="#adfa1d" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

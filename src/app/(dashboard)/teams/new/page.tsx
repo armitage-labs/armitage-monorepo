@@ -146,7 +146,7 @@ export default function CreateTeamPage() {
               <div>
                 <div className="pt-36 flex justify-center">
                   <CalculationResult
-                    userCredDtoList={userCredDtos}
+                    userCredDtoList={userCredDtos.filter((user) => user.type === "USER")}
                   ></CalculationResult>
                 </div>
               </div>
