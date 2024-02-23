@@ -114,7 +114,9 @@ export default function Page({ params }: PageProps) {
 
               <div className="">
                 <CalculationResult
-                  userCredDtoList={userCredDtos.filter((user) => user.type === "USER")}
+                  userCredDtoList={userCredDtos.filter(
+                    (user) => user.type === "USER",
+                  )}
                 ></CalculationResult>
               </div>
             </div>

@@ -20,13 +20,11 @@ export function CalculationResult({ userCredDtoList }: CalculationResultProps) {
     <div className="">
       <div className=""></div>
       <div className="h-[450px] w-[800px]">
-
         <Card className="col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
-
             <ResponsiveContainer width="100%" height={350}>
               <BarChart data={userCredDtoList}>
                 <XAxis
