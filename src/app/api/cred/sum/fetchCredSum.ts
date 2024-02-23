@@ -9,9 +9,10 @@ export async function fetchCredSum(userId: string) {
             owner_user_id: userId,
           },
         },
+        user_type: "USER",
       },
     });
-    const result = allCredScores.reduce(function (acc, userScore) {
+    const result = allCredScores.reduce(function(acc, userScore) {
       return acc + parseFloat(userScore.score);
     }, 0);
     return result;

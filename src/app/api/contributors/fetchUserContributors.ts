@@ -3,11 +3,13 @@ import prisma from "db";
 export type ContributorDto = {
   userName: string;
   contributionScore: number;
+  contributionScorePercentage: number;
 };
 
 export type ContributorViewDto = {
   userName: string;
   contributionScore: number;
+  contributionScorePercentage: number;
   teams: string[];
 };
 
@@ -63,12 +65,14 @@ function transformUserScoresToContributors(
         userScore.score,
       );
     }
-    allContributionsSum += parseInt(userScore.score);
+    allContributionsSum += parseFloat(userScore.score);
   });
+  console.log(JSON.stringify(contributionScoreSumMap));
   for (const [key, value] of Object.entries(contributionScoreSumMap)) {
     contributorsArray.push({
       userName: key,
-      contributionScore: (value / allContributionsSum) * 100,
+      contributionScore: value,
+      contributionScorePercentage: (value / allContributionsSum) * 100,
     });
   }
   return contributorsArray;

@@ -53,7 +53,7 @@ export const topContributorsColumns: ColumnDef<ContributorDto>[] = [
       const contributor = row.original;
       return (
         <div className="text-xl font-bold">
-          {contributor.contributionScore.toFixed(2) + "%"}
+          {contributor.contributionScorePercentage.toFixed(2) + "%"}
         </div>
       );
     },

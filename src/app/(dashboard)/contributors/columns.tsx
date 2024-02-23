@@ -37,8 +37,28 @@ export const contributorsColumns: ColumnDef<ContributorDto>[] = [
     header: () => <div className="text-left"> Name </div>,
   },
   {
+    accessorKey: "contributionScorePercentage",
+    header: () => <div className="text-center"> Impact </div>,
+    cell: ({ row }) => {
+      const contributor = row.original;
+      return (
+        <div className="text-xl font-bold text-center">
+          {contributor.contributionScorePercentage.toFixed(2) + "%"}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "contributionScore",
-    header: () => <div className="text-left"> ContributionScore </div>,
+    header: () => <div className="text-center"> ContributionScore </div>,
+    cell: ({ row }) => {
+      const contributor = row.original;
+      return (
+        <div className="text-xl font-bold text-center">
+          {contributor.contributionScore.toFixed(2)}
+        </div>
+      );
+    },
   },
   {
     id: "actions",

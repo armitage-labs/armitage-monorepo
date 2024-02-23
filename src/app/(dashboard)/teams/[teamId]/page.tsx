@@ -86,7 +86,7 @@ export default function Page({ params }: PageProps) {
           ) : (
             <Heading
               title={team ? team.name : ""}
-              description={`Manage your teams or create a new one`}
+              description={`View the details of your team`}
             />
           )}
         </div>
