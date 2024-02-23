@@ -8,5 +8,6 @@ export const config = {
     "/gitrepo",
     "/create-team",
     "/overview",
+    "/contributor",
   ],
 };

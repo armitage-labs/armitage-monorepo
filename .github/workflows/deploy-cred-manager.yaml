@@ -2,7 +2,7 @@ name: Basic deploy
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   EC2-Deploy:

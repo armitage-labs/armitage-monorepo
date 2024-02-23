@@ -67,7 +67,6 @@ function transformUserScoresToContributors(
     }
     allContributionsSum += parseFloat(userScore.score);
   });
-  console.log(JSON.stringify(contributionScoreSumMap));
   for (const [key, value] of Object.entries(contributionScoreSumMap)) {
     contributorsArray.push({
       userName: key,

@@ -11,12 +11,13 @@ import { Separator } from "@/components/ui/separator";
 import { Team } from "@/app/api/teams/fetchUserTeams";
 import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
-import { UserCredDto } from "@/app/api/credmanager/route";
 import { Circles } from "react-loader-spinner";
 import { GitRepoView, columns } from "./columns";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "./data-table";
+import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
+import { useRouter } from "next/navigation";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
@@ -34,8 +35,10 @@ export default function CreateTeamPage() {
   const [registeredGitRepos, setRegisteredGitRepos] = useState<
     RegisteredGitRepo[]
   >([]);
-  const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
+  const [createdCalculationRequest, setCreatedCalculationRequest] =
+    useState<boolean>(false);
+  const router = useRouter();
 
   const handleCreateTeam = async () => {
     setIsLoading(true);
@@ -73,7 +76,7 @@ export default function CreateTeamPage() {
         `/api/credmanager?team_id=${selectedTeam.id}`,
       );
       if (data && data.success) {
-        setUserCredDtos(data["userCredDtos"] as UserCredDto[]);
+        setCreatedCalculationRequest(true);
       }
       setIsLoading(false);
     }
@@ -134,22 +137,31 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                <Button variant="outline" onClick={handleGenerateReport}>
-                  Generate Calculations
-                </Button>
                 <DataTable
                   columns={columns}
                   data={githubRepoColumnData}
                 ></DataTable>
+
+                <div className="flex justify-center">
+                  <Button variant="default" onClick={handleGenerateReport}>
+                    Next Step
+                  </Button>
+                </div>
               </div>
             ) : (
               <div>
-                <div className="pt-36 flex justify-center">
-                  <CalculationResult
-                    userCredDtoList={userCredDtos.filter(
-                      (user) => user.type === "USER",
-                    )}
-                  ></CalculationResult>
+                <div className="pt-16 flex justify-center">
+                  <TeamCalculationCreated></TeamCalculationCreated>
+                </div>
+                <div className="pt-16 flex justify-center">
+                  <Button
+                    variant="default"
+                    onClick={() => {
+                      router.push("/teams");
+                    }}
+                  >
+                    Return to teams
+                  </Button>
                 </div>
               </div>
             )}

@@ -22,11 +22,11 @@ export async function GET(req: NextRequest) {
     );
     return NextResponse.json({
       success: true,
-      userCredDtos: await calculatedUserCredDtos.json(),
+      userCredDtos: calculatedUserCredDtos.json(),
     });
   }
   // } catch (error) {
   //   console.error(error);
-  //   return NextResponse.json({ success: false, userCredDtos: [] });
+  return NextResponse.json({ success: false, userCredDtos: [] });
   // }
 }

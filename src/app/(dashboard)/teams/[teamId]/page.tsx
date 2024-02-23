@@ -19,12 +19,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Github from "next-auth/providers/github";
 import { GithubRepoList } from "@/components/githubRepoList";
+import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 
 interface PageProps {
   params: { teamId: string };
 }
+
+type UserTooltipDto = {
+  id: number;
+  userName: string;
+  totalCred: number;
+};
 
 export default function Page({ params }: PageProps) {
   const teamId = params.teamId;
@@ -37,6 +43,7 @@ export default function Page({ params }: PageProps) {
   const [team, setTeam] = useState<Team>();
   const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
   const [registeredGitRepos, setRegisteredGitRepos] = useState([]);
+  const [userTooltipDto, setUserTooltipDto] = useState<UserTooltipDto[]>([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -68,6 +75,21 @@ export default function Page({ params }: PageProps) {
       setTeam(data.userTeams[0]);
     }
   };
+
+  useEffect(() => {
+    if (userCredDtos.length > 0) {
+      let index = 0;
+      const userTooltipDtoArray = userCredDtos.map((userCredDto) => {
+        index++;
+        return {
+          id: index,
+          userName: userCredDto.userName,
+          totalCred: userCredDto.totalCred,
+        };
+      });
+      setUserTooltipDto(userTooltipDtoArray);
+    }
+  }, [userCredDtos]);
 
   const handleFetchUserCreds = async () => {
     const { data } = await axios.get(`/api/cred?team_id=${teamId}`);
@@ -118,6 +140,12 @@ export default function Page({ params }: PageProps) {
                     (user) => user.type === "USER",
                   )}
                 ></CalculationResult>
+              </div>
+            </div>
+
+            <div className="pt-16">
+              <div className="flex flex-row items-center justify-center mb-10 w-full">
+                <AnimatedTooltip items={userTooltipDto} />
               </div>
             </div>
           </div>

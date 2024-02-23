@@ -13,7 +13,7 @@ import { executeCommand } from '../utils/bashCommand';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class SourceCredService implements OnModuleInit {
+export class SourceCredService {
   private readonly sourceCredPath: string;
   private readonly sedCommand: string;
   constructor(
@@ -25,15 +25,20 @@ export class SourceCredService implements OnModuleInit {
     this.sedCommand = this.configService.get('SED_COMMAND');
   }
 
-  async onModuleInit() {
-    try {
-      await executeCommand(
-        `cd ${this.sourceCredPath} \
-          && yarn sourcecred go`,
-      );
-    } catch (error) {
-      console.error('Initializing instance failed', error);
+  async createContributionRequest(
+    teamId: string,
+    gitHubToken: string,
+  ): Promise<boolean> {
+    const contributionRequest = await this.prismaService.contributionRequest.create({
+      data: {
+        team_id: teamId,
+        access_token: gitHubToken,
+      },
+    });
+    if (contributionRequest) {
+      return true;
     }
+    return false;
   }
 
   async calculateCredScores(
@@ -85,12 +90,6 @@ export class SourceCredService implements OnModuleInit {
       `cd ${this.sourceCredPath} && ${this.sedCommand}`,
       `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
     ];
-    // const cmd =  `cd ${this.sourceCredPath} \
-    // && yarn clean-all \
-    // && rm -r data/ledger.json \
-    // && ${this.sedCommand} \
-    // && export SOURCECRED_GITHUB_TOKEN=${gitHubToken} \
-    // && yarn sourcecred go`;
     for (let i = 0; i < cmdList.length; i++) {
       try {
         console.log(`Executing cmd: ${cmdList[i]}`);
@@ -104,8 +103,6 @@ export class SourceCredService implements OnModuleInit {
   }
 
   async loadLocalScInstance(): Promise<UserCredDto[]> {
-    // const HARDCODED_DIR =
-    //   '/Users/sudoferraz/Personal/source-cred/source-cred-instance';
     const HARDCODED_DIR = this.sourceCredPath;
     const localInstance = await new sc.instance.LocalInstance(HARDCODED_DIR);
     const graph: CredGrainView = await localInstance.readCredGrainView();

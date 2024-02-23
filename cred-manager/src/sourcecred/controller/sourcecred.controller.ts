@@ -11,7 +11,7 @@ import { SourceCredService } from '../service/sourcecred.service';
 
 @Controller('/cred')
 export class SourceCredController {
-  constructor(private readonly sourceCredService: SourceCredService) {}
+  constructor(private readonly sourceCredService: SourceCredService) { }
 
   /**
    * Calculates Cred scores for registered github repositories given
@@ -28,7 +28,7 @@ export class SourceCredController {
       `Calculating CRED scores for repos registered for user ${teamId}`,
     );
     try {
-      const credScoresArray = await this.sourceCredService.calculateCredScores(
+      const credScoresArray = await this.sourceCredService.createContributionRequest(
         teamId,
         gitHubToken
       );
