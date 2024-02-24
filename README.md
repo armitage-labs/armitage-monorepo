@@ -43,3 +43,4 @@ Landing page builder: https://www.framer.com/templates/categories/saas/
 https://ui.shadcn.com/
 https://next-shadcn-dashboard-starter.vercel.app/dashboard
 https://ui.shadcn.com/examples/tasks
+https://ui.aceternity.com/
