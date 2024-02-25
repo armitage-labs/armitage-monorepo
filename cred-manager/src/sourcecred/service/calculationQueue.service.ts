@@ -13,7 +13,6 @@ export class CalculationQueueService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async handleCron() {
-    this.logger.debug('Called when the current second is 10');
     const semaphore = await this.prismaService.calculationSemaphore.findFirst();
 
     if (!semaphore) {
@@ -47,8 +46,6 @@ export class CalculationQueueService {
           data: { available: true }
         });
 
-      } else {
-        this.logger.debug("No unhandled calculation request.");
       }
     } else {
       this.logger.debug("Semaphore unavailable.");
