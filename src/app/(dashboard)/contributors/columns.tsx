@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,11 +38,22 @@ export const contributorsColumns: ColumnDef<ContributorDto>[] = [
   },
   {
     accessorKey: "contributionScorePercentage",
-    header: () => <div className="text-center"> Impact </div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center"
+        >
+          Impact
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const contributor = row.original;
       return (
-        <div className="text-xl font-bold text-center">
+        <div className="text-xl font-bold text-left pl-4">
           {contributor.contributionScorePercentage.toFixed(2) + "%"}
         </div>
       );
@@ -50,11 +61,21 @@ export const contributorsColumns: ColumnDef<ContributorDto>[] = [
   },
   {
     accessorKey: "contributionScore",
-    header: () => <div className="text-center"> ContributionScore </div>,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Contribution Score
+          <ArrowUpDown className="ml-2 h-4 w-4 flex items-center" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const contributor = row.original;
       return (
-        <div className="text-xl font-bold text-center">
+        <div className="text-xl font-bold text-left pl-14">
           {contributor.contributionScore.toFixed(2)}
         </div>
       );
