@@ -9,7 +9,6 @@ export async function GET() {
   if (session?.accessToken && session?.githubLogin) {
     const githubRepos = await fetchPaginatedGithubRepoResult(
       session.accessToken,
-      session.githubLogin,
     );
     return NextResponse.json({ success: true, gitRepos: githubRepos });
   }
