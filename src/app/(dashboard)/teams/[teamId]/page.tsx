@@ -30,6 +30,7 @@ type UserTooltipDto = {
   id: number;
   userName: string;
   totalCred: number;
+  type: string;
 };
 
 export default function Page({ params }: PageProps) {
@@ -85,6 +86,7 @@ export default function Page({ params }: PageProps) {
           id: index,
           userName: userCredDto.userName,
           totalCred: userCredDto.totalCred,
+          type: userCredDto.type,
         };
       });
       setUserTooltipDto(userTooltipDtoArray);
@@ -145,7 +147,7 @@ export default function Page({ params }: PageProps) {
 
             <div className="pt-16">
               <div className="flex flex-row items-center justify-center mb-10 w-full">
-                <AnimatedTooltip items={userTooltipDto} />
+                <AnimatedTooltip items={userTooltipDto.filter(user => user.type === "USER")} />
               </div>
             </div>
           </div>
