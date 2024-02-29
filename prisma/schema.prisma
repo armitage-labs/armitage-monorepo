@@ -8,17 +8,18 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String   @db.VarChar(255)
-  email      String   @unique
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  Team       Team[]
+  id              String           @id @default(uuid())
+  username        String           @db.VarChar(255)
+  email           String           @unique
+  created_at      DateTime         @default(now()) @db.Timestamp(6)
+  Team            Team[]
+  ProductTourView ProductTourView?
 }
 
 model GithubRepo {
   id        String @id @default(uuid())
   team_id   String
-  Team      Team   @relation(fields: [team_id], references: [id])
+  Team      Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
   name      String
   full_name String
 
@@ -28,7 +29,7 @@ model GithubRepo {
 model Team {
   id                      String                    @id @default(uuid())
   owner_user_id           String
-  owner                   User                      @relation(fields: [owner_user_id], references: [id])
+  owner                   User                      @relation(fields: [owner_user_id], references: [id], onDelete: Cascade)
   name                    String                    @db.VarChar(255)
   GithubRepo              GithubRepo[]
   ContributionCalculation ContributionCalculation[]
@@ -39,7 +40,7 @@ model Team {
 model ContributionCalculation {
   id         String      @id @default(uuid())
   team_id    String
-  Team       Team        @relation(fields: [team_id], references: [id])
+  Team       Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
   UserScore  UserScore[]
   created_at DateTime    @default(now()) @db.Timestamp(6)
 }
@@ -47,7 +48,7 @@ model ContributionCalculation {
 model ContributionRequest {
   id           String   @id @default(uuid())
   team_id      String
-  Team         Team     @relation(fields: [team_id], references: [id])
+  Team         Team     @relation(fields: [team_id], references: [id], onDelete: Cascade)
   created_at   DateTime @default(now()) @db.Timestamp(6)
   access_token String
 }
@@ -57,10 +58,16 @@ model CalculationSemaphore {
   available Boolean
 }
 
+model ProductTourView {
+  id      String @id @default(uuid())
+  user_id String @unique
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
 model UserScore {
   id                          String                  @id @default(uuid())
   contribution_calculation_id String
-  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id])
+  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id], onDelete: Cascade)
   username                    String                  @db.VarChar(255)
   user_type                   String                  @db.VarChar(255)
   score                       String                  @db.VarChar(255)
