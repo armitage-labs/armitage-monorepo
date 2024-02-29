@@ -147,7 +147,9 @@ export default function Page({ params }: PageProps) {
 
             <div className="pt-16">
               <div className="flex flex-row items-center justify-center mb-10 w-full">
-                <AnimatedTooltip items={userTooltipDto.filter(user => user.type === "USER")} />
+                <AnimatedTooltip
+                  items={userTooltipDto.filter((user) => user.type === "USER")}
+                />
               </div>
             </div>
           </div>

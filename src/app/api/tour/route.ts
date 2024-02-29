@@ -10,16 +10,15 @@ export async function GET() {
     const foundTour = await prisma.productTourView.findFirst({
       where: {
         user_id: session.userId,
-      }
-    })
+      },
+    });
     if (foundTour) {
       return NextResponse.json({ success: true, hasSeenProductTour: true });
-    }
-    else {
+    } else {
       await prisma.productTourView.create({
         data: {
-          user_id: session.userId
-        }
+          user_id: session.userId,
+        },
       });
       return NextResponse.json({ success: true, hasSeenProductTour: false });
     }
