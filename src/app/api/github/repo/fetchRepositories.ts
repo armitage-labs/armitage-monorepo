@@ -2,13 +2,12 @@ import { GithubRepoDto } from "./types/githubRepo.dto";
 
 export async function fetchPaginatedGithubRepoResult(
   githubAccessToken: string,
-  githubLogin: string,
 ): Promise<GithubRepoDto[]> {
   let currentPage = 1;
   let mergedGithubRepos: GithubRepoDto[] = [];
   while (true) {
     const fetchGithubReposRequest = await fetch(
-      `https://api.github.com/users/${githubLogin}/repos?&per_page=100&sort=updated&page=${currentPage}`,
+      `https://api.github.com/user/repos?&per_page=100&sort=updated&page=${currentPage}`,
       {
         method: "GET",
         headers: {
@@ -22,7 +21,6 @@ export async function fetchPaginatedGithubRepoResult(
     const parsedGithubRepos = JSON.parse(fetchedGithubRepos) as GithubRepoDto[];
     mergedGithubRepos = mergedGithubRepos.concat(parsedGithubRepos);
     currentPage = currentPage + 1;
-    if (parsedGithubRepos.length == 0)
-      return mergedGithubRepos.filter((githuRepo) => !githuRepo.private);
+    if (parsedGithubRepos.length == 0) return mergedGithubRepos;
   }
 }

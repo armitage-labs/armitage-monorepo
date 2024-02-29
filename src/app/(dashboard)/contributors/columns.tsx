@@ -13,6 +13,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 
 export const contributorsColumns: ColumnDef<ContributorDto>[] = [
   {
@@ -83,7 +84,9 @@ export const contributorsColumns: ColumnDef<ContributorDto>[] = [
   },
   {
     id: "actions",
-    cell: () => {
+    cell: ({ row }) => {
+      const contributor = row.original;
+      const router = useRouter();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -95,7 +98,13 @@ export const contributorsColumns: ColumnDef<ContributorDto>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View contributor details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push(`/contributors/${contributor.userName}`);
+              }}
+            >
+              View contributor details
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
