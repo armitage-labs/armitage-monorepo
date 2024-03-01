@@ -27,6 +27,7 @@ import { Circles } from "react-loader-spinner";
 import { Team } from "@/app/api/teams/fetchUserTeams";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 
 export const teamsColumns: ColumnDef<Team>[] = [
   {
@@ -59,6 +60,25 @@ export const teamsColumns: ColumnDef<Team>[] = [
     header: () => <div className="text-left"> Status </div>,
     cell: () => {
       return <div className="text-left">Active</div>;
+    },
+  },
+  {
+    id: "details",
+    cell: ({ row }) => {
+      const team = row.original;
+      const router = useRouter();
+      return (
+        <div className="">
+          <Button
+            variant={"secondary"}
+            className="text-xs md:text-sm"
+            onClick={() => {
+              router.push(`/teams/${team.id}`);
+            }}
+          >
+            <Icons.lineChart className="mr-2 h-4 w-4" /> Team details
+          </Button>
+        </div>);
     },
   },
   {
@@ -110,12 +130,12 @@ export const teamsColumns: ColumnDef<Team>[] = [
             ) : (
               <div>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Arre you sure?</AlertDialogTitle>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action can take several minutes to complete.
+                    This action can take several minutes to complete and will override previous calculations, making them unavailable until the new report is generated.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
+                <AlertDialogFooter className="pt-6">
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <Button onClick={handleGenerateReport}>Continue</Button>
                 </AlertDialogFooter>

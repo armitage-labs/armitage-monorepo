@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/card";
 import { GithubRepoList } from "@/components/githubRepoList";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
+import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 interface PageProps {
   params: { teamId: string };
@@ -45,6 +48,8 @@ export default function Page({ params }: PageProps) {
   const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
   const [registeredGitRepos, setRegisteredGitRepos] = useState([]);
   const [userTooltipDto, setUserTooltipDto] = useState<UserTooltipDto[]>([]);
+  const [hasContributionRequest, setHasContributionRequest] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsLoading(true);
@@ -52,6 +57,7 @@ export default function Page({ params }: PageProps) {
       handleFetchTeams();
       handleFetchUserCreds();
       handleFetchRegisteredRepos();
+      handleFetchContributionRequest();
     }
   }, [session]);
 
@@ -60,6 +66,15 @@ export default function Page({ params }: PageProps) {
       setIsLoading(false);
     }
   }, [registeredGitRepos, team, userCredDtos]);
+
+  const handleFetchContributionRequest = async () => {
+    const { data } = await axios.get(
+      `/api/contribution-request`,
+    );
+    if (data.success) {
+      setHasContributionRequest(data.hasContributionRequest);
+    }
+  };
 
   const handleFetchRegisteredRepos = async () => {
     const { data } = await axios.get(
@@ -105,55 +120,72 @@ export default function Page({ params }: PageProps) {
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
         <BreadCrumb items={breadcrumbItems} />
         <div className="flex items-start justify-between">
-          {isLoading ? (
-            <ThreeDots color="black" />
-          ) : (
-            <Heading
-              title={team ? team.name : ""}
-              description={`View the details of your team`}
-            />
-          )}
+          <Heading
+            title={team ? team.name : ""}
+            description={`View the details of your team`}
+          />
         </div>
         <Separator />
 
-        {isLoading ? (
-          <div className="pt-36 flex justify-center">
-            <Circles color="black" />
+        {hasContributionRequest ? (
+          <div>
+            <div className="pt-16 flex justify-center">
+              <TeamCalculationCreated></TeamCalculationCreated>
+            </div>
+            <div className="pt-16 flex justify-center">
+              <Button
+                variant="default"
+                onClick={() => {
+                  router.push("/teams");
+                }}
+              >
+                Return to teams
+              </Button>
+            </div>
           </div>
         ) : (
           <div>
-            <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-              <Card className="col-span-4 md:col-span-3">
-                <CardHeader>
-                  <CardTitle>Github Repositories</CardTitle>
-                  <CardDescription>
-                    You have {registeredGitRepos.length} github repositories
-                    registered
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <GithubRepoList githubRepos={registeredGitRepos} />
-                </CardContent>
-              </Card>
-
-              <div className="">
-                <CalculationResult
-                  userCredDtoList={userCredDtos.filter(
-                    (user) => user.type === "USER",
-                  )}
-                ></CalculationResult>
+            {isLoading ? (
+              <div className="pt-36 flex justify-center">
+                <Circles color="black" />
               </div>
-            </div>
+            ) : (
+              <div>
+                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
+                  <Card className="col-span-4 md:col-span-3">
+                    <CardHeader>
+                      <CardTitle>Github Repositories</CardTitle>
+                      <CardDescription>
+                        You have {registeredGitRepos.length} github repositories
+                        registered
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <GithubRepoList githubRepos={registeredGitRepos} />
+                    </CardContent>
+                  </Card>
 
-            <div className="pt-16">
-              <div className="flex flex-row items-center justify-center mb-10 w-full">
-                <AnimatedTooltip
-                  items={userTooltipDto.filter((user) => user.type === "USER")}
-                />
+                  <div className="">
+                    <CalculationResult
+                      userCredDtoList={userCredDtos.filter(
+                        (user) => user.type === "USER",
+                      )}
+                    ></CalculationResult>
+                  </div>
+                </div>
+
+                <div className="pt-16">
+                  <div className="flex flex-row items-center justify-center mb-10 w-full">
+                    <AnimatedTooltip
+                      items={userTooltipDto.filter((user) => user.type === "USER")}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
+
       </div>
     </>
   );
