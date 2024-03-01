@@ -44,8 +44,6 @@ export default function ContributorDetailsPage({
     const { data } = await axios.get(
       "/api/contributors/details?contributor_username=" + contributorUserName,
     );
-    console.log("fetched");
-    console.log(data);
     if (data.success) {
       setContributorDetails(data.contributorDetails);
     }
