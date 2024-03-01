@@ -68,9 +68,7 @@ export default function Page({ params }: PageProps) {
   }, [registeredGitRepos, team, userCredDtos]);
 
   const handleFetchContributionRequest = async () => {
-    const { data } = await axios.get(
-      `/api/contribution-request`,
-    );
+    const { data } = await axios.get(`/api/contribution-request`);
     if (data.success) {
       setHasContributionRequest(data.hasContributionRequest);
     }
@@ -177,7 +175,9 @@ export default function Page({ params }: PageProps) {
                 <div className="pt-16">
                   <div className="flex flex-row items-center justify-center mb-10 w-full">
                     <AnimatedTooltip
-                      items={userTooltipDto.filter((user) => user.type === "USER")}
+                      items={userTooltipDto.filter(
+                        (user) => user.type === "USER",
+                      )}
                     />
                   </div>
                 </div>
@@ -185,7 +185,6 @@ export default function Page({ params }: PageProps) {
             )}
           </div>
         )}
-
       </div>
     </>
   );

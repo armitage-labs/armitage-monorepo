@@ -78,7 +78,8 @@ export const teamsColumns: ColumnDef<Team>[] = [
           >
             <Icons.lineChart className="mr-2 h-4 w-4" /> Team details
           </Button>
-        </div>);
+        </div>
+      );
     },
   },
   {
@@ -132,7 +133,9 @@ export const teamsColumns: ColumnDef<Team>[] = [
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action can take several minutes to complete and will override previous calculations, making them unavailable until the new report is generated.
+                    This action can take several minutes to complete and will
+                    override previous calculations, making them unavailable
+                    until the new report is generated.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="pt-6">
