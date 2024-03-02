@@ -1,0 +1,60 @@
+# Documentation: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+
+name: Build and push service image
+
+on:
+  push:
+    branches:
+      - release
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  set_environment:
+    runs-on: ubuntu-latest # included software: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
+    outputs:
+      short_sha: ${{ steps.git.outputs.short_sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Short SHA
+        id: git
+        run: echo "::set-output name=short_sha::$(git rev-parse --short HEAD)"
+
+  build:
+    needs: set_environment
+    runs-on: ubuntu-latest # included software: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1.0.2 # https://github.com/marketplace/actions/docker-setup-buildx
+        with:
+          driver-opts: image=moby/buildkit:buildx-stable-1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2 # https://github.com/marketplace/actions/amazon-ecr-login-action-for-github-actions
+
+      - name: Build and export
+        id: docker-build
+        uses: docker/build-push-action@v2 # https://github.com/marketplace/actions/build-and-push-docker-images
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/armitage:${{ github.run_number }}-${{ needs.set_environment.outputs.short_sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
