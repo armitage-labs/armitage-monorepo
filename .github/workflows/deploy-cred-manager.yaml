@@ -22,5 +22,4 @@ jobs:
           aws_r53_domain_name: armitage.xyz
           aws_r53_sub_domain_name: api
           aws_r53_create_sub_cert: true
-          aws_elb_app_port: 8080
           aws_elb_listen_port: 443,8080
