@@ -17,3 +17,10 @@ jobs:
           env_ghs: ${{ secrets.DOT_ENV }}
 
           aws_elb_app_port: 8080 # This should match the docker exposed port. Defaults to 3000.
+
+          aws_r53_enable: true
+          aws_r53_domain_name: armitage.xyz
+          aws_r53_sub_domain_name: api
+          aws_r53_create_sub_cert: true
+          aws_elb_app_port: 8080
+          aws_elb_listen_port: 443,8080
