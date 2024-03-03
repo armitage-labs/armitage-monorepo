@@ -49,6 +49,14 @@ jobs:
 
       - name: Create .env file
         run: cat ${{ secrets.DOT_ENV }} > .env
+      
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_DEBUG: false
+          envkey_SOURCECRED_INSTANCE_PATH: ${{ secrets.SOURCECRED_INSTANCE_PATH }}
+          envkey_SED_COMMAND: ${{ secrets.SED_COMMAND }}
+          envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Build and export
         id: docker-build
