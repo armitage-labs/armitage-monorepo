@@ -47,9 +47,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2 # https://github.com/marketplace/actions/amazon-ecr-login-action-for-github-actions
 
-      - name: Create .env file
-        run: cat ${{ secrets.DOT_ENV }} > .env
-      
       - name: Make envfile
         uses: SpicyPizza/create-envfile@v2.0
         with:
