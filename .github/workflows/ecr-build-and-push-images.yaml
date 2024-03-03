@@ -47,10 +47,8 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2 # https://github.com/marketplace/actions/amazon-ecr-login-action-for-github-actions
 
-      - uses: "finnp/create-file-action@master"
-        env:
-          FILE_NAME: ".env"
-          FILE_DATA: ${{ secrets.DOT_ENV }}
+      - name: Create .env file
+        run: cat ${{ secrets.DOT_ENV }} > .env
 
       - name: Build and export
         id: docker-build
