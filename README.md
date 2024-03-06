@@ -5,7 +5,7 @@
 This repository contains the following packages:
 
 - `/` - The Next.js app that runs the Armitage dashboard
-- `/cred-manager` - The Nest.js app that runs the Armitage SourceCred instance on your local machine
+- `/cred-manager` - The Nest.js app that runs the Armitage SourceCred instance on your local machine.
 
 Unless you are already familiar with SourceCred and have an instance running on your environment, you should run the cred-manager via docker;
 
