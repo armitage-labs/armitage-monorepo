@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   if (teamId) {
     const CRED_MANAGER_ROUTE = process.env.CRED_MANAGER_ROUTE;
     const calculatedUserCredDtos = await fetch(
-      `${CRED_MANAGER_ROUTE}/cred/team/${teamId}/${session?.accessToken}`,
+      `${CRED_MANAGER_ROUTE}/cred/team/${teamId}/${session?.accessToken}/${session?.user?.email}`,
       {
         method: "GET",
       },

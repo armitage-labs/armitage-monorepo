@@ -35,7 +35,7 @@ export class CalculationQueueService {
           data: { available: false }
         })
         // calculate cred scores
-        await this.sourceCredService.calculateCredScores(unhandledCalculation.team_id, unhandledCalculation.access_token);
+        await this.sourceCredService.calculateCredScores(unhandledCalculation.team_id, unhandledCalculation.access_token, unhandledCalculation.email);
         // delete the contribution request
         await this.prismaService.contributionRequest.delete({
           where: { id: unhandledCalculation.id }

@@ -1,6 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
+import fetch from 'node-fetch';
+
 
 @Controller()
 export class AppController {
@@ -11,10 +13,8 @@ export class AppController {
 
   @Get()
   async getHello(): Promise<string> {
-    // return this.appService.getHello();
-    const prismaUsers = await this.prismaService.user.findMany({
-      where: { username: 'sudoFerraz' },
+    return JSON.stringify({
+      "status" : "OK"
     });
-    return JSON.stringify(prismaUsers);
   }
 }

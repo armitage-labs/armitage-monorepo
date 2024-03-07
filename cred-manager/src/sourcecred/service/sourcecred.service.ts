@@ -11,6 +11,7 @@ import { ContributionCalculationDto } from '../types/contributionRepo.dto';
 import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
 import { executeCommand } from '../utils/bashCommand';
 import { ConfigService } from '@nestjs/config';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class SourceCredService {
@@ -20,6 +21,7 @@ export class SourceCredService {
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
     this.sedCommand = this.configService.get('SED_COMMAND');
@@ -28,11 +30,13 @@ export class SourceCredService {
   async createContributionRequest(
     teamId: string,
     gitHubToken: string,
+    email: string
   ): Promise<boolean> {
     const contributionRequest = await this.prismaService.contributionRequest.create({
       data: {
         team_id: teamId,
         access_token: gitHubToken,
+        email: email,
       },
     });
     if (contributionRequest) {
@@ -44,6 +48,7 @@ export class SourceCredService {
   async calculateCredScores(
     teamId: string,
     gitHubToken: string,
+    email: string
   ): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByTeam(teamId);
     const pluginConfigString = this.craftPluginConfigString(
@@ -54,7 +59,7 @@ export class SourceCredService {
     await this.loadSourceCredPlugins(gitHubToken);
     const userCredDtoArray = await this.loadLocalScInstance();
     await this.saveUserScore(contribution.id, userCredDtoArray);
-
+    await this.emailService.sendCalculationCompletedMail(email);
     return userCredDtoArray;
   }
 
