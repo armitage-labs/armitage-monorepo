@@ -6,10 +6,12 @@ import { SourceCredController } from './controller/sourcecred.controller';
 import { SourceCredService } from './service/sourcecred.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CalculationQueueService } from './service/calculationQueue.service';
+import { EmailService } from 'src/email/email.service';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-  imports: [GitRepoModule, ConfigModule.forRoot(), ScheduleModule.forRoot()],
+  imports: [EmailModule, GitRepoModule, ConfigModule.forRoot(), ScheduleModule.forRoot()],
   controllers: [SourceCredController],
-  providers: [SourceCredService, PrismaService, CalculationQueueService],
+  providers: [SourceCredService, PrismaService, CalculationQueueService, EmailService],
 })
 export class SourceCredModule { }
