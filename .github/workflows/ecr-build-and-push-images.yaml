@@ -54,6 +54,7 @@ jobs:
           envkey_SOURCECRED_INSTANCE_PATH: ${{ secrets.SOURCECRED_INSTANCE_PATH }}
           envkey_SED_COMMAND: ${{ secrets.SED_COMMAND }}
           envkey_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          envkey_SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
 
       - name: Build and export
         id: docker-build
