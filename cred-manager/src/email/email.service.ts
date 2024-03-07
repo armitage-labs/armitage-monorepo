@@ -6,7 +6,6 @@ import fetch from 'node-fetch';
 export class EmailService implements OnModuleInit  {
 
   async onModuleInit() {
-    // AWS.config.update({ region: "us-east-1" });
   }
 
   async sendCalculationCompletedMail(toEmail: string) {
