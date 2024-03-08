@@ -54,6 +54,7 @@ export class SourceCredService {
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
     );
+    await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId);
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.loadSourceCredPlugins(gitHubToken);
@@ -136,6 +137,23 @@ export class SourceCredService {
     return userDtoArray.sort((a, b) => b.totalCred - a.totalCred);
   }
 
+  async deleteContribution(teamId: string) {
+    const contribution = await this.prismaService.contributionCalculation.findFirst({
+      where: {
+        team_id: teamId,
+      }
+    });
+
+
+    if (contribution != null) {
+      await this.prismaService.contributionCalculation.deleteMany({
+        where: {
+          id : contribution.id
+        }
+      });
+    }
+  }
+
   async saveContribution(teamId: string): Promise<ContributionCalculationDto> {
     try {
       const contribution =
@@ -160,15 +178,15 @@ export class SourceCredService {
       for(var i = 0; i < userCredDtos.length; i++) {
         const userScore = await this.prismaService.userScore.create({ 
           data : {
-              username: userCredDtos[0].userName,
-              user_type: userCredDtos[0].type,
-              score: userCredDtos[0].totalCred.toString(),
+              username: userCredDtos[i].userName,
+              user_type: userCredDtos[i].type,
+              score: userCredDtos[i].totalCred.toString(),
               contribution_calculation_id: contributionCalculationId,
             }
         });
 
         await this.prismaService.userScoreInterval.createMany({
-          data: userCredDtos[0].credPerInterval.map((interval) => {
+          data: userCredDtos[i].credPerInterval.map((interval) => {
             return {
               user_score_id: userScore.id,
               score: interval.toString(),
