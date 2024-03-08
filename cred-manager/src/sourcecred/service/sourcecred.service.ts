@@ -124,6 +124,8 @@ export class SourceCredService {
           totalCred: participant.cred,
           userName: participant.identity.name,
           type: participant.identity.subtype.toString(),
+          credPerInterval: participant.credPerInterval,
+          grainEarnedPerInterval: participant.grainEarnedPerInterval,
         });
       },
     );
@@ -153,17 +155,29 @@ export class SourceCredService {
     contributionCalculationId: string,
     userCredDtos: UserCredDto[],
   ) {
+    // need to delete the user score and interval for the team before we insert new one
     try {
-      return await this.prismaService.userScore.createMany({
-        data: userCredDtos.map((userCredDto) => {
-          return {
-            username: userCredDto.userName,
-            user_type: userCredDto.type,
-            score: userCredDto.totalCred.toString(),
-            contribution_calculation_id: contributionCalculationId,
-          };
-        }),
-      });
+      for(var i = 0; i < userCredDtos.length; i++) {
+        const userScore = await this.prismaService.userScore.create({ 
+          data : {
+              username: userCredDtos[0].userName,
+              user_type: userCredDtos[0].type,
+              score: userCredDtos[0].totalCred.toString(),
+              contribution_calculation_id: contributionCalculationId,
+            }
+        });
+
+        await this.prismaService.userScoreInterval.createMany({
+          data: userCredDtos[0].credPerInterval.map((interval) => {
+            return {
+              user_score_id: userScore.id,
+              score: interval.toString(),
+              interval_start: new Date().getTime().toString(), // TODO we need to get interval from graph
+              interval_end: new Date().getTime().toString(), // TODO we need to get interval from graph
+            };
+          }),
+        });
+      }
     } catch (error) {
       console.error('Error creating users scores', error);
       throw error;

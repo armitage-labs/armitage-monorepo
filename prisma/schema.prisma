@@ -73,4 +73,15 @@ model UserScore {
   user_type                   String                  @db.VarChar(255)
   score                       String                  @db.VarChar(255)
   created_at                  DateTime                @default(now()) @db.Timestamp(6)
+  UserScoreInterval           UserScoreInterval[]
+}
+
+model UserScoreInterval {
+  id             String    @id @default(uuid())
+  user_score_id  String
+  UserScore      UserScore @relation(fields: [user_score_id], references: [id], onDelete: Cascade)
+  score          String    @db.VarChar(255)
+  interval_start Int
+  interval_end   Int
+  created_at     DateTime  @default(now()) @db.Timestamp(6)
 }
