@@ -924,7 +924,7 @@ declare module 'sourcecred' {
   export class CredGrainView {
     constructor(graph: CredGraph, ledger: Ledger);
     participants: () => ParticipantCredGrain[];
-
+    
     totalCredPerInterval: () => number[];
 
     totalGrainPerInterval: () => string[];
@@ -936,6 +936,11 @@ declare module 'sourcecred' {
     credPerInterval: number[];
     grainEarned: string;
     grainEarnedPerInterval: string[];
+  }
+
+  export interface Interval {
+    startTimeMs: number;
+    endTimeMs: number;
   }
 
   export interface LedgerManager {

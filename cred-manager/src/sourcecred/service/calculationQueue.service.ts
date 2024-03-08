@@ -29,13 +29,18 @@ export class CalculationQueueService {
       });
       if (unhandledCalculation) {
         this.logger.debug("Handling unhandled calculation request.");
-        // update semaphore to unavailable
-        await this.prismaService.calculationSemaphore.update({
-          where: { id: semaphore.id },
-          data: { available: false }
-        })
-        // calculate cred scores
-        await this.sourceCredService.calculateCredScores(unhandledCalculation.team_id, unhandledCalculation.access_token, unhandledCalculation.email);
+        try {
+          // update semaphore to unavailable
+          await this.prismaService.calculationSemaphore.update({
+            where: { id: semaphore.id },
+            data: { available: false }
+          })
+          // calculate cred scores
+          await this.sourceCredService.calculateCredScores(unhandledCalculation.team_id, unhandledCalculation.access_token, unhandledCalculation.email);
+        } catch(e) {
+            this.logger.error(e);
+        }
+      
         // delete the contribution request
         await this.prismaService.contributionRequest.delete({
           where: { id: unhandledCalculation.id }
@@ -45,7 +50,6 @@ export class CalculationQueueService {
           where: { id: semaphore.id },
           data: { available: true }
         });
-
       }
     } else {
       this.logger.debug("Semaphore unavailable.");
