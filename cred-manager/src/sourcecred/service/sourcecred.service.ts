@@ -58,8 +58,10 @@ export class SourceCredService {
     const contribution = await this.saveContribution(teamId);
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.loadSourceCredPlugins(gitHubToken);
-    const userCredDtoArray = await this.loadLocalScInstance();
+    const credGrainView = await this.loadLocalScInstance();
+    const userCredDtoArray = this.extractUserData(credGrainView);
     await this.saveUserScore(contribution.id, userCredDtoArray);
+    await this.saveTeamScore(contribution.id, credGrainView);
     await this.emailService.sendCalculationCompletedMail(email);
     return userCredDtoArray;
   }
@@ -108,14 +110,20 @@ export class SourceCredService {
     return success;
   }
 
-  async loadLocalScInstance(): Promise<UserCredDto[]> {
+  async loadLocalScInstance(): Promise<CredGrainView> {
     const HARDCODED_DIR = this.sourceCredPath;
     const localInstance = await new sc.instance.LocalInstance(HARDCODED_DIR);
     const graph: CredGrainView = await localInstance.readCredGrainView();
+    return graph;
+  }
+
+  extractUserData(graph: CredGrainView): UserCredDto[] {
     const userDataArray = this.processUserData(graph);
     console.log(userDataArray.slice(0, 5));
     return this.orderUserByCred(userDataArray);
   }
+
+
 
   processUserData(graph: CredGrainView): UserCredDto[] {
     const participantsArray: ParticipantCredGrain[] = graph.participants();
@@ -200,6 +208,23 @@ export class SourceCredService {
       console.error('Error creating users scores', error);
       throw error;
     }
+  }
+
+  async saveTeamScore(
+    contributionCalculationId: string,
+    graph: CredGrainView
+  ) {
+
+    await this.prismaService.teamScoreInterval.createMany({
+      data: graph.totalCredPerInterval().map((interval) => {
+        return {
+          contribution_calculation_id: contributionCalculationId,
+          score: interval.toString(),
+          interval_start: new Date().getTime().toString(), // TODO we need to get interval from graph
+          interval_end: new Date().getTime().toString(), // TODO we need to get interval from graph
+        };
+      }),
+    });
   }
 
   async fetchLastContributionScoreForTeam(
