@@ -37,6 +37,15 @@ model Team {
   ContributionRequest     ContributionRequest[]
 }
 
+model TeamScoreInterval {
+  id                          String                  @id @default(uuid())
+  contribution_calculation_id String
+  score                       String                  @db.VarChar(255)
+  interval_start              String                  @db.VarChar(255)
+  interval_end                String                  @db.VarChar(255)
+  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id], onDelete: Cascade)
+}
+
 model ContributionCalculation {
   id         String      @id @default(uuid())
   team_id    String
