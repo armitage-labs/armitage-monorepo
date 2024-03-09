@@ -68,7 +68,9 @@ export default function Page({ params }: PageProps) {
   }, [registeredGitRepos, team, userCredDtos]);
 
   const handleFetchContributionRequest = async () => {
-    const { data } = await axios.get(`/api/contribution-request?team_id=${teamId}`);
+    const { data } = await axios.get(
+      `/api/contribution-request?team_id=${teamId}`,
+    );
     if (data.success) {
       setHasContributionRequest(data.hasContributionRequest);
     }
