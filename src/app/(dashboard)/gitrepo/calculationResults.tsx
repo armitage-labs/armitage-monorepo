@@ -19,7 +19,6 @@ export function CalculationResult({ userCredDtoList }: CalculationResultProps) {
   return (
     <div className="">
       <div className=""></div>
-      {/* <div className="h-[450px] w-[800px]"> */}
       <Card className="col-span-2">
         <CardHeader>
           <CardTitle>Overview</CardTitle>
@@ -49,6 +48,5 @@ export function CalculationResult({ userCredDtoList }: CalculationResultProps) {
         </CardContent>
       </Card>
     </div>
-    // </div>
   );
 }
