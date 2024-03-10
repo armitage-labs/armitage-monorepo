@@ -35,8 +35,7 @@ export default function CreateTeamPage() {
     RegisteredGitRepo[]
   >([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
-  const [, setCreatedCalculationRequest] =
-    useState<boolean>(false);
+  const [, setCreatedCalculationRequest] = useState<boolean>(false);
   const router = useRouter();
 
   const handleCreateTeam = async () => {

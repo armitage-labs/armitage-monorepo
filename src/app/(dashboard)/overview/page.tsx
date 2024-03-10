@@ -145,7 +145,9 @@ export default function OverviewPage() {
 
   useEffect(() => {
     if (!isLoading) {
-      toast("Welcome to Armitage Beta! The product is still in development, so please be patient with us! We appreciate all feedback and bug reports!");
+      toast(
+        "Welcome to Armitage Beta! The product is still in development, so please be patient with us! We appreciate all feedback and bug reports!",
+      );
     }
   }, [isLoading]);
 
