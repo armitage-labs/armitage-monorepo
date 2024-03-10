@@ -2,7 +2,7 @@ export interface UserCredJson {
   totalCred: number;
   userName: string;
   type: string;
-  credPerInterval?: number[];
+  credPerInterval?:  any[],
   grainEarnedPerInterval?: string[];
 }
 
@@ -11,7 +11,7 @@ export class UserCredDto {
     public totalCred: number,
     public userName: string,
     public type: string,
-    public credPerInterval?: number[],
+    public credPerInterval?: any[],
     public grainEarnedPerInterval?: string[]
   ) {}
 

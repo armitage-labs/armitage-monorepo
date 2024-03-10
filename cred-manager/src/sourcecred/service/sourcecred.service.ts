@@ -12,6 +12,8 @@ import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
 import { executeCommand } from '../utils/bashCommand';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from 'src/email/email.service';
+import { IntervalDto } from '../types/interval.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class SourceCredService {
@@ -54,14 +56,13 @@ export class SourceCredService {
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
     );
-    await this.deleteContribution(teamId);
-    const contribution = await this.saveContribution(teamId);
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.loadSourceCredPlugins(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
     const userCredDtoArray = this.extractUserData(credGrainView);
+    await this.deleteContribution(teamId);
+    const contribution = await this.saveContribution(teamId, credGrainView);
     await this.saveUserScore(contribution.id, userCredDtoArray);
-    await this.saveTeamScore(contribution.id, credGrainView);
     await this.emailService.sendCalculationCompletedMail(email);
     return userCredDtoArray;
   }
@@ -123,17 +124,22 @@ export class SourceCredService {
     return this.orderUserByCred(userDataArray);
   }
 
-
-
   processUserData(graph: CredGrainView): UserCredDto[] {
     const participantsArray: ParticipantCredGrain[] = graph.participants();
     const userDataArray: UserCredDto[] = participantsArray.map(
       (participant) => {
+        const credPerInterval: any[] = participant.credPerInterval.map((interval, index) => {
+          return {
+            value: interval,
+            sTime: graph.intervals()[index].startTimeMs,
+            eTime: graph.intervals()[index].endTimeMs,
+          }
+        });
         return UserCredDto.fromJSON({
           totalCred: participant.cred,
           userName: participant.identity.name,
           type: participant.identity.subtype.toString(),
-          credPerInterval: participant.credPerInterval,
+          credPerInterval: credPerInterval,
           grainEarnedPerInterval: participant.grainEarnedPerInterval,
         });
       },
@@ -162,12 +168,21 @@ export class SourceCredService {
     }
   }
 
-  async saveContribution(teamId: string): Promise<ContributionCalculationDto> {
+  async saveContribution(teamId: string, graph: CredGrainView): Promise<ContributionCalculationDto> {
     try {
+      const totalCredPerInterval: any[] = graph.totalCredPerInterval().map((interval, index) => {
+        return {
+          value: interval,
+          sTime: graph.intervals()[index].startTimeMs,
+          eTime: graph.intervals()[index].endTimeMs,
+        }
+      });
+
       const contribution =
         await this.prismaService.contributionCalculation.create({
           data: {
             team_id: teamId,
+            score_interval: totalCredPerInterval,
           },
         });
       return contribution;
@@ -181,50 +196,23 @@ export class SourceCredService {
     contributionCalculationId: string,
     userCredDtos: UserCredDto[],
   ) {
-    // need to delete the user score and interval for the team before we insert new one
     try {
       for(var i = 0; i < userCredDtos.length; i++) {
+        
         const userScore = await this.prismaService.userScore.create({ 
           data : {
               username: userCredDtos[i].userName,
               user_type: userCredDtos[i].type,
               score: userCredDtos[i].totalCred.toString(),
+              score_interval: userCredDtos[i].credPerInterval as Prisma.JsonArray,
               contribution_calculation_id: contributionCalculationId,
             }
-        });
-
-        await this.prismaService.userScoreInterval.createMany({
-          data: userCredDtos[i].credPerInterval.map((interval) => {
-            return {
-              user_score_id: userScore.id,
-              score: interval.toString(),
-              interval_start: new Date().getTime().toString(), // TODO we need to get interval from graph
-              interval_end: new Date().getTime().toString(), // TODO we need to get interval from graph
-            };
-          }),
         });
       }
     } catch (error) {
       console.error('Error creating users scores', error);
       throw error;
     }
-  }
-
-  async saveTeamScore(
-    contributionCalculationId: string,
-    graph: CredGrainView
-  ) {
-
-    await this.prismaService.teamScoreInterval.createMany({
-      data: graph.totalCredPerInterval().map((interval) => {
-        return {
-          contribution_calculation_id: contributionCalculationId,
-          score: interval.toString(),
-          interval_start: new Date().getTime().toString(), // TODO we need to get interval from graph
-          interval_end: new Date().getTime().toString(), // TODO we need to get interval from graph
-        };
-      }),
-    });
   }
 
   async fetchLastContributionScoreForTeam(

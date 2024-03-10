@@ -37,21 +37,13 @@ model Team {
   ContributionRequest     ContributionRequest[]
 }
 
-model TeamScoreInterval {
-  id                          String                  @id @default(uuid())
-  contribution_calculation_id String
-  score                       String                  @db.VarChar(255)
-  interval_start              String                  @db.VarChar(255)
-  interval_end                String                  @db.VarChar(255)
-  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id], onDelete: Cascade)
-}
-
 model ContributionCalculation {
-  id         String      @id @default(uuid())
-  team_id    String
-  Team       Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
-  UserScore  UserScore[]
-  created_at DateTime    @default(now()) @db.Timestamp(6)
+  id             String      @id @default(uuid())
+  team_id        String
+  score_interval Json?
+  Team           Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  UserScore      UserScore[]
+  created_at     DateTime    @default(now()) @db.Timestamp(6)
 }
 
 model ContributionRequest {
@@ -81,15 +73,6 @@ model UserScore {
   username                    String                  @db.VarChar(255)
   user_type                   String                  @db.VarChar(255)
   score                       String                  @db.VarChar(255)
+  score_interval              Json?
   created_at                  DateTime                @default(now()) @db.Timestamp(6)
-  UserScoreInterval           UserScoreInterval[]
-}
-
-model UserScoreInterval {
-  id             String    @id @default(uuid())
-  user_score_id  String
-  UserScore      UserScore @relation(fields: [user_score_id], references: [id], onDelete: Cascade)
-  score          String    @db.VarChar(255)
-  interval_start String    @db.VarChar(255)
-  interval_end   String    @db.VarChar(255)
 }

@@ -924,7 +924,7 @@ declare module 'sourcecred' {
   export class CredGrainView {
     constructor(graph: CredGraph, ledger: Ledger);
     participants: () => ParticipantCredGrain[];
-    
+    intervals: () => Interval[];
     totalCredPerInterval: () => number[];
 
     totalGrainPerInterval: () => string[];
