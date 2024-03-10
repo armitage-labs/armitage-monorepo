@@ -1,21 +1,8 @@
-import {
-    AreaChart,
-    Area,
-    XAxis,
-    Tooltip,
-    ResponsiveContainer,
-} from 'recharts';
+import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import * as React from "react";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface CalculationIntervalChartProps {
-    intervals: any[];
-}
+interface CalculationIntervalChartProps { intervals: any[]; }
 
 export function CalculationIntervalChart({ intervals }: CalculationIntervalChartProps) {
     return (
