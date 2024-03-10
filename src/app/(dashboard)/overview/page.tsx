@@ -13,6 +13,7 @@ import { Icons } from "@/components/icons";
 import { RegisteredGitRepo } from "@/app/api/github/repo/all/fetchAllUserRepos";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { toast } from "sonner";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
@@ -142,6 +143,12 @@ export default function OverviewPage() {
     }
   }, [hasSeenProductTour]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      toast("Welcome to Armitage Beta! The product is still in development, so please be patient with us! We appreciate all feedback and bug reports!");
+    }
+  }, [isLoading]);
+
   return (
     <div>
       {isLoading ? (
@@ -169,7 +176,8 @@ export default function OverviewPage() {
                     {contributors.length}
                   </div>
                   <p className="pt-1 text-xs text-muted-foreground">
-                    +15% from last month
+                    {/* +15% from last month */}
+                    All contributors on all your teams
                   </p>
                 </CardContent>
               </Card>
@@ -184,7 +192,8 @@ export default function OverviewPage() {
                 <CardContent>
                   <div className="text-2xl font-bold">{credSum.toFixed(2)}</div>
                   <p className="pt-1 text-xs text-muted-foreground">
-                    +8% from last week
+                    {/* +8% from last week */}
+                    All CRED earned on all your teams
                   </p>
                 </CardContent>
               </Card>
@@ -198,6 +207,10 @@ export default function OverviewPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{userRepos.length}</div>
+                  <p className="pt-1 text-xs text-muted-foreground">
+                    {/* +8% from last week */}
+                    All Github Repositories registered on all teams
+                  </p>
                 </CardContent>
               </Card>
             </div>

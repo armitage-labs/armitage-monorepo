@@ -13,7 +13,6 @@ import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegiste
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import { Circles } from "react-loader-spinner";
 import { GitRepoView, columns } from "./columns";
-import { CalculationResult } from "../../gitrepo/calculationResults";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "./data-table";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
@@ -36,7 +35,7 @@ export default function CreateTeamPage() {
     RegisteredGitRepo[]
   >([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
-  const [createdCalculationRequest, setCreatedCalculationRequest] =
+  const [, setCreatedCalculationRequest] =
     useState<boolean>(false);
   const router = useRouter();
 
