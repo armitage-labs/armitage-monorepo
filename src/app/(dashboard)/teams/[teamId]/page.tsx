@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Team } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Circles, ThreeDots } from "react-loader-spinner";
+import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import {
   Card,
@@ -68,7 +68,9 @@ export default function Page({ params }: PageProps) {
   }, [registeredGitRepos, team, userCredDtos]);
 
   const handleFetchContributionRequest = async () => {
-    const { data } = await axios.get(`/api/contribution-request`);
+    const { data } = await axios.get(
+      `/api/contribution-request?team_id=${teamId}`,
+    );
     if (data.success) {
       setHasContributionRequest(data.hasContributionRequest);
     }
@@ -149,8 +151,8 @@ export default function Page({ params }: PageProps) {
               </div>
             ) : (
               <div>
-                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
-                  <Card className="col-span-4 md:col-span-3">
+                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  <Card className="col-span-1 md:col-span-1">
                     <CardHeader>
                       <CardTitle>Github Repositories</CardTitle>
                       <CardDescription>
@@ -163,7 +165,7 @@ export default function Page({ params }: PageProps) {
                     </CardContent>
                   </Card>
 
-                  <div className="">
+                  <div className="col-span-2 md:col-span-2">
                     <CalculationResult
                       userCredDtoList={userCredDtos.filter(
                         (user) => user.type === "USER",
