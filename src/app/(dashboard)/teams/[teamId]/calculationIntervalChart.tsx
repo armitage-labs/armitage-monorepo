@@ -1,11 +1,17 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    Tooltip,
+    ResponsiveContainer,
+} from 'recharts';
 import * as React from "react";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
-  } from "@/components/ui/card";
+} from "@/components/ui/card";
 
 interface CalculationIntervalChartProps {
     intervals: any[];
@@ -14,7 +20,7 @@ interface CalculationIntervalChartProps {
 export function CalculationIntervalChart({ intervals }: CalculationIntervalChartProps) {
     return (
         <div className="">
-        <div className=""></div>
+            <div className=""></div>
             <Card className="col-span-2">
                 <CardHeader>
                     <CardTitle>Overview</CardTitle>
@@ -26,7 +32,7 @@ export function CalculationIntervalChart({ intervals }: CalculationIntervalChart
                             height={400}
                             data={intervals}
                         >
-                            <XAxis 
+                            <XAxis
                                 dataKey="eTime"
                                 stroke="#888888"
                                 fontSize={12}
