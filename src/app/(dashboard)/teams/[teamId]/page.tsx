@@ -50,8 +50,9 @@ export default function Page({ params }: PageProps) {
   const [registeredGitRepos, setRegisteredGitRepos] = useState([]);
   const [userTooltipDto, setUserTooltipDto] = useState<UserTooltipDto[]>([]);
   const [hasContributionRequest, setHasContributionRequest] = useState(false);
-  const [contributionCalculation, setContributionCalculation] = useState<ContributionCalculation>();
-  
+  const [contributionCalculation, setContributionCalculation] =
+    useState<ContributionCalculation>();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -166,9 +167,11 @@ export default function Page({ params }: PageProps) {
               <div>
                 <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
-                    <CalculationIntervalChart intervals={
-                      contributionCalculation?.score_interval as any[]
-                      } ></CalculationIntervalChart>
+                    <CalculationIntervalChart
+                      intervals={
+                        contributionCalculation?.score_interval as any[]
+                      }
+                    ></CalculationIntervalChart>
                   </div>
                 </div>
                 <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">

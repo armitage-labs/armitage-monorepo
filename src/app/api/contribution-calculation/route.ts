@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { fetchContributionCalculation } from "./fetchContributionCalculation";
 
-
 export async function GET(req: NextRequest) {
   const teamId = req.nextUrl.searchParams.get("team_id");
   if (teamId) {
