@@ -1,10 +1,37 @@
-import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  Tooltip,
+  TooltipProps,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  ValueType,
+  NameType,
+} from "recharts/types/component/DefaultTooltipContent";
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CalculationIntervalChartProps {
   intervals: any[];
 }
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`${new Date(label).toLocaleString([], { day: "numeric", month: "short", year: "numeric" })} : ${payload[0].value}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
 
 export function CalculationIntervalChart({
   intervals,
@@ -17,22 +44,27 @@ export function CalculationIntervalChart({
           <CardTitle>Overview</CardTitle>
         </CardHeader>
         <CardContent className="pl-2">
-          <ResponsiveContainer width="100%" height={350}>
-            <AreaChart width={500} height={400} data={intervals}>
+          <ResponsiveContainer width="100%" height={150}>
+            <AreaChart data={intervals}>
               <XAxis
                 dataKey="eTime"
                 stroke="#888888"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `${new Date(value).toDateString()}`}
+                tickFormatter={(value) =>
+                  `${new Date(value).toLocaleString([], { day: "numeric", month: "short", year: "numeric" })}`
+                }
               />
-              <Tooltip />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ fill: "transparent" }}
+              />
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#888888"
-                fill="#888888"
+                stroke="#adfa1d"
+                fill="#adfa1d"
               />
             </AreaChart>
           </ResponsiveContainer>

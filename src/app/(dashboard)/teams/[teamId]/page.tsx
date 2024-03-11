@@ -165,7 +165,7 @@ export default function Page({ params }: PageProps) {
               </div>
             ) : (
               <div>
-                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <div className="pt-6 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
                     <CalculationIntervalChart
                       intervals={
@@ -190,9 +190,9 @@ export default function Page({ params }: PageProps) {
 
                   <div className="col-span-2 md:col-span-2">
                     <CalculationResult
-                      userCredDtoList={userCredDtos.filter(
-                        (user) => user.type === "USER",
-                      )}
+                      userCredDtoList={userCredDtos
+                        .filter((user) => user.type === "USER")
+                        .sort((a, b) => b.totalCred - a.totalCred)}
                     ></CalculationResult>
                   </div>
                 </div>
@@ -200,9 +200,9 @@ export default function Page({ params }: PageProps) {
                 <div className="pt-16">
                   <div className="flex flex-row items-center justify-center mb-10 w-full">
                     <AnimatedTooltip
-                      items={userTooltipDto.filter(
-                        (user) => user.type === "USER",
-                      )}
+                      items={userTooltipDto
+                        .filter((user) => user.type === "USER")
+                        .sort((a, b) => b.totalCred - a.totalCred)}
                     />
                   </div>
                 </div>
