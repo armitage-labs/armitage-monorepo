@@ -190,9 +190,9 @@ export default function Page({ params }: PageProps) {
 
                   <div className="col-span-2 md:col-span-2">
                     <CalculationResult
-                      userCredDtoList={userCredDtos.filter(
-                        (user) => user.type === "USER",
-                      ).sort((a, b) => b.totalCred - a.totalCred)}
+                      userCredDtoList={userCredDtos
+                        .filter((user) => user.type === "USER")
+                        .sort((a, b) => b.totalCred - a.totalCred)}
                     ></CalculationResult>
                   </div>
                 </div>
@@ -200,9 +200,9 @@ export default function Page({ params }: PageProps) {
                 <div className="pt-16">
                   <div className="flex flex-row items-center justify-center mb-10 w-full">
                     <AnimatedTooltip
-                      items={userTooltipDto.filter(
-                        (user) => user.type === "USER",
-                      ).sort((a, b) => b.totalCred - a.totalCred)}
+                      items={userTooltipDto
+                        .filter((user) => user.type === "USER")
+                        .sort((a, b) => b.totalCred - a.totalCred)}
                     />
                   </div>
                 </div>
