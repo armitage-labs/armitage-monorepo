@@ -192,7 +192,7 @@ export default function Page({ params }: PageProps) {
                     <CalculationResult
                       userCredDtoList={userCredDtos.filter(
                         (user) => user.type === "USER",
-                      )}
+                      ).sort((a, b) => b.totalCred - a.totalCred)}
                     ></CalculationResult>
                   </div>
                 </div>
@@ -202,7 +202,7 @@ export default function Page({ params }: PageProps) {
                     <AnimatedTooltip
                       items={userTooltipDto.filter(
                         (user) => user.type === "USER",
-                      )}
+                      ).sort((a, b) => b.totalCred - a.totalCred)}
                     />
                   </div>
                 </div>
