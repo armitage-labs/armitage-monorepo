@@ -21,7 +21,7 @@ export function CalculationResult({ userCredDtoList }: CalculationResultProps) {
       <div className=""></div>
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle>Overview</CardTitle>
+          <CardTitle>User Scores</CardTitle>
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={350}>

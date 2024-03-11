@@ -7,11 +7,12 @@ import { UserCredDto } from "@/app/api/credmanager/route";
 import BreadCrumb from "@/components/breadcrumbs";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Team } from "@prisma/client";
+import { Team, ContributionCalculation } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
+import { CalculationIntervalChart } from "./calculationIntervalChart";
 import {
   Card,
   CardContent,
@@ -49,6 +50,9 @@ export default function Page({ params }: PageProps) {
   const [registeredGitRepos, setRegisteredGitRepos] = useState([]);
   const [userTooltipDto, setUserTooltipDto] = useState<UserTooltipDto[]>([]);
   const [hasContributionRequest, setHasContributionRequest] = useState(false);
+  const [contributionCalculation, setContributionCalculation] =
+    useState<ContributionCalculation>();
+
   const router = useRouter();
 
   useEffect(() => {
@@ -58,6 +62,7 @@ export default function Page({ params }: PageProps) {
       handleFetchUserCreds();
       handleFetchRegisteredRepos();
       handleFetchContributionRequest();
+      handleFetchContributionCalculation();
     }
   }, [session]);
 
@@ -73,6 +78,15 @@ export default function Page({ params }: PageProps) {
     );
     if (data.success) {
       setHasContributionRequest(data.hasContributionRequest);
+    }
+  };
+
+  const handleFetchContributionCalculation = async () => {
+    const { data } = await axios.get(
+      `/api/contribution-calculation?team_id=${teamId}`,
+    );
+    if (data.success) {
+      setContributionCalculation(data.contributionCalculation);
     }
   };
 
@@ -151,6 +165,15 @@ export default function Page({ params }: PageProps) {
               </div>
             ) : (
               <div>
+                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="col-span-3 md:col-span-3">
+                    <CalculationIntervalChart
+                      intervals={
+                        contributionCalculation?.score_interval as any[]
+                      }
+                    ></CalculationIntervalChart>
+                  </div>
+                </div>
                 <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <Card className="col-span-1 md:col-span-1">
                     <CardHeader>
