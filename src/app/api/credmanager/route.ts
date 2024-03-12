@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { options } from "../auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
-import jwt, { Secret, JwtPayload } from "jsonwebtoken";
-import { createAppAuth } from "@octokit/auth-app";
-import { App } from "octokit";
-import * as fs from "fs";
 
 export interface UserCredDto {
   totalCred: number;
@@ -22,7 +18,7 @@ export async function GET(req: NextRequest) {
       `${CRED_MANAGER_ROUTE}/cred/team/${teamId}/${session?.accessToken}/${session?.user?.email}`,
       {
         method: "GET",
-      }
+      },
     );
     return NextResponse.json({
       success: true,
