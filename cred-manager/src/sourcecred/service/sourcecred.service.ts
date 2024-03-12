@@ -12,8 +12,8 @@ import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
 import { executeCommand } from '../utils/bashCommand';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from 'src/email/email.service';
-import { IntervalDto } from '../types/interval.dto';
 import { Prisma } from '@prisma/client';
+import * as fs from 'fs';
 
 @Injectable()
 export class SourceCredService {
@@ -57,9 +57,12 @@ export class SourceCredService {
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
     );
+    await this.resetSourceCred();
     await this.configureSourcecredGithubPlugin(pluginConfigString);
-    await this.loadSourceCredPlugins(gitHubToken);
+    await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
+    await this.resetSourceCred();
+
     const userCredDtoArray = this.extractUserData(credGrainView);
     await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId, credGrainView);
@@ -92,13 +95,10 @@ export class SourceCredService {
     }
   }
 
-  async loadSourceCredPlugins(gitHubToken: string) {
+  async startSourceCredCalculation(gitHubToken: string) {
     let success = true;
     const cmdList = [
-      `cd ${this.sourceCredPath} && yarn clean-all`,
-      `rm -rf ${this.sourceCredPath}/data/ledger.json`,
       `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
-      `cd ${this.sourceCredPath} && ${this.sedCommand}`,
     ];
     for (let i = 0; i < cmdList.length; i++) {
       try {
@@ -110,6 +110,26 @@ export class SourceCredService {
       }
     }
     return success;
+  }
+
+  async resetSourceCred() {
+    try {
+      await executeCommand(`cd ${this.sourceCredPath} && yarn clean-all`);
+      await executeCommand(`rm -rf ${this.sourceCredPath}/data/ledger.json`);
+      await this.resetDependencies();
+    } catch (error) {
+      console.error('execute command failed', error);
+    }
+  }
+
+  async resetDependencies() {
+    const filePath = `${this.sourceCredPath}/config/dependencies.json`;
+    const dependenciesJson = fs.readFileSync(filePath, 'utf8').toString();
+    const content: any[] = JSON.parse(dependenciesJson);
+    content.forEach((value) => {
+      delete value.id;
+    });
+    fs.writeFileSync(filePath, JSON.stringify(content, null, 2));
   }
 
   async loadLocalScInstance(): Promise<CredGrainView> {
