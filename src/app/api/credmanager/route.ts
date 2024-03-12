@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
       `${CRED_MANAGER_ROUTE}/cred/team/${teamId}/${session?.accessToken}/${session?.user?.email}`,
       {
         method: "GET",
-      }
+      },
     );
     return NextResponse.json({
       success: true,
