@@ -82,7 +82,13 @@ export default function CreateTeamPage() {
 
   // loads in all the repos the user has access to
   useEffect(() => {
-    if (session?.accessToken && session.githubLogin && session.userId) {
+    if (session?.accessToken) {
+      handleFetchGithubRepos();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (session?.accessToken) {
       handleFetchGithubRepos();
     }
   }, [session]);
