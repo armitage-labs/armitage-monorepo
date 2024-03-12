@@ -12,13 +12,12 @@ import { UserScoreRepoDto } from '../types/userScoreRepo.dto';
 import { executeCommand } from '../utils/bashCommand';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from 'src/email/email.service';
-import { IntervalDto } from '../types/interval.dto';
 import { Prisma } from '@prisma/client';
+import * as fs from 'fs';
 
 @Injectable()
 export class SourceCredService {
   private readonly sourceCredPath: string;
-  private readonly sedCommand: string;
   constructor(
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
@@ -26,21 +25,21 @@ export class SourceCredService {
     private readonly emailService: EmailService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
-    this.sedCommand = this.configService.get('SED_COMMAND');
   }
 
   async createContributionRequest(
     teamId: string,
     gitHubToken: string,
-    email: string
+    email: string,
   ): Promise<boolean> {
-    const contributionRequest = await this.prismaService.contributionRequest.create({
-      data: {
-        team_id: teamId,
-        access_token: gitHubToken,
-        email: email,
-      },
-    });
+    const contributionRequest =
+      await this.prismaService.contributionRequest.create({
+        data: {
+          team_id: teamId,
+          access_token: gitHubToken,
+          email: email,
+        },
+      });
     if (contributionRequest) {
       return true;
     }
@@ -50,15 +49,18 @@ export class SourceCredService {
   async calculateCredScores(
     teamId: string,
     gitHubToken: string,
-    email: string
+    email: string,
   ): Promise<UserCredDto[]> {
     const userRegisteredRepos = await this.gitRepoService.getByTeam(teamId);
     const pluginConfigString = this.craftPluginConfigString(
       userRegisteredRepos.map((repo) => repo.full_name),
     );
+    await this.resetSourceCred();
     await this.configureSourcecredGithubPlugin(pluginConfigString);
-    await this.loadSourceCredPlugins(gitHubToken);
+    await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
+    await this.resetSourceCred();
+
     const userCredDtoArray = this.extractUserData(credGrainView);
     await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId, credGrainView);
@@ -91,12 +93,9 @@ export class SourceCredService {
     }
   }
 
-  async loadSourceCredPlugins(gitHubToken: string) {
+  async startSourceCredCalculation(gitHubToken: string) {
     let success = true;
     const cmdList = [
-      `cd ${this.sourceCredPath} && yarn clean-all`,
-      `rm -r ${this.sourceCredPath}/data/ledger.json`,
-      `cd ${this.sourceCredPath} && ${this.sedCommand}`,
       `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
     ];
     for (let i = 0; i < cmdList.length; i++) {
@@ -109,6 +108,26 @@ export class SourceCredService {
       }
     }
     return success;
+  }
+
+  async resetSourceCred() {
+    try {
+      await executeCommand(`cd ${this.sourceCredPath} && yarn clean-all`);
+      await executeCommand(`rm -rf ${this.sourceCredPath}/data/ledger.json`);
+      await this.resetDependencies();
+    } catch (error) {
+      console.error('execute command failed', error);
+    }
+  }
+
+  async resetDependencies() {
+    const filePath = `${this.sourceCredPath}/config/dependencies.json`;
+    const dependenciesJson = fs.readFileSync(filePath, 'utf8').toString();
+    const content: any[] = JSON.parse(dependenciesJson);
+    content.forEach((value) => {
+      delete value.id;
+    });
+    fs.writeFileSync(filePath, JSON.stringify(content, null, 2));
   }
 
   async loadLocalScInstance(): Promise<CredGrainView> {
@@ -128,13 +147,15 @@ export class SourceCredService {
     const participantsArray: ParticipantCredGrain[] = graph.participants();
     const userDataArray: UserCredDto[] = participantsArray.map(
       (participant) => {
-        const credPerInterval: any[] = participant.credPerInterval.map((interval, index) => {
-          return {
-            value: interval,
-            sTime: graph.intervals()[index].startTimeMs,
-            eTime: graph.intervals()[index].endTimeMs,
-          }
-        });
+        const credPerInterval: any[] = participant.credPerInterval.map(
+          (interval, index) => {
+            return {
+              value: interval,
+              sTime: graph.intervals()[index].startTimeMs,
+              eTime: graph.intervals()[index].endTimeMs,
+            };
+          },
+        );
         return UserCredDto.fromJSON({
           totalCred: participant.cred,
           userName: participant.identity.name,
@@ -152,31 +173,36 @@ export class SourceCredService {
   }
 
   async deleteContribution(teamId: string) {
-    const contribution = await this.prismaService.contributionCalculation.findFirst({
-      where: {
-        team_id: teamId,
-      }
-    });
-
+    const contribution =
+      await this.prismaService.contributionCalculation.findFirst({
+        where: {
+          team_id: teamId,
+        },
+      });
 
     if (contribution != null) {
       await this.prismaService.contributionCalculation.deleteMany({
         where: {
-          id : contribution.id
-        }
+          id: contribution.id,
+        },
       });
     }
   }
 
-  async saveContribution(teamId: string, graph: CredGrainView): Promise<ContributionCalculationDto> {
+  async saveContribution(
+    teamId: string,
+    graph: CredGrainView,
+  ): Promise<ContributionCalculationDto> {
     try {
-      const totalCredPerInterval: any[] = graph.totalCredPerInterval().map((interval, index) => {
-        return {
-          value: interval,
-          sTime: graph.intervals()[index].startTimeMs,
-          eTime: graph.intervals()[index].endTimeMs,
-        }
-      });
+      const totalCredPerInterval: any[] = graph
+        .totalCredPerInterval()
+        .map((interval, index) => {
+          return {
+            value: interval,
+            sTime: graph.intervals()[index].startTimeMs,
+            eTime: graph.intervals()[index].endTimeMs,
+          };
+        });
 
       const contribution =
         await this.prismaService.contributionCalculation.create({
@@ -197,16 +223,15 @@ export class SourceCredService {
     userCredDtos: UserCredDto[],
   ) {
     try {
-      for(var i = 0; i < userCredDtos.length; i++) {
-        
-        const userScore = await this.prismaService.userScore.create({ 
-          data : {
-              username: userCredDtos[i].userName,
-              user_type: userCredDtos[i].type,
-              score: userCredDtos[i].totalCred.toString(),
-              score_interval: userCredDtos[i].credPerInterval as Prisma.JsonArray,
-              contribution_calculation_id: contributionCalculationId,
-            }
+      for (var i = 0; i < userCredDtos.length; i++) {
+        const userScore = await this.prismaService.userScore.create({
+          data: {
+            username: userCredDtos[i].userName,
+            user_type: userCredDtos[i].type,
+            score: userCredDtos[i].totalCred.toString(),
+            score_interval: userCredDtos[i].credPerInterval as Prisma.JsonArray,
+            contribution_calculation_id: contributionCalculationId,
+          },
         });
       }
     } catch (error) {
