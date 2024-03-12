@@ -15,7 +15,8 @@ COPY .env /app/.env
 RUN yarn prisma db push
 RUN yarn build
 
-RUN git clone -b backup https://github.com/sudoFerraz/source-cred-instance /instance
+RUN git clone https://github.com/armitage-labs/source-cred-instance /instance
+
 COPY .env /instance/.env
 
 WORKDIR /instance
