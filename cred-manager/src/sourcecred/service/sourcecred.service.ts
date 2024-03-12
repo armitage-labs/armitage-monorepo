@@ -18,7 +18,6 @@ import * as fs from 'fs';
 @Injectable()
 export class SourceCredService {
   private readonly sourceCredPath: string;
-  private readonly sedCommand: string;
   constructor(
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
@@ -26,7 +25,6 @@ export class SourceCredService {
     private readonly emailService: EmailService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
-    this.sedCommand = this.configService.get('SED_COMMAND');
   }
 
   async createContributionRequest(
