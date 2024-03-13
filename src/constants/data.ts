@@ -19,6 +19,12 @@ export const signedInNavItems: NavItem[] = [
     icon: "kanban",
     label: "employee",
   },
+  {
+    title: "Feedback",
+    href: "https://armitage.canny.io/feedback",
+    icon: "help",
+    label: "employee",
+  },
 ];
 
 export const signedOutNavItems: NavItem[] = [
