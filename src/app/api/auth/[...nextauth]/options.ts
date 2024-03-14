@@ -38,8 +38,8 @@ export const options: AuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        // @ts-ignore
-        if (token.exp < (Date.now() / 1000)) {
+        // @ts-expect-error expiry doesn't exist on token type by default, therefore it complains about types
+        if (token.exp < Date.now() / 1000) {
           console.log("token expired");
           session.error = "RefreshAccessTokenError";
           return session;

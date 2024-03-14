@@ -12,7 +12,7 @@ export default async function DashboardLayout({
     <html lang="en">
       <Header />
       <div className="flex h-screen">
-        <SessionRefreshProvider  >
+        <SessionRefreshProvider>
           <Sidebar />
           <main className="w-full pt-16">{children}</main>
         </SessionRefreshProvider>

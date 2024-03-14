@@ -14,7 +14,7 @@ export const SessionRefreshProvider = ({ children }: Props) => {
     if (session?.error) {
       if (session.error === "RefreshAccessTokenError") {
         console.log("Refreshing the access token");
-        signIn("github", { callbackUrl: "/overview" })
+        signIn("github", { callbackUrl: "/overview" });
       }
     }
   }, [session]);
