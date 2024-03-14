@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "./data-table";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
-import { LoadingGithubRepos } from "@/components/loadingGithubRepos";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
@@ -111,7 +110,7 @@ export default function CreateTeamPage() {
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
     }
-  }, [selectedTeam]);
+  }, [selectedTeam, githubRepos]);
 
   return (
     <>
@@ -139,9 +138,14 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                {fetchingRepos ? (
-                  <div>
-                    <LoadingGithubRepos></LoadingGithubRepos>
+                {fetchingRepos && githubRepoColumnData.length < 1 ? (
+                  <div className="flex justify-center items-center pt-36">
+                    <div className="">
+                      <div className="pl-20">
+                        <Circles color="black" />
+                      </div>
+                      <p className="text-center pt-6 pl-6"> Fetching github repositories </p>
+                    </div>
                   </div>
                 ) : (
                   <div>
