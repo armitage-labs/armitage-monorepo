@@ -1,5 +1,4 @@
 import Link from "next/link";
-import ThemeToggle from "../theme/theme-toggle";
 import { UserNav } from "./userNavigation";
 import { Icons } from "../icons";
 
