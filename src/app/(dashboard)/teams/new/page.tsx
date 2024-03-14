@@ -144,7 +144,10 @@ export default function CreateTeamPage() {
                       <div className="pl-20">
                         <Circles color="black" />
                       </div>
-                      <p className="text-center pt-6 pl-6"> Fetching github repositories </p>
+                      <p className="text-center pt-6 pl-6">
+                        {" "}
+                        Fetching github repositories{" "}
+                      </p>
                     </div>
                   </div>
                 ) : (
