@@ -22,8 +22,6 @@ export const options: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, profile }): Promise<JWT> {
-      console.log("token", token);
-      console.log("now:", Date.now() / 1000);
       if (token) {
         if (account) {
           token.accessToken = account.access_token;
