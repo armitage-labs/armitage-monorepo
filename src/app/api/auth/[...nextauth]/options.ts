@@ -22,6 +22,8 @@ export const options: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, account, profile }): Promise<JWT> {
+      console.log("token", token);
+      console.log("now:", Date.now() / 1000);
       if (token) {
         if (account) {
           token.accessToken = account.access_token;
@@ -36,6 +38,12 @@ export const options: AuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
+        // @ts-ignore
+        if (token.exp < (Date.now() / 1000)) {
+          console.log("token expired");
+          session.error = "RefreshAccessTokenError";
+          return session;
+        }
         session.accessToken = token.accessToken?.toString();
         session.githubLogin = token.githubLogin?.toString();
         if (session.user?.email && session.githubLogin) {

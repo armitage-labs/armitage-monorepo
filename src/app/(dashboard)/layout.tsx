@@ -1,6 +1,7 @@
 import "../globals.css";
 import Header from "@/components/navigation/header";
 import Sidebar from "@/components/navigation/sidebar";
+import { SessionRefreshProvider } from "../sessionRefreshProvider";
 
 export default async function DashboardLayout({
   children,
@@ -11,8 +12,10 @@ export default async function DashboardLayout({
     <html lang="en">
       <Header />
       <div className="flex h-screen">
-        <Sidebar />
-        <main className="w-full pt-16">{children}</main>
+        <SessionRefreshProvider  >
+          <Sidebar />
+          <main className="w-full pt-16">{children}</main>
+        </SessionRefreshProvider>
       </div>
     </html>
   );

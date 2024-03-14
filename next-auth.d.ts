@@ -15,5 +15,6 @@ declare module "next-auth" {
     accessToken?: string;
     githubLogin?: string;
     userId?: string;
+    error?: string;
   }
 }
