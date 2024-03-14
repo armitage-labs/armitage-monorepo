@@ -50,6 +50,13 @@ export function UserNav() {
             >
               New Team
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                router.push("/settings");
+              }}
+            >
+              Settings
+            </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => signOut()}>

@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import { TopContributorsDataTable } from "./top-contributors-data-table";
 import { topContributorsColumns } from "./top-contributors-columns";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Icons } from "@/components/icons";
@@ -165,7 +166,21 @@ export default function OverviewPage() {
                 Hi, Welcome back {session?.githubLogin} 👋
               </h2>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 pt-6">
+            <div className="">
+              <Alert>
+                <Icons.gitHub className="mr-2 h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                  If you want to use Armitage with private repos, you can
+                  install the Arimitate GitHub App from the{" "}
+                  <a className="text-link " href={`/settings`}>
+                    Settings
+                  </a>
+                </AlertDescription>
+              </Alert>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
