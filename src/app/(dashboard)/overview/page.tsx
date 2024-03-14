@@ -166,7 +166,7 @@ export default function OverviewPage() {
                 Hi, Welcome back {session?.githubLogin} 👋
               </h2>
             </div>
-            <div className="">
+            <div>
               <Alert>
                 <Icons.gitHub className="mr-2 h-4 w-4" />
                 <AlertTitle>Heads up!</AlertTitle>
