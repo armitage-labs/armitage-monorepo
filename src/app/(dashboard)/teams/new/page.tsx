@@ -25,6 +25,7 @@ const breadcrumbItems = [
 export default function CreateTeamPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchingRepos, setFetchingRepos] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -49,9 +50,13 @@ export default function CreateTeamPage() {
   };
 
   const handleFetchGithubRepos = async () => {
-    const { data } = await axios.get("/api/github/repo");
-    if (data.success) {
-      setGithubRepos(data.gitRepos);
+    if (githubRepos.length < 1 && fetchingRepos === false) {
+      setFetchingRepos(true);
+      const { data } = await axios.get("/api/github/repo");
+      if (data.success && data.gitRepos.length > 0) {
+        setGithubRepos(data.gitRepos);
+        setFetchingRepos(false);
+      }
     }
   };
 
@@ -82,16 +87,8 @@ export default function CreateTeamPage() {
 
   // loads in all the repos the user has access to
   useEffect(() => {
-    if (session?.accessToken) {
-      handleFetchGithubRepos();
-    }
+    handleFetchGithubRepos();
   }, []);
-
-  useEffect(() => {
-    if (session?.accessToken) {
-      handleFetchGithubRepos();
-    }
-  }, [session]);
 
   useEffect(() => {
     if (selectedTeam !== undefined) {
@@ -113,7 +110,7 @@ export default function CreateTeamPage() {
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
     }
-  }, [selectedTeam]);
+  }, [selectedTeam, githubRepos]);
 
   return (
     <>
@@ -141,16 +138,32 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                <DataTable
-                  columns={columns}
-                  data={githubRepoColumnData}
-                ></DataTable>
+                {fetchingRepos && githubRepoColumnData.length < 1 ? (
+                  <div className="flex justify-center items-center pt-36">
+                    <div className="">
+                      <div className="pl-20">
+                        <Circles color="black" />
+                      </div>
+                      <p className="text-center pt-6 pl-6">
+                        {" "}
+                        Fetching github repositories{" "}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <DataTable
+                      columns={columns}
+                      data={githubRepoColumnData}
+                    ></DataTable>
 
-                <div className="flex justify-center">
-                  <Button variant="default" onClick={handleGenerateReport}>
-                    Next Step
-                  </Button>
-                </div>
+                    <div className="flex justify-center">
+                      <Button variant="default" onClick={handleGenerateReport}>
+                        Next Step
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div>
