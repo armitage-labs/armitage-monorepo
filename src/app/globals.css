@@ -85,3 +85,8 @@
     height: 100dvh;
   }
 }
+
+.text-link {
+  text-decoration: underline;
+  color: blue;
+}
