@@ -172,7 +172,7 @@ export default function OverviewPage() {
                 <AlertTitle>Heads up!</AlertTitle>
                 <AlertDescription>
                   If you want to use Armitage with private repos, you can
-                  install the Arimitate GitHub App from the{" "}
+                  install the Armitage GitHub App from the{" "}
                   <a className="text-link " href={`/settings`}>
                     Settings
                   </a>
