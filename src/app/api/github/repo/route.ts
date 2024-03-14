@@ -6,6 +6,7 @@ import { options } from "../../auth/[...nextauth]/options";
 
 export async function GET() {
   const session = await getServerSession(options);
+  console.log(session);
   if (session?.accessToken && session?.githubLogin) {
     const githubRepos = await fetchPaginatedGithubRepoResult(
       session.accessToken,

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "./data-table";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
+import { LoadingGithubRepos } from "@/components/loadingGithubRepos";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
@@ -25,6 +26,7 @@ const breadcrumbItems = [
 export default function CreateTeamPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchingRepos, setFetchingRepos] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -49,9 +51,13 @@ export default function CreateTeamPage() {
   };
 
   const handleFetchGithubRepos = async () => {
-    const { data } = await axios.get("/api/github/repo");
-    if (data.success) {
-      setGithubRepos(data.gitRepos);
+    if (githubRepos.length < 1 && fetchingRepos === false) {
+      setFetchingRepos(true);
+      const { data } = await axios.get("/api/github/repo");
+      if (data.success && data.gitRepos.length > 0) {
+        setGithubRepos(data.gitRepos);
+        setFetchingRepos(false);
+      }
     }
   };
 
@@ -82,16 +88,8 @@ export default function CreateTeamPage() {
 
   // loads in all the repos the user has access to
   useEffect(() => {
-    if (session?.accessToken) {
-      handleFetchGithubRepos();
-    }
+    handleFetchGithubRepos();
   }, []);
-
-  useEffect(() => {
-    if (session?.accessToken) {
-      handleFetchGithubRepos();
-    }
-  }, [session]);
 
   useEffect(() => {
     if (selectedTeam !== undefined) {
@@ -141,16 +139,24 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                <DataTable
-                  columns={columns}
-                  data={githubRepoColumnData}
-                ></DataTable>
+                {fetchingRepos ? (
+                  <div>
+                    <LoadingGithubRepos></LoadingGithubRepos>
+                  </div>
+                ) : (
+                  <div>
+                    <DataTable
+                      columns={columns}
+                      data={githubRepoColumnData}
+                    ></DataTable>
 
-                <div className="flex justify-center">
-                  <Button variant="default" onClick={handleGenerateReport}>
-                    Next Step
-                  </Button>
-                </div>
+                    <div className="flex justify-center">
+                      <Button variant="default" onClick={handleGenerateReport}>
+                        Next Step
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div>
