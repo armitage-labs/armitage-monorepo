@@ -27,11 +27,15 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  page: number;
+  setPage: (page: number) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  page,
+  setPage,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -50,6 +54,23 @@ export function DataTable<TData, TValue>({
       columnFilters,
     },
   });
+
+  function nextPage(page: number) {
+    console.log("Here");
+    setPage(page + 1);
+  }
+
+  function previousPage(page: number) {
+    setPage(page - 1);
+  }
+
+  function canNextPage(): boolean {
+    return true;
+  }
+
+  function canPreviousPage() {
+    return true;
+  }
 
   return (
     <div>
@@ -74,9 +95,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -117,16 +138,16 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => previousPage(page++)}
+          disabled={!canPreviousPage()}
         >
           Previous
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => nextPage(page++)}
+          disabled={!canNextPage()}
         >
           Next
         </Button>

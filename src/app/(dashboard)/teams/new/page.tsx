@@ -25,7 +25,7 @@ const breadcrumbItems = [
 export default function CreateTeamPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [fetchingRepos, setFetchingRepos] = useState(false);
+  // const [fetchingRepos, setFetchingRepos] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -37,6 +37,7 @@ export default function CreateTeamPage() {
   >([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [, setCreatedCalculationRequest] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
   const router = useRouter();
 
   const handleCreateTeam = async () => {
@@ -50,13 +51,21 @@ export default function CreateTeamPage() {
   };
 
   const handleFetchGithubRepos = async () => {
-    if (githubRepos.length < 1 && fetchingRepos === false) {
-      setFetchingRepos(true);
-      const { data } = await axios.get("/api/github/repo");
-      if (data.success && data.gitRepos.length > 0) {
-        setGithubRepos(data.gitRepos);
-        setFetchingRepos(false);
-      }
+    // if (githubRepos.length < 1 && fetchingRepos === false) {
+    //   setFetchingRepos(true);
+    const { data } = await axios.get("/api/github/repo");
+    if (data.success && data.gitRepos.length > 0) {
+      setGithubRepos(data.gitRepos);
+      // setFetchingRepos(false);
+    }
+    // }
+  };
+
+  const handleQueryGithubRepos = async (page: number) => {
+    const { data } = await axios.get(`/api/github/repo?page=${page}`);
+    if (data.success && data.gitRepos.length > 0) {
+      setGithubRepos(data.gitRepos);
+      // setFetchingRepos(false);
     }
   };
 
@@ -107,10 +116,16 @@ export default function CreateTeamPage() {
             registeredRepo.full_name === githubRepoDto.full_name,
         ),
       }));
+      console.log("Data is not being loaded");
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
     }
   }, [selectedTeam, githubRepos]);
+
+  useEffect(() => {
+    console.log("===================");
+    handleQueryGithubRepos(page);
+  }, [page]);
 
   return (
     <>
@@ -138,7 +153,7 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                {fetchingRepos && githubRepoColumnData.length < 1 ? (
+                {/* {fetchingRepos && githubRepoColumnData.length < 1 ? (
                   <div className="flex justify-center items-center pt-36">
                     <div className="">
                       <div className="pl-20">
@@ -150,20 +165,22 @@ export default function CreateTeamPage() {
                       </p>
                     </div>
                   </div>
-                ) : (
-                  <div>
-                    <DataTable
-                      columns={columns}
-                      data={githubRepoColumnData}
-                    ></DataTable>
+                ) : ( */}
+                <div>
+                  <DataTable
+                    columns={columns}
+                    data={githubRepoColumnData}
+                    page={page}
+                    setPage={setPage}
+                  ></DataTable>
 
-                    <div className="flex justify-center">
-                      <Button variant="default" onClick={handleGenerateReport}>
-                        Next Step
-                      </Button>
-                    </div>
+                  <div className="flex justify-center">
+                    <Button variant="default" onClick={handleGenerateReport}>
+                      Next Step
+                    </Button>
                   </div>
-                )}
+                </div>
+                {/* )} */}
               </div>
             ) : (
               <div>
