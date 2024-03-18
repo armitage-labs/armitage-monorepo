@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const githubRepos = await fetchPaginatedGithubRepoResult(
       session.accessToken,
       Number(page || "1"),
-      Number(perPage || "10")
+      Number(perPage || "10"),
     );
     return NextResponse.json({ success: true, gitRepos: githubRepos });
   }
