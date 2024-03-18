@@ -65,11 +65,13 @@ export function DataTable<TData, TValue>({
   }
 
   function canNextPage(): boolean {
-    return true;
+    console.log(data.length);
+    console.log(data.length >= 10);
+    return data.length <= 10;
   }
 
   function canPreviousPage() {
-    return true;
+    return page > 1;
   }
 
   return (
@@ -138,7 +140,7 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => previousPage(page++)}
+          onClick={() => previousPage(page)}
           disabled={!canPreviousPage()}
         >
           Previous
@@ -146,7 +148,7 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => nextPage(page++)}
+          onClick={() => nextPage(page)}
           disabled={!canNextPage()}
         >
           Next
