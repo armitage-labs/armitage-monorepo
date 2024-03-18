@@ -114,12 +114,6 @@ export default function CreateTeamPage() {
   }, [selectedTeam, githubRepos]);
 
   useEffect(() => {
-    console.log("HERE###");
-    console.log(canNext);
-    console.log(canPrevious);
-  }, [canNext, canPrevious]);
-
-  useEffect(() => {
     handleQueryGithubRepos(page);
   }, [page]);
 
