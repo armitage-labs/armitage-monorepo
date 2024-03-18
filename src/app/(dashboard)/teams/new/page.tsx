@@ -113,7 +113,6 @@ export default function CreateTeamPage() {
     }
   }, [selectedTeam, githubRepos]);
 
-
   useEffect(() => {
     console.log("HERE###");
     console.log(canNext);
