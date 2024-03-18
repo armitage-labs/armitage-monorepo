@@ -84,15 +84,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "created_at",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Created At
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <div>Created At</div>;
     },
     cell: ({ row }) => {
       return (
@@ -105,15 +97,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "stars",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Stars
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <div>Stars</div>;
     },
     cell: ({ row }) => {
       return <div className="text-center">{row.getValue("stars")}</div>;
@@ -122,15 +106,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "forks",
     header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Forks
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+      return <div>Forks</div>;
     },
     cell: ({ row }) => {
       return <div className="text-center">{row.getValue("forks")}</div>;
@@ -139,33 +115,5 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "owner",
     header: "Owner",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const githubRepo = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(githubRepo.html_url)}
-            >
-              Copy repo URL
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View repository details</DropdownMenuItem>
-            <DropdownMenuItem>Calculate contributions</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
   },
 ];

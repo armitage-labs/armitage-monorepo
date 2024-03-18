@@ -38,17 +38,10 @@ export function DataTable<TData, TValue>({
   canGoNext,
   canGoPrevious,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    state: {
-      sorting,
-      columnFilters,
-    },
   });
 
   function nextPage(page: number) {
@@ -61,7 +54,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      {/* <div className="flex items-center py-2">
+      {/* <div className="flex items-center py-2"> we ll bring this back in new feature
         <Input
           placeholder="Filter name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
