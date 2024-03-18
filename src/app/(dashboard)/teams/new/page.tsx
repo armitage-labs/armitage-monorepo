@@ -97,7 +97,6 @@ export default function CreateTeamPage() {
   };
 
   function canNextPage(): boolean {
-    console.log(githubRepoColumnData.length);
     return githubRepoColumnData.length < 10;
   }
 
@@ -129,7 +128,6 @@ export default function CreateTeamPage() {
       }));
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
-      console.log(`Can go next:${canNextPage()}`);
       setCanNext(canNextPage());
       setCanPrevious(canPreviousPage());
     }
@@ -165,19 +163,6 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                {/* {fetchingRepos && githubRepoColumnData.length < 1 ? (
-                  <div className="flex justify-center items-center pt-36">
-                    <div className="">
-                      <div className="pl-20">
-                        <Circles color="black" />
-                      </div>
-                      <p className="text-center pt-6 pl-6">
-                        {" "}
-                        Fetching github repositories{" "}
-                      </p>
-                    </div>
-                  </div>
-                ) : ( */}
                 <div>
                   <DataTable
                     columns={columns}
@@ -194,7 +179,6 @@ export default function CreateTeamPage() {
                     </Button>
                   </div>
                 </div>
-                {/* )} */}
               </div>
             ) : (
               <div>
