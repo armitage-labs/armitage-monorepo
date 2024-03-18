@@ -25,6 +25,7 @@ const breadcrumbItems = [
 export default function CreateTeamPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchingRepos, setFetchingRepos] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -36,9 +37,6 @@ export default function CreateTeamPage() {
   >([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [, setCreatedCalculationRequest] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
-  const [canNext, setCanNext] = useState<boolean>(false);
-  const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const router = useRouter();
 
   const handleCreateTeam = async () => {
@@ -52,16 +50,13 @@ export default function CreateTeamPage() {
   };
 
   const handleFetchGithubRepos = async () => {
-    const { data } = await axios.get("/api/github/repo");
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
-    }
-  };
-
-  const handleQueryGithubRepos = async (page: number) => {
-    const { data } = await axios.get(`/api/github/repo?page=${page}`);
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
+    if (githubRepos.length < 1 && fetchingRepos === false) {
+      setFetchingRepos(true);
+      const { data } = await axios.get("/api/github/repo");
+      if (data.success && data.gitRepos.length > 0) {
+        setGithubRepos(data.gitRepos);
+        setFetchingRepos(false);
+      }
     }
   };
 
@@ -90,14 +85,6 @@ export default function CreateTeamPage() {
     }
   };
 
-  function canNextPage(): boolean {
-    return githubRepoColumnData.length < 10;
-  }
-
-  function canPreviousPage(): boolean {
-    return page > 1;
-  }
-
   // loads in all the repos the user has access to
   useEffect(() => {
     handleFetchGithubRepos();
@@ -122,14 +109,8 @@ export default function CreateTeamPage() {
       }));
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
-      setCanNext(canNextPage());
-      setCanPrevious(canPreviousPage());
     }
   }, [selectedTeam, githubRepos]);
-
-  useEffect(() => {
-    handleQueryGithubRepos(page);
-  }, [page]);
 
   return (
     <>
@@ -157,22 +138,32 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                <div>
-                  <DataTable
-                    columns={columns}
-                    data={githubRepoColumnData}
-                    page={page}
-                    setPage={setPage}
-                    canGoNext={canNext}
-                    canGoPrevious={canPrevious}
-                  ></DataTable>
-
-                  <div className="flex justify-center">
-                    <Button variant="default" onClick={handleGenerateReport}>
-                      Next Step
-                    </Button>
+                {fetchingRepos && githubRepoColumnData.length < 1 ? (
+                  <div className="flex justify-center items-center pt-36">
+                    <div className="">
+                      <div className="pl-20">
+                        <Circles color="black" />
+                      </div>
+                      <p className="text-center pt-6 pl-6">
+                        {" "}
+                        Fetching github repositories{" "}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <DataTable
+                      columns={columns}
+                      data={githubRepoColumnData}
+                    ></DataTable>
+
+                    <div className="flex justify-center">
+                      <Button variant="default" onClick={handleGenerateReport}>
+                        Next Step
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div>

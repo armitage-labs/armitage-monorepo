@@ -4,15 +4,11 @@ import { fetchPaginatedGithubRepoResult } from "./fetchRepositories";
 import { getServerSession } from "next-auth";
 import { options } from "../../auth/[...nextauth]/options";
 
-export async function GET(req: NextRequest) {
-  const page = req.nextUrl.searchParams.get("page");
-  const perPage = req.nextUrl.searchParams.get("per_page");
+export async function GET() {
   const session = await getServerSession(options);
   if (session?.accessToken && session?.githubLogin) {
     const githubRepos = await fetchPaginatedGithubRepoResult(
       session.accessToken,
-      Number(page || "1"),
-      Number(perPage || "10"),
     );
     return NextResponse.json({ success: true, gitRepos: githubRepos });
   }
