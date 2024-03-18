@@ -3,7 +3,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import BreadCrumb from "@/components/breadcrumbs";
-import { useSession } from "next-auth/react";
 import { CreateTeamStepper } from "@/components/createTeamSteps";
 import { CreateTeamCard } from "@/components/teams/createTeam";
 import { Heading } from "@/components/ui/heading";
@@ -23,7 +22,6 @@ const breadcrumbItems = [
   { title: "Create", link: "/teams/create" },
 ];
 export default function CreateTeamPage() {
-  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
@@ -51,14 +49,7 @@ export default function CreateTeamPage() {
     }
   };
 
-  const handleFetchGithubRepos = async () => {
-    const { data } = await axios.get("/api/github/repo");
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
-    }
-  };
-
-  const handleQueryGithubRepos = async (page: number) => {
+  const handleQueryGithubRepos = async (page: number = 1) => {
     const { data } = await axios.get(`/api/github/repo?page=${page}`);
     if (data.success && data.gitRepos.length > 0) {
       setGithubRepos(data.gitRepos);
@@ -90,17 +81,14 @@ export default function CreateTeamPage() {
     }
   };
 
-  function canNextPage(): boolean {
-    return githubRepoColumnData.length < 10;
-  }
-
-  function canPreviousPage(): boolean {
-    return page > 1;
-  }
+  useEffect(() => {
+    setCanNext(githubRepoColumnData.length === 10);
+    setCanPrevious(page > 1);
+  }, [githubRepoColumnData, page]);
 
   // loads in all the repos the user has access to
   useEffect(() => {
-    handleFetchGithubRepos();
+    handleQueryGithubRepos(page);
   }, []);
 
   useEffect(() => {
@@ -122,10 +110,15 @@ export default function CreateTeamPage() {
       }));
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
-      setCanNext(canNextPage());
-      setCanPrevious(canPreviousPage());
     }
   }, [selectedTeam, githubRepos]);
+
+
+  useEffect(() => {
+    console.log("HERE###");
+    console.log(canNext);
+    console.log(canPrevious);
+  }, [canNext, canPrevious]);
 
   useEffect(() => {
     handleQueryGithubRepos(page);
@@ -157,7 +150,7 @@ export default function CreateTeamPage() {
               </div>
             ) : currentStep === 1 ? (
               <div>
-                <div>
+                <div className="pt-6">
                   <DataTable
                     columns={columns}
                     data={githubRepoColumnData}

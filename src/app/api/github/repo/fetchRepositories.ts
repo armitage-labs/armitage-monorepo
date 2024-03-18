@@ -5,9 +5,6 @@ export async function fetchPaginatedGithubRepoResult(
   page: number,
   per_page: number,
 ): Promise<GithubRepoDto[]> {
-  console.log(
-    `https://api.github.com/user/repos?page=${page}&per_page=${per_page}&sort=updated`,
-  );
   const fetchGithubReposRequest = await fetch(
     `https://api.github.com/user/repos?page=${page}&per_page=${per_page}&sort=updated`,
     {
@@ -21,6 +18,5 @@ export async function fetchPaginatedGithubRepoResult(
   );
   const fetchedGithubRepos = await fetchGithubReposRequest.text();
   const parsedGithubRepos = JSON.parse(fetchedGithubRepos) as GithubRepoDto[];
-  console.log(parsedGithubRepos.length);
   return parsedGithubRepos;
 }

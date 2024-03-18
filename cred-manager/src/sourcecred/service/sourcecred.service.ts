@@ -139,7 +139,6 @@ export class SourceCredService {
 
   extractUserData(graph: CredGrainView): UserCredDto[] {
     const userDataArray = this.processUserData(graph);
-    console.log(userDataArray.slice(0, 5));
     return this.orderUserByCred(userDataArray);
   }
 
