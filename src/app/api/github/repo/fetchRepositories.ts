@@ -21,6 +21,5 @@ export async function fetchPaginatedGithubRepoResult(
   );
   const fetchedGithubRepos = await fetchGithubReposRequest.text();
   const parsedGithubRepos = JSON.parse(fetchedGithubRepos) as GithubRepoDto[];
-  console.log(parsedGithubRepos.length);
   return parsedGithubRepos;
 }
