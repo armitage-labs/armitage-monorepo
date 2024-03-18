@@ -6,9 +6,6 @@ import {
   SortingState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
@@ -29,6 +26,8 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   page: number;
   setPage: (page: number) => void;
+  canGoNext: boolean;
+  canGoPrevious: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -36,6 +35,8 @@ export function DataTable<TData, TValue>({
   data,
   page,
   setPage,
+  canGoNext,
+  canGoPrevious,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -44,11 +45,6 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       columnFilters,
@@ -56,7 +52,6 @@ export function DataTable<TData, TValue>({
   });
 
   function nextPage(page: number) {
-    console.log("Here");
     setPage(page + 1);
   }
 
@@ -64,19 +59,9 @@ export function DataTable<TData, TValue>({
     setPage(page - 1);
   }
 
-  function canNextPage(): boolean {
-    console.log(data.length);
-    console.log(data.length >= 10);
-    return data.length <= 10;
-  }
-
-  function canPreviousPage() {
-    return page > 1;
-  }
-
   return (
     <div>
-      <div className="flex items-center py-2">
+      {/* <div className="flex items-center py-2">
         <Input
           placeholder="Filter name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -85,7 +70,7 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-      </div>
+      </div> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -141,7 +126,7 @@ export function DataTable<TData, TValue>({
           variant="outline"
           size="sm"
           onClick={() => previousPage(page)}
-          disabled={!canPreviousPage()}
+          disabled={!canGoPrevious}
         >
           Previous
         </Button>
@@ -149,7 +134,7 @@ export function DataTable<TData, TValue>({
           variant="outline"
           size="sm"
           onClick={() => nextPage(page)}
-          disabled={!canNextPage()}
+          disabled={!canGoNext}
         >
           Next
         </Button>

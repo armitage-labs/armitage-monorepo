@@ -38,6 +38,8 @@ export default function CreateTeamPage() {
   const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [, setCreatedCalculationRequest] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [canNext, setCanNext] = useState<boolean>(false);
+  const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const router = useRouter();
 
   const handleCreateTeam = async () => {
@@ -94,6 +96,15 @@ export default function CreateTeamPage() {
     }
   };
 
+  function canNextPage(): boolean {
+    console.log(githubRepoColumnData.length);
+    return githubRepoColumnData.length < 10;
+  }
+
+  function canPreviousPage(): boolean {
+    return page > 1;
+  }
+
   // loads in all the repos the user has access to
   useEffect(() => {
     handleFetchGithubRepos();
@@ -116,14 +127,15 @@ export default function CreateTeamPage() {
             registeredRepo.full_name === githubRepoDto.full_name,
         ),
       }));
-      console.log("Data is not being loaded");
       setGithubRepoColumnData(columnData);
       handleFetchRegisteredRepos();
+      console.log(`Can go next:${canNextPage()}`);
+      setCanNext(canNextPage());
+      setCanPrevious(canPreviousPage());
     }
   }, [selectedTeam, githubRepos]);
 
   useEffect(() => {
-    console.log("===================");
     handleQueryGithubRepos(page);
   }, [page]);
 
@@ -172,6 +184,8 @@ export default function CreateTeamPage() {
                     data={githubRepoColumnData}
                     page={page}
                     setPage={setPage}
+                    canGoNext={canNext}
+                    canGoPrevious={canPrevious}
                   ></DataTable>
 
                   <div className="flex justify-center">
