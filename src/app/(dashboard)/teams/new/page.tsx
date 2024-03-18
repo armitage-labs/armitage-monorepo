@@ -25,7 +25,6 @@ const breadcrumbItems = [
 export default function CreateTeamPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  // const [fetchingRepos, setFetchingRepos] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -53,21 +52,16 @@ export default function CreateTeamPage() {
   };
 
   const handleFetchGithubRepos = async () => {
-    // if (githubRepos.length < 1 && fetchingRepos === false) {
-    //   setFetchingRepos(true);
     const { data } = await axios.get("/api/github/repo");
     if (data.success && data.gitRepos.length > 0) {
       setGithubRepos(data.gitRepos);
-      // setFetchingRepos(false);
     }
-    // }
   };
 
   const handleQueryGithubRepos = async (page: number) => {
     const { data } = await axios.get(`/api/github/repo?page=${page}`);
     if (data.success && data.gitRepos.length > 0) {
       setGithubRepos(data.gitRepos);
-      // setFetchingRepos(false);
     }
   };
 
