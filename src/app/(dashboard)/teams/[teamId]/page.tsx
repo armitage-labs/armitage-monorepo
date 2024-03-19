@@ -10,10 +10,10 @@ import { Separator } from "@/components/ui/separator";
 import { Team, ContributionCalculation } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { CalculationIntervalChart } from "./calculationIntervalChart";
+import { TeamInsights } from "./teamInsights";
 import {
   Card,
   CardContent,
@@ -176,58 +176,7 @@ export default function Page({ params }: PageProps) {
               </div>
             ) : (
               <div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Total team CRED
-                      </CardTitle>
-                      <Icons.pizza></Icons.pizza>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {overview?.totalScore.toFixed(2)}
-                      </div>
-                      <p className="pt-1 text-xs text-muted-foreground">
-                        Total CRED earned for team
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Team CRED earned this week
-                      </CardTitle>
-                      <Icons.pizza></Icons.pizza>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {overview?.weekScore.toFixed(2)}
-                      </div>
-                      <p className="pt-1 text-xs text-muted-foreground">
-                        +{overview?.weekGrowth.toFixed(2)}% from last week
-                      </p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Total contributors
-                      </CardTitle>
-                      <Icons.pizza></Icons.pizza>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">
-                        {overview?.totalContributors}
-                      </div>
-                      <p className="pt-1 text-xs text-muted-foreground">
-                        All contributors on all your teams
-                      </p>
-                    </CardContent>
-                  </Card>
-                </div>
+                <TeamInsights overview={overview}></TeamInsights>
 
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">

@@ -5,9 +5,8 @@ export type TeamContributorDto = {
   contributionScore: number;
 };
 
-export async function fetchTeamContributors(
+export async function fetchTeamContributorsByUserId(
   userId: string,
-  teamId: string,
 ): Promise<TeamContributorDto[]> {
   const foundTeamContributors = await prisma.userScore.findMany({
     where: {
@@ -28,28 +27,9 @@ export async function fetchTeamContributors(
   return teamContributorDto;
 }
 
-export async function fetchTeamScoreSum(teamId: string): Promise<number> {
-  const foundTeamContributors = await prisma.userScore.findMany({
-    where: {
-      user_type: "USER",
-      contribution_calculation: {
-        Team: {
-          id: teamId,
-        },
-      },
-    },
-  });
-
-  let score = 0;
-  foundTeamContributors.forEach((foundTeamContributor) => {
-    score += Number(foundTeamContributor.score);
-  });
-  return score;
-}
-
-export async function fetchTeamContributorsSum(
+export async function fetchTeamContributorsByTeamId(
   teamId: string,
-): Promise<number> {
+): Promise<TeamContributorDto[]> {
   const foundTeamContributors = await prisma.userScore.findMany({
     where: {
       user_type: "USER",
@@ -60,5 +40,12 @@ export async function fetchTeamContributorsSum(
       },
     },
   });
-  return foundTeamContributors.length;
+
+  const teamContributorDto = foundTeamContributors.map((contributor) => {
+    return {
+      userName: contributor.username,
+      contributionScore: parseFloat(contributor.score),
+    } as TeamContributorDto;
+  });
+  return teamContributorDto;
 }
