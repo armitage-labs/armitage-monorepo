@@ -25,11 +25,15 @@ export const options: AuthOptions = {
       if (token) {
         if (account) {
           token.accessToken = account.access_token;
+          token.expires_at = account.expires_at;
+          token.refresh_token = account.refresh_token;
+          token.refresh_token_expires_in = account.refresh_token_expires_in;
           token.id = account.id;
         }
         if (profile) {
           token.githubLogin = transformProfile(profile)?.login;
         }
+        console.log(token);
         return token;
       }
       return {};
@@ -37,13 +41,14 @@ export const options: AuthOptions = {
     async session({ session, token }) {
       if (token) {
         // @ts-expect-error expiry doesn't exist on token type by default, therefore it complains about types
-        if (token.exp < Date.now() / 1000) {
-          console.log("token expired");
+        if (token.expires_at < Date.now() / 1000 || token.error) {
           session.error = "RefreshAccessTokenError";
           return session;
         }
-        session.accessToken = token.accessToken?.toString();
-        session.githubLogin = token.githubLogin?.toString();
+        if (!(session.accessToken && session.githubLogin)) {
+          session.accessToken = token.accessToken?.toString();
+          session.githubLogin = token.githubLogin?.toString();
+        }
         if (session.user?.email && session.githubLogin) {
           session.userId = await synchronizeUser(
             session.user?.email,
