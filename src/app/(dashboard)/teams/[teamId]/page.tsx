@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Team, ContributionCalculation } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { CalculationIntervalChart } from "./calculationIntervalChart";

@@ -1,29 +1,33 @@
-import { NextRequest, NextResponse } from "next/server";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
-import { fetchTeamContributorsByTeamId } from "../../contributors/team/fetchTeamContributors";
-import { fetchUserContributorsIntervalByTeam } from "../../contributors/fetchUserContributors";
+import { NextRequest, NextResponse } from "next/server";
+import { fetchUserContributorsInterval } from "../contributors/fetchUserContributors";
+import { fetchTeamContributorsByUserId } from "../contributors/team/fetchTeamContributors";
 import {
   calculatePercentageDifference,
   getIntervalForDate,
   mergeIntervals,
+  numberUniqueContributors,
   sumScore,
-} from "../../utils/utils";
+} from "../utils/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
-  const teamId = req.nextUrl.searchParams.get("team_id");
+  if (session?.userId) {
+    const userContributors = await fetchUserContributorsInterval(
+      session?.userId,
+    );
 
-  if (session?.userId && teamId) {
-    const userContributors = await fetchUserContributorsIntervalByTeam(teamId);
-    const teamContributors = await fetchTeamContributorsByTeamId(teamId);
+    const allTeamsContributors = await fetchTeamContributorsByUserId(
+      session.userId,
+    );
+    const uniqueContributors = numberUniqueContributors(userContributors);
+    const scoreInterval = mergeIntervals(userContributors);
+    const totalScore = sumScore(allTeamsContributors);
 
     const thisWeekDate = new Date();
     const lastWeekDate = new Date();
-    const numberOfContributors = teamContributors.length;
-    const totalScore = sumScore(teamContributors);
     lastWeekDate.setDate(lastWeekDate.getDate() - 7);
-    const scoreInterval = mergeIntervals(userContributors);
     const weekScore = getIntervalForDate(thisWeekDate, scoreInterval);
     const lastWeek = getIntervalForDate(lastWeekDate, scoreInterval);
 
@@ -31,7 +35,7 @@ export async function GET(req: NextRequest) {
       success: true,
       overview: {
         interval: scoreInterval,
-        totalContributors: numberOfContributors,
+        totalContributors: uniqueContributors,
         totalScore: totalScore,
         wowScore: calculatePercentageDifference(lastWeek, weekScore),
         weekScore: weekScore,
@@ -42,9 +46,6 @@ export async function GET(req: NextRequest) {
   } else {
     return NextResponse.json({
       success: false,
-      overview: {
-        interval: [],
-      },
     });
   }
 }

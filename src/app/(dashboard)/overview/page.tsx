@@ -11,27 +11,25 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Icons } from "@/components/icons";
-import { RegisteredGitRepo } from "@/app/api/github/repo/all/fetchAllUserRepos";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { toast } from "sonner";
+import { OverviewDto } from "@/app/api/teams/types/overview.dto";
+import { DashboardInsights } from "@/components/overview/dashboardInsights";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [contributors, setContributors] = useState<ContributorDto[]>([]);
   const [topContributors, setTopContributors] = useState<ContributorDto[]>([]);
-  const [credSum, setCredSum] = useState<number>(0);
-  const [userRepos, setUserRepos] = useState<RegisteredGitRepo[]>([]);
   const [hasSeenProductTour, setHasSeenProductTour] = useState(true);
+  const [overview, setOverview] = useState<OverviewDto>();
 
   useEffect(() => {
     if (session?.githubLogin) {
       setIsLoading(false);
       handleFetchContributors();
-      handleFetchCredSum();
-      handleFetchUserRepos();
       handleFetchProductTour();
+      handleFetchOverview();
     }
   }, [session]);
 
@@ -42,17 +40,10 @@ export default function OverviewPage() {
     }
   };
 
-  const handleFetchCredSum = async () => {
-    const { data } = await axios.get("/api/cred/sum");
+  const handleFetchOverview = async () => {
+    const { data } = await axios.get("/api/overview");
     if (data.success) {
-      setCredSum(data.credSum);
-    }
-  };
-
-  const handleFetchUserRepos = async () => {
-    const { data } = await axios.get("/api/github/repo/all");
-    if (data.success) {
-      setUserRepos(data.registeredRepos);
+      setOverview(data.overview);
     }
   };
 
@@ -62,7 +53,6 @@ export default function OverviewPage() {
       const rankedContributors = data.contributors.sort(
         compareByContributionScore,
       );
-      setContributors(rankedContributors);
       if (data.contributors.length > 3) {
         setTopContributors(rankedContributors.slice(0, 3));
       } else {
@@ -180,57 +170,8 @@ export default function OverviewPage() {
               </Alert>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total contributors
-                  </CardTitle>
-                  <Icons.users></Icons.users>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">
-                    {contributors.length}
-                  </div>
-                  <p className="pt-1 text-xs text-muted-foreground">
-                    {/* +15% from last month */}
-                    All contributors on all your teams
-                  </p>
-                </CardContent>
-              </Card>
+            <DashboardInsights overview={overview}></DashboardInsights>
 
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total CRED earned
-                  </CardTitle>
-                  <Icons.pizza></Icons.pizza>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{credSum.toFixed(2)}</div>
-                  <p className="pt-1 text-xs text-muted-foreground">
-                    {/* +8% from last week */}
-                    All CRED earned on all your teams
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total repositories
-                  </CardTitle>
-                  <Icons.gitBranch></Icons.gitBranch>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{userRepos.length}</div>
-                  <p className="pt-1 text-xs text-muted-foreground">
-                    {/* +8% from last week */}
-                    All Github Repositories registered on all teams
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
               <Card className="col-span-7">
                 <CardHeader>
