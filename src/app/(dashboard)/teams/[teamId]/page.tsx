@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { CalculationIntervalChart } from "./calculationIntervalChart";
+import { TeamInsights } from "./teamInsights";
 import {
   Card,
   CardContent,
@@ -25,6 +26,7 @@ import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 
 interface PageProps {
   params: { teamId: string };
@@ -46,6 +48,7 @@ export default function Page({ params }: PageProps) {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [team, setTeam] = useState<Team>();
+  const [overview, setOverview] = useState<OverviewDto>();
   const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
   const [registeredGitRepos, setRegisteredGitRepos] = useState([]);
   const [userTooltipDto, setUserTooltipDto] = useState<UserTooltipDto[]>([]);
@@ -63,6 +66,7 @@ export default function Page({ params }: PageProps) {
       handleFetchRegisteredRepos();
       handleFetchContributionRequest();
       handleFetchContributionCalculation();
+      handleFetchTeamOverview();
     }
   }, [session]);
 
@@ -103,6 +107,13 @@ export default function Page({ params }: PageProps) {
     const { data } = await axios.get("/api/teams?team_id=" + teamId);
     if (data.success) {
       setTeam(data.userTeams[0]);
+    }
+  };
+
+  const handleFetchTeamOverview = async () => {
+    const { data } = await axios.get("/api/teams/overview?team_id=" + teamId);
+    if (data.success) {
+      setOverview(data.overview);
     }
   };
 
@@ -165,7 +176,9 @@ export default function Page({ params }: PageProps) {
               </div>
             ) : (
               <div>
-                <div className="pt-6 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                <TeamInsights overview={overview}></TeamInsights>
+
+                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
                     <CalculationIntervalChart
                       intervals={
@@ -174,7 +187,8 @@ export default function Page({ params }: PageProps) {
                     ></CalculationIntervalChart>
                   </div>
                 </div>
-                <div className="pt-16 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+
+                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <Card className="col-span-1 md:col-span-1">
                     <CardHeader>
                       <CardTitle>Github Repositories</CardTitle>

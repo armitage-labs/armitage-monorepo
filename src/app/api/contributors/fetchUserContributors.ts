@@ -46,6 +46,52 @@ export async function fetchUserContributors(
   }
 }
 
+export async function fetchUserContributorsInterval(
+  userId: string,
+): Promise<any[]> {
+  try {
+    // fetch userScores where calculation is part of a team
+    // which the owner is the userId
+    const foundUserScores = await prisma.userScore.findMany({
+      where: {
+        user_type: "USER",
+        contribution_calculation: {
+          Team: {
+            owner_user_id: userId,
+          },
+        },
+      },
+    });
+    return foundUserScores;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+export async function fetchUserContributorsIntervalByTeam(
+  teamId: string,
+): Promise<any[]> {
+  try {
+    // fetch userScores where calculation is part of a team
+    // which the owner is the userId
+    const foundUserScores = await prisma.userScore.findMany({
+      where: {
+        user_type: "USER",
+        contribution_calculation: {
+          Team: {
+            id: teamId,
+          },
+        },
+      },
+    });
+    return foundUserScores;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
 // export async function mergeContributorDtoWithTeams():
 
 function transformUserScoresToContributors(
