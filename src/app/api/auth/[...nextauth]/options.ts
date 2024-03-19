@@ -33,7 +33,6 @@ export const options: AuthOptions = {
         if (profile) {
           token.githubLogin = transformProfile(profile)?.login;
         }
-        console.log(token);
         return token;
       }
       return {};
