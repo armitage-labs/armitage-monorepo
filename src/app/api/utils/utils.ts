@@ -13,8 +13,8 @@ export function getIntervalForDate(date: Date, scoreInterval: any[]) {
 
 export function mergeIntervals(userContributors: any[]): any[] {
   const map = new Map();
-  userContributors.forEach((userContributor) => {
-    userContributor.score_interval.forEach((interval: any) => {
+  userContributors?.forEach((userContributor) => {
+    userContributor.score_interval?.forEach((interval: any) => {
       const intervalRow = map.get(interval.eTime);
       if (intervalRow) {
         intervalRow.value = intervalRow.value + interval.value;
@@ -42,7 +42,7 @@ export function calculatePercentageDifference(
 
 export function sumScore(teamContributors: TeamContributorDto[]) {
   let score = 0;
-  teamContributors.forEach((teamContributor) => {
+  teamContributors?.forEach((teamContributor) => {
     score += Number(teamContributor.contributionScore);
   });
   return score;
