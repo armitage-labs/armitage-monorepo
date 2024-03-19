@@ -8,7 +8,7 @@ import {
   getIntervalForDate,
   mergeIntervals,
   sumScore,
-} from "../../until/untils";
+} from "../../utils/utils";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);

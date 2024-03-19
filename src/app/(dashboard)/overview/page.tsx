@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSession } from "next-auth/react";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import { TopContributorsDataTable } from "./top-contributors-data-table";
-import { DashboardInsights } from "./dashboardInsights";
 import { topContributorsColumns } from "./top-contributors-columns";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
@@ -16,11 +15,11 @@ import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { toast } from "sonner";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
+import { DashboardInsights } from "@/components/overview/dashboardInsights";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const [contributors, setContributors] = useState<ContributorDto[]>([]);
   const [topContributors, setTopContributors] = useState<ContributorDto[]>([]);
   const [hasSeenProductTour, setHasSeenProductTour] = useState(true);
   const [overview, setOverview] = useState<OverviewDto>();
@@ -54,7 +53,6 @@ export default function OverviewPage() {
       const rankedContributors = data.contributors.sort(
         compareByContributionScore,
       );
-      setContributors(rankedContributors);
       if (data.contributors.length > 3) {
         setTopContributors(rankedContributors.slice(0, 3));
       } else {
