@@ -15,11 +15,11 @@ export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
   if (session?.userId) {
     const userContributors = await fetchUserContributorsInterval(
-      session?.userId
+      session?.userId,
     );
 
     const allTeamsContributors = await fetchTeamContributorsByUserId(
-      session.userId
+      session.userId,
     );
     const uniqueContributors = numberUniqueContributors(userContributors);
     const scoreInterval = mergeIntervals(userContributors);

@@ -29,7 +29,7 @@ export function mergeIntervals(userContributors: any[]): any[] {
 
 export function calculatePercentageDifference(
   value1: number,
-  value2: number
+  value2: number,
 ): number {
   if (value1 == value2) {
     return 0;
