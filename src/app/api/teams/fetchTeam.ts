@@ -24,3 +24,12 @@ export async function fetchUserTeam(
     return [];
   }
 }
+
+export async function fetchTeam(teamId: string): Promise<Team> {
+  const foundUserTeam = await prisma.team.findFirst({
+    where: {
+      id: teamId,
+    },
+  });
+  return foundUserTeam as Team;
+}
