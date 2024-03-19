@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
-import {
-  TeamContributorDto,
-  fetchTeamContributorsByTeamId,
-} from "../../contributors/team/fetchTeamContributors";
+import { fetchTeamContributorsByTeamId } from "../../contributors/team/fetchTeamContributors";
 import { fetchUserContributorsIntervalByTeam } from "../../contributors/fetchUserContributors";
+import {
+  calculatePercentageDifference,
+  getIntervalForDate,
+  mergeIntervals,
+  sumScore,
+} from "../../until/untils";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
@@ -44,45 +47,4 @@ export async function GET(req: NextRequest) {
       },
     });
   }
-}
-
-function getIntervalForDate(date: Date, scoreInterval: any[]) {
-  for (const interval of scoreInterval) {
-    const startDate = new Date(interval.sTime);
-    const endDate = new Date(interval.eTime);
-    if (startDate < date && endDate > date) {
-      return interval.value;
-    }
-  }
-  return 0;
-}
-
-function mergeIntervals(userContributors: any[]): any[] {
-  const map = new Map();
-  userContributors.forEach((userContributor) => {
-    userContributor.score_interval.forEach((interval: any) => {
-      const intervalRow = map.get(interval.eTime);
-      if (intervalRow) {
-        intervalRow.value = intervalRow.value + interval.value;
-        map.set(interval.eTime, intervalRow);
-      } else {
-        map.set(interval.eTime, interval);
-      }
-    });
-  });
-  return Array.from(map.values());
-}
-
-function calculatePercentageDifference(value1: number, value2: number): number {
-  const difference: number = value2 - value1;
-  const percentageDifference: number = (difference / value1) * 100;
-  return percentageDifference;
-}
-
-function sumScore(teamContributors: TeamContributorDto[]) {
-  let score = 0;
-  teamContributors.forEach((teamContributor) => {
-    score += Number(teamContributor.contributionScore);
-  });
-  return score;
 }

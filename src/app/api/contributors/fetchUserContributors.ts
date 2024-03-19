@@ -19,7 +19,7 @@ export type UserScoreDto = {
   username: string;
   user_type: string;
   score: string;
-  score_interval: any[];
+  score_interval: any;
   created_at: Date;
 };
 
