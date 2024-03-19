@@ -15,6 +15,7 @@ import { RegisteredGitRepo } from "@/app/api/github/repo/all/fetchAllUserRepos";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { toast } from "sonner";
+import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
@@ -24,6 +25,7 @@ export default function OverviewPage() {
   const [credSum, setCredSum] = useState<number>(0);
   const [userRepos, setUserRepos] = useState<RegisteredGitRepo[]>([]);
   const [hasSeenProductTour, setHasSeenProductTour] = useState(true);
+  const [overview, setOverview] = useState<OverviewDto>();
 
   useEffect(() => {
     if (session?.githubLogin) {
@@ -32,6 +34,7 @@ export default function OverviewPage() {
       handleFetchCredSum();
       handleFetchUserRepos();
       handleFetchProductTour();
+      handleFetchOverview();
     }
   }, [session]);
 
@@ -46,6 +49,13 @@ export default function OverviewPage() {
     const { data } = await axios.get("/api/cred/sum");
     if (data.success) {
       setCredSum(data.credSum);
+    }
+  };
+
+  const handleFetchOverview = async () => {
+    const { data } = await axios.get("/api/overview");
+    if (data.success) {
+      setOverview(data.overview);
     }
   };
 
@@ -184,6 +194,40 @@ export default function OverviewPage() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
+                    Total CRED earned
+                  </CardTitle>
+                  <Icons.pizza></Icons.pizza>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {overview?.totalScore.toFixed(2)}
+                  </div>
+                  <p className="pt-1 text-xs text-muted-foreground">
+                    All CRED earned on all your teams
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    This week CRED earned
+                  </CardTitle>
+                  <Icons.gitBranch></Icons.gitBranch>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">
+                    {overview?.weekScore.toFixed(2)}
+                  </div>
+                  <p className="pt-1 text-xs text-muted-foreground">
+                    +{overview?.weekGrowth.toFixed(2)}% from last week
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
                     Total contributors
                   </CardTitle>
                   <Icons.users></Icons.users>
@@ -195,38 +239,6 @@ export default function OverviewPage() {
                   <p className="pt-1 text-xs text-muted-foreground">
                     {/* +15% from last month */}
                     All contributors on all your teams
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total CRED earned
-                  </CardTitle>
-                  <Icons.pizza></Icons.pizza>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{credSum.toFixed(2)}</div>
-                  <p className="pt-1 text-xs text-muted-foreground">
-                    {/* +8% from last week */}
-                    All CRED earned on all your teams
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">
-                    Total repositories
-                  </CardTitle>
-                  <Icons.gitBranch></Icons.gitBranch>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{userRepos.length}</div>
-                  <p className="pt-1 text-xs text-muted-foreground">
-                    {/* +8% from last week */}
-                    All Github Repositories registered on all teams
                   </p>
                 </CardContent>
               </Card>
