@@ -12,7 +12,7 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total team CRED</CardTitle>
-          <Icons.pizza></Icons.pizza>
+          <Icons.lineChart></Icons.lineChart>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
@@ -46,7 +46,7 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
           <CardTitle className="text-sm font-medium">
             Total contributors
           </CardTitle>
-          <Icons.pizza></Icons.pizza>
+          <Icons.users></Icons.users>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">

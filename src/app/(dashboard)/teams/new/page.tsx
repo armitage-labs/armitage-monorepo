@@ -1,21 +1,18 @@
 "use client";
 
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import BreadCrumb from "@/components/breadcrumbs";
 import { CreateTeamStepper } from "@/components/createTeamSteps";
 import { CreateTeamCard } from "@/components/teams/createTeam";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Team } from "@/app/api/teams/fetchUserTeams";
-import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
-import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import { Circles } from "react-loader-spinner";
-import { GitRepoView, columns } from "./columns";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "./data-table";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
+import TeamGithubRepositoriesTable from "@/components/teams/teamGithubRepositoriesTable";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
@@ -25,18 +22,8 @@ export default function CreateTeamPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [createTeamName, setCreateTeamName] = useState<string>();
   const [currentStep, setCurrentStep] = useState(0);
-  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
-  const [githubRepoColumnData, setGithubRepoColumnData] = useState<
-    GitRepoView[]
-  >([]);
-  const [registeredGitRepos, setRegisteredGitRepos] = useState<
-    RegisteredGitRepo[]
-  >([]);
   const [selectedTeam, setSelectedTeam] = useState<Team>();
   const [, setCreatedCalculationRequest] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
-  const [canNext, setCanNext] = useState<boolean>(false);
-  const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const router = useRouter();
 
   const handleCreateTeam = async () => {
@@ -46,24 +33,6 @@ export default function CreateTeamPage() {
       setCurrentStep(1);
       setIsLoading(false);
       setSelectedTeam(data.createdTeam);
-    }
-  };
-
-  const handleQueryGithubRepos = async (page: number = 1) => {
-    const { data } = await axios.get(`/api/github/repo?page=${page}`);
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
-    }
-  };
-
-  const handleFetchRegisteredRepos = async () => {
-    if (selectedTeam) {
-      const { data } = await axios.get(
-        `/api/github/repo/registered?team_id=${selectedTeam.id}`,
-      );
-      if (data.success) {
-        setRegisteredGitRepos(data.registeredRepos);
-      }
     }
   };
 
@@ -80,42 +49,6 @@ export default function CreateTeamPage() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    setCanNext(githubRepoColumnData.length === 10);
-    setCanPrevious(page > 1);
-  }, [githubRepoColumnData, page]);
-
-  // loads in all the repos the user has access to
-  useEffect(() => {
-    handleQueryGithubRepos(page);
-  }, []);
-
-  useEffect(() => {
-    if (selectedTeam !== undefined) {
-      const columnData = githubRepos.map((githubRepoDto) => ({
-        id: githubRepoDto.id,
-        name: githubRepoDto.name,
-        full_name: githubRepoDto.full_name,
-        stars: githubRepoDto.stargazers_count,
-        owner: githubRepoDto.owner.login,
-        forks: githubRepoDto.forks_count,
-        created_at: githubRepoDto.created_at,
-        html_url: githubRepoDto.html_url,
-        team_id: selectedTeam.id,
-        initially_registered: registeredGitRepos.some(
-          (registeredRepo) =>
-            registeredRepo.full_name === githubRepoDto.full_name,
-        ),
-      }));
-      setGithubRepoColumnData(columnData);
-      handleFetchRegisteredRepos();
-    }
-  }, [selectedTeam, githubRepos]);
-
-  useEffect(() => {
-    handleQueryGithubRepos(page);
-  }, [page]);
 
   return (
     <>
@@ -144,14 +77,9 @@ export default function CreateTeamPage() {
             ) : currentStep === 1 ? (
               <div>
                 <div className="pt-6">
-                  <DataTable
-                    columns={columns}
-                    data={githubRepoColumnData}
-                    page={page}
-                    setPage={setPage}
-                    canGoNext={canNext}
-                    canGoPrevious={canPrevious}
-                  ></DataTable>
+                  <TeamGithubRepositoriesTable
+                    teamId={selectedTeam!.id}
+                  ></TeamGithubRepositoriesTable>
 
                   <div className="flex justify-center">
                     <Button variant="default" onClick={handleGenerateReport}>
