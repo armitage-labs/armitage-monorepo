@@ -21,7 +21,7 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
             {overview?.totalScore.toFixed(2)}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            +{overview?.weekGrowth.toFixed(2)}% CRED earned
+            +{overview?.weekGrowth?.toFixed(2) || 0}% CRED earned
           </p>
         </CardContent>
       </Card>
