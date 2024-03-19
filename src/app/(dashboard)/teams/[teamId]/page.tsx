@@ -14,14 +14,6 @@ import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { CalculationIntervalChart } from "./calculationIntervalChart";
 import { TeamInsights } from "./teamInsights";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { GithubRepoList } from "@/components/githubRepoList";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { Button } from "@/components/ui/button";
@@ -39,7 +31,7 @@ type UserTooltipDto = {
   type: string;
 };
 
-export default function Page({ params }: PageProps) {
+export default function TeamDetailsPage({ params }: PageProps) {
   const teamId = params.teamId;
   const breadcrumbItems = [
     { title: "Teams", link: "/teams" },
@@ -149,6 +141,14 @@ export default function Page({ params }: PageProps) {
             title={team ? team.name : ""}
             description={`View the details of your team`}
           />
+          <Button
+            onClick={() => {
+              router.push(`/teams/${teamId}/settings`);
+            }}
+          >
+            {" "}
+            Manage repositories{" "}
+          </Button>
         </div>
         <Separator />
 
@@ -189,20 +189,7 @@ export default function Page({ params }: PageProps) {
                 </div>
 
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                  <Card className="col-span-1 md:col-span-1">
-                    <CardHeader>
-                      <CardTitle>Github Repositories</CardTitle>
-                      <CardDescription>
-                        You have {registeredGitRepos.length} github repositories
-                        registered
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <GithubRepoList githubRepos={registeredGitRepos} />
-                    </CardContent>
-                  </Card>
-
-                  <div className="col-span-2 md:col-span-2">
+                  <div className="col-span-3 md:col-span-3">
                     <CalculationResult
                       userCredDtoList={userCredDtos
                         .filter((user) => user.type === "USER")
