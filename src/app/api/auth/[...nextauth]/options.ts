@@ -39,8 +39,8 @@ export const options: AuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        // @ts-expect-error expiry doesn't exist on token type by default, therefore it complains about types
         if (
+          // @ts-expect-error expiry doesn't exist on token type by default, therefore it complains about types
           token.expires_at < Date.now() / 1000 ||
           token.error ||
           token.expires_at === undefined
