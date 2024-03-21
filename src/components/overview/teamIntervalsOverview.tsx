@@ -5,6 +5,8 @@ import {
   ResponsiveContainer,
   Line,
   LineChart,
+  AreaChart,
+  Area,
 } from "recharts";
 import {
   ValueType,
@@ -19,7 +21,6 @@ const CustomTooltip = ({
   payload,
 }: TooltipProps<ValueType, NameType>) => {
   if (active && payload && payload.length) {
-    console.log(payload);
     return (
       <div className="custom-tooltip">
         {payload.map((data) => {
@@ -131,8 +132,6 @@ export function TeamIntervalsOverview({
     };
   });
 
-  console.log(chartData);
-
   return (
     <div className="">
       <div className=""></div>
@@ -142,7 +141,7 @@ export function TeamIntervalsOverview({
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={150}>
-            <LineChart data={chartData}>
+            <AreaChart data={chartData}>
               <XAxis
                 dataKey="start"
                 stroke="#888888"
@@ -161,9 +160,8 @@ export function TeamIntervalsOverview({
 
               {uniqueTeamNames.map((teamName) => {
                 const teamIndex = teamNameToIndex.get(teamName);
-                console.log(teamName);
                 return (
-                  <Line
+                  <Area
                     type="monotone"
                     dataKey={`${teamName}`}
                     stroke={indexToColor(teamIndex!)}
@@ -171,7 +169,7 @@ export function TeamIntervalsOverview({
                   />
                 );
               })}
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
