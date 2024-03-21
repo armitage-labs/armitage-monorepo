@@ -17,7 +17,7 @@ import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { DashboardInsights } from "@/components/overview/dashboardInsights";
 import { productTourData } from "@/content/product-tour";
 import { TeamIntervalsOverview } from "@/components/overview/teamIntervalsOverview";
-import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/route";
+import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 import { LoadingCircle } from "@/components/navigation/loading";
 
 export default function OverviewPage() {

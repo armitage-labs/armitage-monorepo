@@ -1,4 +1,4 @@
-import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/route";
+import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 
 export interface TeamIntervalsOverviewProps {
   teamIntervalsOverview: TeamIntervalsOverviewDto[];
