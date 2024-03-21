@@ -8,11 +8,12 @@ import { CreateTeamCard } from "@/components/teams/createTeam";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Team } from "@/app/api/teams/fetchUserTeams";
-import { Circles } from "react-loader-spinner";
 import { Button } from "@/components/ui/button";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import TeamGithubRepositoriesTable from "@/components/teams/teamGithubRepositoriesTable";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
@@ -37,16 +38,26 @@ export default function CreateTeamPage() {
   };
 
   const handleGenerateReport = async () => {
-    setIsLoading(true);
     if (selectedTeam) {
-      setCurrentStep(2);
+      setIsLoading(true);
       const { data } = await axios.get(
-        `/api/credmanager?team_id=${selectedTeam.id}`,
+        `/api/github/repo/registered?team_id=${selectedTeam.id}`,
       );
-      if (data && data.success) {
-        setCreatedCalculationRequest(true);
+      if (data.success && data.registeredRepos.length == 0) {
+        setIsLoading(false);
+        toast("Failed to start calculation", {
+          description: "Please select at least one repository to continue",
+        });
+      } else {
+        setCurrentStep(2);
+        const { data } = await axios.get(
+          `/api/credmanager?team_id=${selectedTeam.id}`,
+        );
+        if (data && data.success) {
+          setCreatedCalculationRequest(true);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
   };
 
@@ -63,7 +74,7 @@ export default function CreateTeamPage() {
         <CreateTeamStepper currentStep={currentStep}></CreateTeamStepper>
         {isLoading ? (
           <div className="pt-36 flex justify-center">
-            <Circles color="black" />
+            <LoadingCircle></LoadingCircle>
           </div>
         ) : (
           <div>

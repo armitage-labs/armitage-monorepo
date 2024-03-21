@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Circles } from "react-loader-spinner";
 import {
   Dialog,
   DialogClose,
@@ -10,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { LoadingCircle } from "./navigation/loading";
 
 type LoadingCalculationsProps = {
   onSubmit: () => void;
@@ -38,7 +38,7 @@ export function LoadingCalculations({ ...props }: LoadingCalculationsProps) {
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col items-center space-x-2 pt-6 pb-6">
-          <Circles />
+          <LoadingCircle></LoadingCircle>
         </div>
         <DialogFooter className="sm:justify-start">
           <DialogClose asChild></DialogClose>

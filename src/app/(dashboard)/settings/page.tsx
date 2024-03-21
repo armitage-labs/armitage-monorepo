@@ -4,11 +4,11 @@ import axios from "axios";
 import { Icons } from "@/components/icons";
 import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
-import { Circles } from "react-loader-spinner";
 import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 type Settings = {
   githubAppUrl: string;
@@ -44,7 +44,7 @@ export default function SettingsPage() {
       <Separator />
       {isLoading ? (
         <div className="pt-36 flex justify-center">
-          <Circles color="black" />
+          <LoadingCircle></LoadingCircle>
         </div>
       ) : (
         <div>

@@ -1,7 +1,7 @@
 import "../globals.css";
 import Header from "@/components/navigation/header";
 import Sidebar from "@/components/navigation/sidebar";
-import { SessionRefreshProvider } from "../sessionRefreshProvider";
+import { SessionRefreshProvider } from "../providers/sessionRefreshProvider";
 
 export default async function DashboardLayout({
   children,

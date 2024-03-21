@@ -10,13 +10,13 @@ import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Circles } from "react-loader-spinner";
 import { TeamsTable } from "./data-table";
 import { teamsColumns } from "./columns";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 const breadcrumbItems = [{ title: "Teams", link: "/dashboard/teams" }];
 
-export default function GitRepo() {
+export default function TeamsPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [teams, setTeams] = useState<Team[]>([]);
@@ -57,7 +57,7 @@ export default function GitRepo() {
 
         {isLoading ? (
           <div className="pt-36 flex justify-center">
-            <Circles color="black" />
+            <LoadingCircle></LoadingCircle>
           </div>
         ) : (
           <TeamsTable columns={teamsColumns} data={teams}></TeamsTable>
