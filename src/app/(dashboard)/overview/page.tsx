@@ -123,7 +123,7 @@ export default function OverviewPage() {
                 <AlertDescription>
                   If you want to use Armitage with private repos, you can
                   install the Armitage GitHub App from the{" "}
-                  <a className="text-link " href={`/settings`}>
+                  <a className="text-blue-400" href={`/settings`}>
                     Settings
                   </a>
                 </AlertDescription>

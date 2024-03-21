@@ -5,8 +5,6 @@ import {
   ResponsiveContainer,
   Line,
   LineChart,
-  AreaChart,
-  Area,
 } from "recharts";
 import {
   ValueType,
@@ -14,19 +12,37 @@ import {
 } from "recharts/types/component/DefaultTooltipContent";
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/route";
+import { Interval } from "@/app/api/teams/overview/intervals/types";
+import { Badge } from "../ui/badge";
+import {
+  TeamIntervalsChartData,
+  TeamIntervalsOverviewProps,
+  TeamUtils,
+} from "./types";
+import { indexToColor } from "./utils";
 
 const CustomTooltip = ({
   active,
   payload,
-}: TooltipProps<ValueType, NameType>) => {
+  teamNameToIndex,
+}: TooltipProps<ValueType, NameType> & TeamUtils) => {
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
         {payload.map((data) => {
           return (
             <div>
-              <p className="label">{`${data.dataKey}: ${parseFloat(data.value!.toString()).toPrecision(3)}`}</p>
+              <Badge>
+                <span
+                  className={`pl-4 h-4 w-4 rounded-full `}
+                  style={{
+                    backgroundColor: `${indexToColor(teamNameToIndex.get(data.dataKey!.toString())!)}`,
+                  }}
+                ></span>
+                <div className="pl-2">
+                  {`${data.dataKey}: ${parseFloat(data.value!.toString()).toPrecision(3)}`}
+                </div>
+              </Badge>
             </div>
           );
         })}
@@ -36,36 +52,6 @@ const CustomTooltip = ({
 
   return null;
 };
-
-interface TeamIntervalsOverviewProps {
-  teamIntervalsOverview: TeamIntervalsOverviewDto[];
-}
-
-interface TeamIntervalsChartData {
-  start: number;
-  end: number;
-  teamScores: { name: string; score: number }[];
-}
-
-function indexToColor(index: number): string {
-  //switch case for index
-  switch (index) {
-    case 0:
-      return "#adfa1d";
-    case 1:
-      return "#A4FFFF";
-    case 2:
-      return "#FFB86C";
-    case 3:
-      return "#242c54";
-    case 4:
-      return "#A4FFFF";
-    case 5:
-      return "#FFFFFF";
-    default:
-      return "#FFFFFF";
-  }
-}
 
 export function TeamIntervalsOverview({
   teamIntervalsOverview,
@@ -77,7 +63,7 @@ export function TeamIntervalsOverview({
   uniqueTeamNames.forEach((team, index) => {
     teamNameToIndex.set(team, index);
   });
-  let teamIntervalChartData: TeamIntervalsChartData[] = [];
+  const teamIntervalChartData: TeamIntervalsChartData[] = [];
   const scoresMappedByStart = new Map<
     number,
     { name: string; score: number }[]
@@ -86,7 +72,7 @@ export function TeamIntervalsOverview({
   const uniqueStarts: number[] = [];
   let counter = 0;
   for (const team of teamIntervalsOverview) {
-    team.intervals.forEach((interval) => {
+    team.intervals.forEach((interval: Interval) => {
       if (!uniqueStarts.includes(interval.start)) {
         uniqueStarts.push(interval.start);
 
@@ -111,14 +97,6 @@ export function TeamIntervalsOverview({
     });
   });
 
-  teamIntervalChartData.sort((a, b) => a.start - b.start);
-  const currentDate = Date.now();
-  const threeMonthsAgo = currentDate - 7776000000;
-
-  teamIntervalChartData = teamIntervalChartData.filter(
-    (interval) => interval.start > threeMonthsAgo,
-  );
-
   const chartData = teamIntervalChartData.map((interval) => {
     const teamParsedScores = new Map<string, number>();
     interval.teamScores.forEach((team) => {
@@ -141,7 +119,7 @@ export function TeamIntervalsOverview({
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={150}>
-            <AreaChart data={chartData}>
+            <LineChart data={chartData}>
               <XAxis
                 dataKey="start"
                 stroke="#888888"
@@ -154,14 +132,14 @@ export function TeamIntervalsOverview({
                 }
               />
               <Tooltip
-                content={<CustomTooltip />}
+                content={<CustomTooltip teamNameToIndex={teamNameToIndex} />}
                 cursor={{ fill: "transparent" }}
               />
 
               {uniqueTeamNames.map((teamName) => {
                 const teamIndex = teamNameToIndex.get(teamName);
                 return (
-                  <Area
+                  <Line
                     type="monotone"
                     dataKey={`${teamName}`}
                     stroke={indexToColor(teamIndex!)}
@@ -169,7 +147,7 @@ export function TeamIntervalsOverview({
                   />
                 );
               })}
-            </AreaChart>
+            </LineChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
