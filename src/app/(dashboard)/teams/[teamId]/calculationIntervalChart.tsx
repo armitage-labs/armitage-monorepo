@@ -12,6 +12,7 @@ import {
 } from "recharts/types/component/DefaultTooltipContent";
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface CalculationIntervalChartProps {
   intervals: any[];
@@ -25,7 +26,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       <div className="custom-tooltip">
-        <p className="label">{`${new Date(label).toLocaleString([], { day: "numeric", month: "short", year: "numeric" })} : ${payload[0].value}`}</p>
+        <Badge>{`${new Date(label).toLocaleString([], { day: "numeric", month: "short", year: "numeric" })} : ${parseFloat(payload[0].value!.toString()).toPrecision(3)}`}</Badge>
       </div>
     );
   }

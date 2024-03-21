@@ -23,11 +23,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import { Circles } from "react-loader-spinner";
 import { Team } from "@/app/api/teams/fetchUserTeams";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Icons } from "@/components/icons";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 export const teamsColumns: ColumnDef<Team>[] = [
   {
@@ -126,7 +126,7 @@ export const teamsColumns: ColumnDef<Team>[] = [
           <AlertDialogContent>
             {isLoading ? (
               <div className="flex justify-center">
-                <Circles color="black" />
+                <LoadingCircle></LoadingCircle>
               </div>
             ) : (
               <div>

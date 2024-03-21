@@ -1,6 +1,5 @@
 "use client";
 
-import { Circles } from "react-loader-spinner";
 import { DataTable } from "./data-table";
 import { GitRepoView, columns } from "./columns";
 import { GenerateCalculations } from "@/components/generateCalculationsDrawer";
@@ -11,6 +10,7 @@ import { CalculationResult } from "./calculationResults";
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import { RegisteredGitRepo } from "@/app/api/github/repo/registered/fetchRegisteredRepos";
 import { UserCredDto } from "@/app/api/credmanager/route";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 export default function GitRepo() {
   const { data: session } = useSession();
@@ -136,7 +136,7 @@ export default function GitRepo() {
               </div>
             ) : (
               <div className="pt-36 flex justify-center">
-                <Circles />
+                <LoadingCircle></LoadingCircle>
               </div>
             )}
           </div>
