@@ -1,6 +1,6 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { fetchUserContributorsInterval } from "../contributors/fetchUserContributors";
 import { fetchTeamContributorsByUserId } from "../contributors/team/fetchTeamContributors";
 import {
@@ -11,7 +11,7 @@ import {
   sumScore,
 } from "../utils/utils";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await getServerSession(options);
   if (session?.userId) {
     const userContributors = await fetchUserContributorsInterval(

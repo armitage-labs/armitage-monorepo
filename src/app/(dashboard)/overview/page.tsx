@@ -15,6 +15,9 @@ import "driver.js/dist/driver.css";
 import { toast } from "sonner";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { DashboardInsights } from "@/components/overview/dashboardInsights";
+import { productTourData } from "@/content/product-tour";
+import { TeamIntervalsOverview } from "@/components/overview/teamIntervalsOverview";
+import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 import { LoadingCircle } from "@/components/navigation/loading";
 
 export default function OverviewPage() {
@@ -23,6 +26,9 @@ export default function OverviewPage() {
   const [topContributors, setTopContributors] = useState<ContributorDto[]>([]);
   const [hasSeenProductTour, setHasSeenProductTour] = useState(true);
   const [overview, setOverview] = useState<OverviewDto>();
+  const [teamIntervalsOverview, setTeamIntervalsOverview] = useState<
+    TeamIntervalsOverviewDto[]
+  >([]);
 
   useEffect(() => {
     if (session?.githubLogin) {
@@ -30,8 +36,16 @@ export default function OverviewPage() {
       handleFetchContributors();
       handleFetchProductTour();
       handleFetchOverview();
+      handleFetchTeamIntervalsOverview();
     }
   }, [session]);
+
+  const handleFetchTeamIntervalsOverview = async () => {
+    const { data } = await axios.get("/api/teams/overview/intervals");
+    if (data.success) {
+      setTeamIntervalsOverview(data.teamOverviewIntervals);
+    }
+  };
 
   const handleFetchProductTour = async () => {
     const { data } = await axios.get("/api/tour");
@@ -71,61 +85,7 @@ export default function OverviewPage() {
 
   const driverObj = driver({
     showProgress: true,
-    steps: [
-      {
-        popover: {
-          title: "Welcome to Armitage!",
-          description:
-            "Thank you for trying Armitage! We are still a prototype but we hope you find it useful!",
-          side: "left",
-          align: "start",
-        },
-      },
-      {
-        popover: {
-          title: "Let's get started",
-          description:
-            "To start measuring impact, you need to create a team and assign repositories to that specific team",
-          side: "left",
-          align: "start",
-        },
-      },
-      {
-        element: 'a[href="/teams"]',
-        popover: {
-          title: "Teams",
-          description:
-            "You can create a team on the Teams tab, by clicking the Add New button on the top right corner",
-          side: "left",
-          align: "start",
-        },
-      },
-      {
-        popover: {
-          title: "Team details",
-          description:
-            "Analyzing a team impact can take a couple of minutes, so take a cup of tea and relax, after it finishes calculating, you can see the results on the team details page",
-          side: "left",
-          align: "start",
-        },
-      },
-      {
-        element: 'a[href="/contributors"]',
-        popover: {
-          title: "Contributors",
-          description:
-            "You can also see all engineers of all your teams on the Contributors page, with scores that compare their impact with all your other teams",
-          side: "left",
-          align: "start",
-        },
-      },
-      {
-        popover: {
-          title: "Get to the impact!",
-          description: "And that is all, go ahead and start having fun!",
-        },
-      },
-    ],
+    steps: productTourData,
   });
 
   useEffect(() => {
@@ -163,7 +123,7 @@ export default function OverviewPage() {
                 <AlertDescription>
                   If you want to use Armitage with private repos, you can
                   install the Armitage GitHub App from the{" "}
-                  <a className="text-link " href={`/settings`}>
+                  <a className="text-blue-400" href={`/settings`}>
                     Settings
                   </a>
                 </AlertDescription>
@@ -171,6 +131,12 @@ export default function OverviewPage() {
             </div>
 
             <DashboardInsights overview={overview}></DashboardInsights>
+
+            {teamIntervalsOverview.length !== 0 && (
+              <TeamIntervalsOverview
+                teamIntervalsOverview={teamIntervalsOverview}
+              ></TeamIntervalsOverview>
+            )}
 
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-7">
               <Card className="col-span-7">
