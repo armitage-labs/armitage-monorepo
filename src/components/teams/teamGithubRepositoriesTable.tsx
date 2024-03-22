@@ -6,6 +6,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GitRepoView, columns } from "./columns";
 import { DataTable } from "./data-table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/icons";
+import { Input } from "@/components/ui/input";
 
 interface TeamGithubRepositoriesTableProps {
   teamId: string;
@@ -18,6 +22,8 @@ export default function TeamGithubRepositoriesTable({
     RegisteredGitRepo[]
   >([]);
   const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>();
+  const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
   const [canNext, setCanNext] = useState<boolean>(false);
   const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
@@ -41,6 +47,33 @@ export default function TeamGithubRepositoriesTable({
     }
   };
 
+  const handleSearchRepo = async () => {
+    const { data } = await axios.get(`/api/search/repo?name=${search}`);
+    console.log(data?.results?.length);
+    if (data?.results?.length == 1) {
+      setFoundAddRepo(data?.results[0]);
+    } else {
+      setFoundAddRepo(undefined);
+    }
+  };
+
+  const handleRegisterRepo = async (name: string, fullName: string) => {
+    await axios.post(`/api/github/repo`, {
+      name: name,
+      full_name: fullName,
+      team_id: teamId,
+    });
+    setSearch("");
+    handleFetchRegisteredRepos();
+  };
+
+  const handleUnregisterRepo = async (fullName: string) => {
+    await axios.delete(
+      `/api/github/repo?full_name=${fullName}&team_id=${teamId}`,
+    );
+    handleFetchRegisteredRepos();
+  };
+
   useEffect(() => {
     setCanNext(githubRepoColumnData.length === 10);
     setCanPrevious(page > 1);
@@ -49,6 +82,10 @@ export default function TeamGithubRepositoriesTable({
   useEffect(() => {
     handleQueryGithubRepos(page);
   }, []);
+
+  useEffect(() => {
+    handleSearchRepo();
+  }, [search]);
 
   useEffect(() => {
     if (githubRepos.length > 0) {
@@ -79,6 +116,42 @@ export default function TeamGithubRepositoriesTable({
   return (
     <>
       <div>
+        <div className="flex items-center py-2">
+          <Input
+            placeholder="Search e.g owner/name ... "
+            onChange={(event) => setSearch(event.target.value)}
+            value={search}
+            className="max-w-sm"
+          />
+          <Button
+            className="items-center ml-4"
+            disabled={foundAddRepo == null}
+            onClick={() => {
+              if (foundAddRepo != null) {
+                handleRegisterRepo(foundAddRepo?.name, foundAddRepo?.full_name);
+              }
+            }}
+          >
+            {foundAddRepo != null ? <>Add Repo</> : <>Repo Not Found</>}
+          </Button>
+        </div>
+        <div className="flex items-center py-2">
+          {registeredGitRepos.map((registeredGitRepo) => (
+            <Badge
+              className="mr-2 p-2 primary-badge-outline"
+              variant={"outline"}
+            >
+              <Icons.gitHub className="mr-2 ml-2 h-4 w-4" />
+              <span>{registeredGitRepo.full_name}</span>
+              <Icons.close
+                className="mr-2 ml-2 h-4 w-4 cursor-pointer"
+                onClick={() =>
+                  handleUnregisterRepo(registeredGitRepo.full_name)
+                }
+              />
+            </Badge>
+          ))}
+        </div>
         <DataTable
           columns={columns}
           data={githubRepoColumnData}

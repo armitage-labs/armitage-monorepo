@@ -90,3 +90,12 @@
   text-decoration: underline;
   color: blue;
 }
+
+.primary-badge-outline {
+  border-color: RGB(173, 250, 29);
+  color: RGB(173, 250, 29);
+}
+
+.secondary-badge-outline {
+  background-color: RGB(82, 165, 0);
+}
