@@ -110,6 +110,8 @@ export function TeamIntervalsOverview({
     };
   });
 
+  chartData.sort((a, b) => a.start - b.start);
+
   return (
     <div className="">
       <div className=""></div>
