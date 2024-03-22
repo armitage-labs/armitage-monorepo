@@ -10,8 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { Team, ContributionCalculation } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
-import { Circles } from "react-loader-spinner";
 import { CalculationResult } from "../../gitrepo/calculationResults";
 import { CalculationIntervalChart } from "./calculationIntervalChart";
 import { TeamInsights } from "./teamInsights";
@@ -20,6 +18,7 @@ import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreate
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 interface PageProps {
   params: { teamId: string };
@@ -39,6 +38,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
     { title: "Team details", link: `/teams/${teamId}` },
   ];
   const { data: session } = useSession();
+
   const [isLoading, setIsLoading] = useState(true);
   const [team, setTeam] = useState<Team>();
   const [overview, setOverview] = useState<OverviewDto>();
@@ -173,7 +173,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
           <div>
             {isLoading ? (
               <div className="pt-36 flex justify-center">
-                <Circles color="black" />
+                <LoadingCircle></LoadingCircle>
               </div>
             ) : (
               <div>

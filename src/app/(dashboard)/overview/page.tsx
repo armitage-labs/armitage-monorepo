@@ -1,6 +1,5 @@
 "use client";
 
-import { Circles } from "react-loader-spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSession } from "next-auth/react";
@@ -16,6 +15,7 @@ import "driver.js/dist/driver.css";
 import { toast } from "sonner";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { DashboardInsights } from "@/components/overview/dashboardInsights";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
@@ -146,7 +146,7 @@ export default function OverviewPage() {
     <div>
       {isLoading ? (
         <div className="flex pt-40 justify-center items-center">
-          <Circles color="slate" />
+          <LoadingCircle></LoadingCircle>
         </div>
       ) : (
         <ScrollArea className="h-full">

@@ -6,10 +6,10 @@ import { Separator } from "@/components/ui/separator";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Circles } from "react-loader-spinner";
 import { ContributorsDataTable } from "./data-table";
 import { contributorsColumns } from "./columns";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 const breadcrumbItems = [
   { title: "Contributors", link: "/dashboard/contributors" },
@@ -49,7 +49,7 @@ export default function GitRepo() {
 
         {isLoading ? (
           <div className="pt-36 flex justify-center">
-            <Circles color="black" />
+            <LoadingCircle></LoadingCircle>
           </div>
         ) : (
           <ContributorsDataTable
