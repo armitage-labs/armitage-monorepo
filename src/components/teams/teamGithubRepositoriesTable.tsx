@@ -20,6 +20,7 @@ export default function TeamGithubRepositoriesTable({
   const [registeredGitRepos, setRegisteredGitRepos] = useState<
     RegisteredGitRepo[]
   >([]);
+  const [isLoading, setIsisLoading] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
   const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
@@ -32,10 +33,12 @@ export default function TeamGithubRepositoriesTable({
   >([]);
 
   const handleQueryGithubRepos = async (page: number = 1) => {
+    setIsisLoading(true);
     const { data } = await axios.get(`/api/github/repo?page=${page}`);
     if (data.success && data.gitRepos.length > 0) {
       setGithubRepos(data.gitRepos);
     }
+    setIsisLoading(false);
   };
 
   const handleFetchRegisteredRepos = async () => {
@@ -157,6 +160,7 @@ export default function TeamGithubRepositoriesTable({
         <DataTable
           columns={columns}
           data={githubRepoColumnData}
+          isLoading={isLoading}
           page={page}
           setPage={setPage}
           canGoNext={canNext}
