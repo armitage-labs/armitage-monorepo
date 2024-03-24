@@ -11,7 +11,9 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total team CRED</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            Total team impact
+          </CardTitle>
           <Icons.lineChart></Icons.lineChart>
         </CardHeader>
         <CardContent>
@@ -27,7 +29,7 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Team CRED earned this week
+            Team impact earned week
           </CardTitle>
           <Icons.pizza></Icons.pizza>
         </CardHeader>
@@ -36,7 +38,8 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
             {overview?.weekScore.toFixed(2)}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            +{overview?.wowScore.toFixed(2)}% over last week
+            {overview?.wowScore ? (overview?.wowScore > 0 ? "+" : "-") : ""}{" "}
+            {overview?.wowScore.toFixed(2)}% over last week
           </p>
         </CardContent>
       </Card>

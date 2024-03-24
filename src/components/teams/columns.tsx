@@ -1,20 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
 import axios from "axios";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
+import { Icons } from "../icons";
+import { stringToColour } from "@/lib/utils";
 
 export type GitRepoView = {
   id: string;
@@ -80,10 +71,25 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "name",
     header: () => <div className="text-left"> Name </div>,
+    cell: ({ row }) => {
+      return (
+        <div className="flex">
+          <span
+            className={`h-4 w-4 rounded-full`}
+            style={{
+              backgroundColor: `${stringToColour(row.getValue("name"))}`,
+            }}
+          ></span>
+          <div className="pl-3">
+            {row.getValue("name")}
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "created_at",
-    header: ({ column }) => {
+    header: () => {
       return <div>Created At</div>;
     },
     cell: ({ row }) => {
@@ -96,7 +102,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
   },
   {
     accessorKey: "stars",
-    header: ({ column }) => {
+    header: () => {
       return <div>Stars</div>;
     },
     cell: ({ row }) => {
@@ -105,7 +111,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
   },
   {
     accessorKey: "forks",
-    header: ({ column }) => {
+    header: () => {
       return <div>Forks</div>;
     },
     cell: ({ row }) => {
@@ -115,5 +121,11 @@ export const columns: ColumnDef<GitRepoView>[] = [
   {
     accessorKey: "owner",
     header: "Owner",
+    cell: ({ row }) => {
+      return <div className="flex">
+        <div className="h-5 w-5"><Icons.gitHub></Icons.gitHub></div>
+        <div className="pl-3">{row.getValue("owner")}</div>
+      </div>;
+    }
   },
 ];
