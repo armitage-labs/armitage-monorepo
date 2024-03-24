@@ -80,9 +80,7 @@ export const columns: ColumnDef<GitRepoView>[] = [
               backgroundColor: `${stringToColour(row.getValue("name"))}`,
             }}
           ></span>
-          <div className="pl-3">
-            {row.getValue("name")}
-          </div>
+          <div className="pl-3">{row.getValue("name")}</div>
         </div>
       );
     },
@@ -122,10 +120,14 @@ export const columns: ColumnDef<GitRepoView>[] = [
     accessorKey: "owner",
     header: "Owner",
     cell: ({ row }) => {
-      return <div className="flex">
-        <div className="h-5 w-5"><Icons.gitHub></Icons.gitHub></div>
-        <div className="pl-3">{row.getValue("owner")}</div>
-      </div>;
-    }
+      return (
+        <div className="flex">
+          <div className="h-5 w-5">
+            <Icons.gitHub></Icons.gitHub>
+          </div>
+          <div className="pl-3">{row.getValue("owner")}</div>
+        </div>
+      );
+    },
   },
 ];
