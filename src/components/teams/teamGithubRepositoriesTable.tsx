@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { Input } from "@/components/ui/input";
+import debounce from 'lodash.debounce'
+import throttle from 'lodash.throttle'
 
 interface TeamGithubRepositoriesTableProps {
   teamId: string;
@@ -48,13 +50,16 @@ export default function TeamGithubRepositoriesTable({
   };
 
   const handleSearchRepo = async () => {
-    const { data } = await axios.get(`/api/search/repo?name=${search}`);
-    console.log(data?.results?.length);
-    if (data?.results?.length == 1) {
-      setFoundAddRepo(data?.results[0]);
-    } else {
-      setFoundAddRepo(undefined);
-    }
+    const debouncedFilter = throttle(async () => {
+      const { data } = await axios.get(`/api/search/repo?name=${search}`);
+
+      if (data?.results?.length == 1) {
+        setFoundAddRepo(data?.results[0]);
+      } else {
+        setFoundAddRepo(undefined);
+      }
+    }, 500);
+    debouncedFilter();
   };
 
   const handleRegisterRepo = async (name: string, fullName: string) => {
@@ -135,7 +140,7 @@ export default function TeamGithubRepositoriesTable({
             {foundAddRepo != null ? <>Add Repo</> : <>Repo Not Found</>}
           </Button>
         </div>
-        <div className="flex items-center py-2">
+        <div className="flex items-center py-2 mb-2">
           {registeredGitRepos.map((registeredGitRepo) => (
             <Badge
               className="mr-2 p-2 primary-badge-outline"
