@@ -8,7 +8,7 @@ import { CreateTeamCard } from "@/components/teams/createTeam";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Team } from "@/app/api/teams/fetchUserTeams";
-import { Circles } from "react-loader-spinner";
+import { LoadingCircle } from "@/components/navigation/loading";
 import { Button } from "@/components/ui/button";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
@@ -74,7 +74,7 @@ export default function CreateTeamPage() {
         <CreateTeamStepper currentStep={currentStep}></CreateTeamStepper>
         {isLoading ? (
           <div className="pt-36 flex justify-center">
-            <Circles color="black" />
+            <LoadingCircle></LoadingCircle>
           </div>
         ) : (
           <div>

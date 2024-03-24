@@ -6,10 +6,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { GitRepoView, columns } from "./columns";
 import { DataTable } from "./data-table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
 import { Input } from "@/components/ui/input";
+import TeamGithubRepositoriesBadge from "./teamGithubRepositoriesBadge";
 
 interface TeamGithubRepositoriesTableProps {
   teamId: string;
@@ -89,7 +88,7 @@ export default function TeamGithubRepositoriesTable({
     setSearchLoading(true);
     const delayDebounceFn = setTimeout(() => {
       handleSearchRepo();
-    }, 1000)
+    }, 1000);
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
@@ -138,7 +137,9 @@ export default function TeamGithubRepositoriesTable({
               }
             }}
           >
-            {searchLoading ? <>Loading...</> : (
+            {searchLoading ? (
+              <>Loading...</>
+            ) : (
               <div>
                 {foundAddRepo != null ? <>Add Repo</> : <>Not valid repo</>}
               </div>
@@ -147,19 +148,10 @@ export default function TeamGithubRepositoriesTable({
         </div>
         <div className="flex items-center py-2 mb-2">
           {registeredGitRepos.map((registeredGitRepo) => (
-            <Badge
-              className="mr-2 p-2 primary-badge-outline"
-              variant={"outline"}
-            >
-              <Icons.gitHub className="mr-2 ml-2 h-4 w-4" />
-              <span>{registeredGitRepo.full_name}</span>
-              <Icons.close
-                className="mr-2 ml-2 h-4 w-4 cursor-pointer"
-                onClick={() =>
-                  handleUnregisterRepo(registeredGitRepo.full_name)
-                }
-              />
-            </Badge>
+            <TeamGithubRepositoriesBadge
+              repoFullName={registeredGitRepo.full_name}
+              handleUnregisterRepo={handleUnregisterRepo}
+            ></TeamGithubRepositoriesBadge>
           ))}
         </div>
         <DataTable
