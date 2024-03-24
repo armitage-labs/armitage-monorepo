@@ -10,8 +10,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { Input } from "@/components/ui/input";
-import debounce from 'lodash.debounce'
-import throttle from 'lodash.throttle'
 
 interface TeamGithubRepositoriesTableProps {
   teamId: string;
@@ -24,9 +22,10 @@ export default function TeamGithubRepositoriesTable({
     RegisteredGitRepo[]
   >([]);
   const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>();
+  const [search, setSearch] = useState<string>("");
   const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
   const [canNext, setCanNext] = useState<boolean>(false);
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
   const [githubRepoColumnData, setGithubRepoColumnData] = useState<
@@ -50,16 +49,14 @@ export default function TeamGithubRepositoriesTable({
   };
 
   const handleSearchRepo = async () => {
-    const debouncedFilter = throttle(async () => {
-      const { data } = await axios.get(`/api/search/repo?name=${search}`);
+    const { data } = await axios.get(`/api/search/repo?name=${search}`);
 
-      if (data?.results?.length == 1) {
-        setFoundAddRepo(data?.results[0]);
-      } else {
-        setFoundAddRepo(undefined);
-      }
-    }, 500);
-    debouncedFilter();
+    if (data?.results?.length == 1) {
+      setFoundAddRepo(data?.results[0]);
+    } else {
+      setFoundAddRepo(undefined);
+    }
+    setSearchLoading(false);
   };
 
   const handleRegisterRepo = async (name: string, fullName: string) => {
@@ -89,7 +86,11 @@ export default function TeamGithubRepositoriesTable({
   }, []);
 
   useEffect(() => {
-    handleSearchRepo();
+    setSearchLoading(true);
+    const delayDebounceFn = setTimeout(() => {
+      handleSearchRepo();
+    }, 1000)
+    return () => clearTimeout(delayDebounceFn);
   }, [search]);
 
   useEffect(() => {
@@ -123,21 +124,25 @@ export default function TeamGithubRepositoriesTable({
       <div>
         <div className="flex items-center py-2">
           <Input
-            placeholder="Search e.g owner/name ... "
+            placeholder="Search with owner/name ... "
             onChange={(event) => setSearch(event.target.value)}
             value={search}
             className="max-w-sm"
           />
           <Button
             className="items-center ml-4"
-            disabled={foundAddRepo == null}
+            disabled={foundAddRepo == null || searchLoading}
             onClick={() => {
               if (foundAddRepo != null) {
                 handleRegisterRepo(foundAddRepo?.name, foundAddRepo?.full_name);
               }
             }}
           >
-            {foundAddRepo != null ? <>Add Repo</> : <>Repo Not Found</>}
+            {searchLoading ? <>Loading...</> : (
+              <div>
+                {foundAddRepo != null ? <>Add Repo</> : <>Not valid repo</>}
+              </div>
+            )}
           </Button>
         </div>
         <div className="flex items-center py-2 mb-2">
