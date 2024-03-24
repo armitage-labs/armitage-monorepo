@@ -9,6 +9,7 @@ import { DataTable } from "./data-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import TeamGithubRepositoriesBadge from "./teamGithubRepositoriesBadge";
+import TeamGithubRepositoriesSearch from "./teamGithubRepositoriesSearch";
 
 interface TeamGithubRepositoriesTableProps {
   teamId: string;
@@ -21,10 +22,9 @@ export default function TeamGithubRepositoriesTable({
     RegisteredGitRepo[]
   >([]);
   const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>("");
+
   const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
   const [canNext, setCanNext] = useState<boolean>(false);
-  const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
   const [githubRepoColumnData, setGithubRepoColumnData] = useState<
@@ -47,26 +47,15 @@ export default function TeamGithubRepositoriesTable({
     }
   };
 
-  const handleSearchRepo = async () => {
-    const { data } = await axios.get(`/api/search/repo?name=${search}`);
-
-    if (data?.results?.length == 1) {
-      setFoundAddRepo(data?.results[0]);
-    } else {
-      setFoundAddRepo(undefined);
-    }
-    setSearchLoading(false);
-  };
-
-  const handleRegisterRepo = async (name: string, fullName: string) => {
-    await axios.post(`/api/github/repo`, {
-      name: name,
-      full_name: fullName,
-      team_id: teamId,
-    });
-    setSearch("");
-    handleFetchRegisteredRepos();
-  };
+  // const handleRegisterRepo = async (name: string, fullName: string) => {
+  //   await axios.post(`/api/github/repo`, {
+  //     name: name,
+  //     full_name: fullName,
+  //     team_id: teamId,
+  //   });
+  //   setSearch("");
+  //   handleFetchRegisteredRepos();
+  // };
 
   const handleUnregisterRepo = async (fullName: string) => {
     await axios.delete(
@@ -83,14 +72,6 @@ export default function TeamGithubRepositoriesTable({
   useEffect(() => {
     handleQueryGithubRepos(page);
   }, []);
-
-  useEffect(() => {
-    setSearchLoading(true);
-    const delayDebounceFn = setTimeout(() => {
-      handleSearchRepo();
-    }, 1000);
-    return () => clearTimeout(delayDebounceFn);
-  }, [search]);
 
   useEffect(() => {
     if (githubRepos.length > 0) {
@@ -122,7 +103,14 @@ export default function TeamGithubRepositoriesTable({
     <>
       <div>
         <div className="flex items-center py-2">
-          <Input
+          <TeamGithubRepositoriesSearch
+            teamId={teamId}
+            foundAddRepo={foundAddRepo}
+            setFoundAddRepo={setFoundAddRepo}
+            handleFetchRegisteredRepos={handleFetchRegisteredRepos}
+          ></TeamGithubRepositoriesSearch>
+
+          {/* <Input
             placeholder="Search with owner/name ... "
             onChange={(event) => setSearch(event.target.value)}
             value={search}
@@ -144,7 +132,7 @@ export default function TeamGithubRepositoriesTable({
                 {foundAddRepo != null ? <>Add Repo</> : <>Not valid repo</>}
               </div>
             )}
-          </Button>
+          </Button> */}
         </div>
         <div className="flex items-center py-2 mb-2">
           {registeredGitRepos.map((registeredGitRepo) => (
