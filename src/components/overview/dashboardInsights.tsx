@@ -11,9 +11,7 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            Total CRED earned
-          </CardTitle>
+          <CardTitle className="text-sm font-medium">Total impact</CardTitle>
           <Icons.pizza></Icons.pizza>
         </CardHeader>
         <CardContent>
@@ -21,7 +19,8 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
             {overview?.totalScore.toFixed(2)}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            +{overview?.weekGrowth?.toFixed(2) || 0}% CRED earned
+            {overview?.weekGrowth ? (overview?.weekGrowth > 0 ? "+" : "-") : ""}{" "}
+            {overview?.weekGrowth.toFixed(2)}% all time growth during last week
           </p>
         </CardContent>
       </Card>
@@ -29,7 +28,7 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            CRED earned this week
+            Impact this week
           </CardTitle>
           <Icons.gitBranch></Icons.gitBranch>
         </CardHeader>
@@ -38,7 +37,8 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
             {overview?.weekScore.toFixed(2)}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            +{overview?.wowScore.toFixed(2)}% over last week
+            {overview?.wowScore ? (overview?.wowScore > 0 ? "+" : "-") : ""}{" "}
+            {overview?.wowScore.toFixed(2)}% compared to last week
           </p>
         </CardContent>
       </Card>

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { LoadingCircle } from "@/components/navigation/loading";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 interface PageProps {
   params: { teamId: string };
@@ -40,6 +41,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
   const { data: session } = useSession();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [emptyTeam, setEmptyTeam] = useState(false);
   const [team, setTeam] = useState<Team>();
   const [overview, setOverview] = useState<OverviewDto>();
   const [userCredDtos, setUserCredDtos] = useState<UserCredDto[]>([]);
@@ -93,6 +95,9 @@ export default function TeamDetailsPage({ params }: PageProps) {
     );
     if (data.success) {
       setRegisteredGitRepos(data.registeredRepos);
+      if (data.registeredRepos.length == 0) {
+        setEmptyTeam(true);
+      }
     }
   };
 
@@ -173,7 +178,13 @@ export default function TeamDetailsPage({ params }: PageProps) {
           <div>
             {isLoading ? (
               <div className="pt-36 flex justify-center">
-                <LoadingCircle></LoadingCircle>
+                {emptyTeam ? (
+                  <div className="pl-36 pr-36 flex justify-center">
+                    <TextGenerateEffect words="Seems like there are no github repositories on this team, fix this by clicking on the manage repositories button above." />
+                  </div>
+                ) : (
+                  <LoadingCircle></LoadingCircle>
+                )}
               </div>
             ) : (
               <div>
