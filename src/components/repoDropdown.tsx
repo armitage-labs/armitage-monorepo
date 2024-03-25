@@ -19,34 +19,6 @@ import {
 } from "@/components/ui/popover";
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
-
-interface RepoListItem {
-  value: string;
-  label: string;
-}
-
 interface RepoDropdownProps {
   repositories: GithubRepoDto[];
 }
