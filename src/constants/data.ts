@@ -5,27 +5,32 @@ export const signedInNavItems: NavItem[] = [
     title: "Dashboard",
     href: "/overview",
     icon: "dashboard",
-    label: "Dashboard",
+    label: "dashboard",
+  },
+  {
+    title: "Repositories",
+    href: "/repositories",
+    icon: "folderGit2",
+    label: "repositories",
   },
   {
     title: "Teams",
     href: "/teams",
     icon: "users",
-    label: "employee",
+    label: "teams",
   },
   {
     title: "Contributors",
     href: "/contributors",
-    icon: "kanban",
-    label: "employee",
+    icon: "heartHandshake",
+    label: "contributors",
   },
   {
     title: "Feedback",
     href: "https://armitage.canny.io/feedback",
     icon: "help",
-    label: "employee",
-  },
-];
+    label: "help",
+  }];
 
 export const signedOutNavItems: NavItem[] = [
   {
