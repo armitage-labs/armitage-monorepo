@@ -8,7 +8,7 @@ export enum EventName {
 export async function createEvent(
   userId: string,
   eventName: EventName,
-  eventData: object
+  eventData: object,
 ): Promise<Event> {
   return prisma.event.create({
     data: {
