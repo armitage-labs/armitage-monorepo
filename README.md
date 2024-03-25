@@ -41,6 +41,28 @@ yarn dev && docker-compose up
 
 Open [http://localhost:3000](http://localhost:3000) with your browser and you should see the application being served.
 
+
+### Migration
+
+For generating migrations:
+
+```bash
+yarn prisma migrate dev --name <migration-name>
+```
+
+For applying migrations
+
+```bash
+yarn prisma migrate deploy
+```
+
+For resolving migrations
+
+```bash
+yarn prisma migrate resolve --rolled-back 20240325202302_events
+```
+
+
 ## Resources
 
 We recommend getting familiar with SourceCred and the following resources:
