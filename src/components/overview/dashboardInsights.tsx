@@ -20,7 +20,8 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
             {overview?.weekGrowth ? (overview?.weekGrowth > 0 ? "+" : "-") : ""}{" "}
-            {overview?.weekGrowth.toFixed(2)}% all time growth during last week
+            {overview?.weekGrowth?.toFixed(2) || 0}% all time growth during last
+            week
           </p>
         </CardContent>
       </Card>
