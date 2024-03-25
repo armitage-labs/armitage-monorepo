@@ -70,6 +70,7 @@ export function TeamIntervalsOverview({
   >();
   const endMappedByStart = new Map<number, number>();
   const uniqueStarts: number[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let counter = 0;
   for (const team of teamIntervalsOverview) {
     team.intervals.forEach((interval: Interval) => {

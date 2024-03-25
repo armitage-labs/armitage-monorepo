@@ -1,6 +1,7 @@
 "use client";
 import { DashboardNav } from "@/components/dashboard-nav";
 import { signedInNavItems } from "@/constants/data";
+import { FeedbackButton } from "@/components/navigation/feedbackButton";
 import { cn } from "@/lib/utils";
 
 export default function Sidebar() {
@@ -18,6 +19,7 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
+      <FeedbackButton></FeedbackButton>
     </nav>
   );
 }

@@ -19,10 +19,12 @@ import { productTourData } from "@/content/product-tour";
 import { TeamIntervalsOverview } from "@/components/overview/teamIntervalsOverview";
 import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 import { LoadingCircle } from "@/components/navigation/loading";
+import { UserOnboarding } from "@prisma/client";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
+  const [, setUserOnboarding] = useState<UserOnboarding>();
   const [topContributors, setTopContributors] = useState<ContributorDto[]>([]);
   const [hasSeenProductTour, setHasSeenProductTour] = useState(true);
   const [overview, setOverview] = useState<OverviewDto>();
@@ -44,6 +46,13 @@ export default function OverviewPage() {
     const { data } = await axios.get("/api/teams/overview/intervals");
     if (data.success) {
       setTeamIntervalsOverview(data.teamOverviewIntervals);
+    }
+  };
+
+  const handleFetchUserOnboarding = async () => {
+    const { data } = await axios.get("/api/onboarding");
+    if (data.success) {
+      setUserOnboarding(data.onboardingStatus);
     }
   };
 
@@ -95,6 +104,7 @@ export default function OverviewPage() {
   }, [hasSeenProductTour]);
 
   useEffect(() => {
+    handleFetchUserOnboarding();
     if (!isLoading) {
       toast(
         "Welcome to Armitage Beta! The product is still in development, so please be patient with us! We appreciate all feedback and bug reports!",
