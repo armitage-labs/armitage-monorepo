@@ -5,16 +5,16 @@
 
 */
 -- AlterTable
-ALTER TABLE "ContributionCalculation" ADD COLUMN     "score_interval" JSONB;
+ALTER TABLE "ContributionCalculation" ADD COLUMN IF NOT EXISTS "score_interval" JSONB;
 
 -- AlterTable
-ALTER TABLE "ContributionRequest" ADD COLUMN     "email" VARCHAR(1000) NOT NULL;
+ALTER TABLE "ContributionRequest" ADD COLUMN IF NOT EXISTS "email" VARCHAR(1000) NOT NULL;
 
 -- AlterTable
-ALTER TABLE "UserScore" ADD COLUMN     "score_interval" JSONB;
+ALTER TABLE "UserScore" ADD COLUMN IF NOT EXISTS "score_interval" JSONB ;
 
 -- CreateTable
-CREATE TABLE "Event" (
+CREATE TABLE IF NOT EXISTS "Event" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "event_name" VARCHAR(1000) NOT NULL,
