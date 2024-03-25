@@ -52,29 +52,19 @@ export default function TeamsPage() {
           </Button>
         </div>
         <Separator />
-        {!isLoading ? (
-          <div>
-            {repositoryTeams.length !== 0 && (
-              <div className="grid gap-4 lg:grid-cols-2">
-                {repositoryTeams.map((team) => {
-                  return (
-                    <div>
-                      <RepositoryTeamCard teamDto={team}></RepositoryTeamCard>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {[...Array(10)].map((_elementInArray, _index) => (
-              <div className="flex flex-col space-y-3">
-                <Skeleton className="h-[165px] w-full rounded-xl" />
-              </div>
-            ))}
-          </div>
-        )}
+        <div>
+          {repositoryTeams.length !== 0 && (
+            <div className="grid gap-4 lg:grid-cols-2">
+              {repositoryTeams.map((team) => {
+                return (
+                  <div>
+                    <RepositoryTeamCard teamDto={team}></RepositoryTeamCard>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </>
   );
