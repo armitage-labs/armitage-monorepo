@@ -30,7 +30,8 @@ export const signedInNavItems: NavItem[] = [
     href: "https://armitage.canny.io/feedback",
     icon: "help",
     label: "help",
-  }];
+  },
+];
 
 export const signedOutNavItems: NavItem[] = [
   {

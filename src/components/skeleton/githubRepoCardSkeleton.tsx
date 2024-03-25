@@ -17,11 +17,9 @@ export function GithubRepoCardSkeleton() {
             <Skeleton className="w-[48px] max-w-full" />
           </div>
           <div className="shrink-0 bg-border w-[1px] h-[20px]"></div>
-          <div className="inline-flex items-center justify-center transition-colors h-10 py-2 px-1 shadow-none">
-          </div>
+          <div className="inline-flex items-center justify-center transition-colors h-10 py-2 px-1 shadow-none"></div>
         </div>
       </div>
     </>
   );
-};
-
+}

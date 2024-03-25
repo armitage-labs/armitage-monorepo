@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -10,6 +9,8 @@ import axios from "axios";
 import { GithubRepoCard } from "@/components/githubRepoCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Team } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 const breadcrumbItems = [
   { title: "Repositories", link: "/repositories" },
@@ -20,7 +21,11 @@ export default function CreateTeamPage() {
   const [canNext, setCanNext] = useState<boolean>(false);
   const [canPrevious, setCanPrevious] = useState<boolean>(false);
   const [isLoading, setIsisLoading] = useState<boolean>(true);
+  const [loadingTeamTransition, setLoadingTeamTransition] =
+    useState<boolean>(false);
+  const router = useRouter();
   const [page, setPage] = useState<number>(1);
+  const [team, setTeam] = useState<Team>();
 
   const handleQueryGithubRepos = async (page: number = 1) => {
     setIsisLoading(true);
@@ -30,6 +35,30 @@ export default function CreateTeamPage() {
     }
     setIsisLoading(false);
   };
+
+  const handleSelectRepo = async (repo: GithubRepoDto) => {
+    setLoadingTeamTransition(true);
+    const { data } = await axios.post(`/api/repositories`, {
+      repositoryFullName: repo.full_name,
+      repositoryName: repo.name,
+    });
+    if (data.success) {
+      setTeam(data.createdTeam);
+    }
+  };
+
+  const handleCreateCalculationRequest = async () => {
+    if (team) {
+      const { data } = await axios.get(`/api/credmanager?team_id=${team.id}`);
+      if (data && data.success) {
+        router.push(`/repositories/${team.id}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (team) handleCreateCalculationRequest();
+  }, [team]);
 
   useEffect(() => {
     handleQueryGithubRepos();
@@ -43,7 +72,6 @@ export default function CreateTeamPage() {
   useEffect(() => {
     handleQueryGithubRepos(page);
   }, [page]);
-
 
   return (
     <>
@@ -59,35 +87,48 @@ export default function CreateTeamPage() {
             <div className="grid gap-4 lg:grid-cols-2">
               {githubRepos.map((repo) => {
                 return (
-                  <GithubRepoCard githubRepoDto={repo}></GithubRepoCard>
+                  <GithubRepoCard
+                    githubRepoDto={repo}
+                    onSelectRepo={handleSelectRepo}
+                    loadingTeamTransition={loadingTeamTransition}
+                  ></GithubRepoCard>
                 );
               })}
             </div>
             <div className="flex justify-between pt-16">
               <div>
-                <Button variant="default" onClick={() => { setPage(page - 1) }} disabled={!canPrevious}>
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    setPage(page - 1);
+                  }}
+                  disabled={!canPrevious}
+                >
                   Previous Page
                 </Button>
               </div>
               <div className="pl-6">
-                <Button variant="default" onClick={() => { setPage(page + 1) }} disabled={!canNext}>
+                <Button
+                  variant="default"
+                  onClick={() => {
+                    setPage(page + 1);
+                  }}
+                  disabled={!canNext}
+                >
                   Next Page
                 </Button>
               </div>
             </div>
           </div>
-        ) :
-          (
-            <div className="grid gap-4 lg:grid-cols-2">
-              {[...Array(10)].map((_elementInArray, _index) => (
-                <div className="flex flex-col space-y-3">
-                  <Skeleton className="h-[100px] w-[400px] rounded-xl" />
-                </div>
-
-              ))}
-            </div>
-          )
-        }
+        ) : (
+          <div className="grid gap-4 lg:grid-cols-2">
+            {[...Array(10)].map((_elementInArray, _index) => (
+              <div className="flex flex-col space-y-3">
+                <Skeleton className="h-[165px] w-full rounded-xl" />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

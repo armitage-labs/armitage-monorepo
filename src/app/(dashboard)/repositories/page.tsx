@@ -8,26 +8,31 @@ import axios from "axios";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { GithubRepoCard } from "@/components/githubRepoCard";
-import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
+import { Team } from "@prisma/client";
+import { RepositoryTeamCard } from "@/components/repositoryTeamCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const breadcrumbItems = [{ title: "Repositories", link: "/dashboard/repositories" }];
+const breadcrumbItems = [
+  { title: "Repositories", link: "/dashboard/repositories" },
+];
 
 export default function TeamsPage() {
-  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
+  const [repositoryTeams, setRepositoryTeams] = useState<Team[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const handleQueryGithubRepos = async (page: number = 1) => {
-    const { data } = await axios.get(`/api/github/repo?page=${page}`);
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
+  const handleQueryRepositoryTeams = async () => {
+    setIsLoading(true);
+    const { data } = await axios.get(`/api/repositories`);
+    if (data.success && data.userTeams) {
+      setRepositoryTeams(data.userTeams);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    handleQueryGithubRepos();
+    handleQueryRepositoryTeams();
   }, []);
-
 
   return (
     <>
@@ -47,13 +52,29 @@ export default function TeamsPage() {
           </Button>
         </div>
         <Separator />
-        {githubRepos.length !== 0 && (
+        {!isLoading ? (
+          <div>
+            {repositoryTeams.length !== 0 && (
+              <div className="grid gap-4 lg:grid-cols-2">
+                {repositoryTeams.map((team) => {
+                  return (
+                    <div>
+                      <RepositoryTeamCard teamDto={team}></RepositoryTeamCard>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
           <div className="grid gap-4 lg:grid-cols-2">
-            <GithubRepoCard githubRepoDto={githubRepos[0]}></GithubRepoCard>
-            <GithubRepoCard githubRepoDto={githubRepos[1]}></GithubRepoCard>
+            {[...Array(10)].map((_elementInArray, _index) => (
+              <div className="flex flex-col space-y-3">
+                <Skeleton className="h-[165px] w-full rounded-xl" />
+              </div>
+            ))}
           </div>
         )}
-
       </div>
     </>
   );

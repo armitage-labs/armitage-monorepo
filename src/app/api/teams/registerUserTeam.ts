@@ -17,7 +17,7 @@ export async function registerUserTeam(
       data: {
         name: teamName,
         owner_user_id: userId,
-        singleRepository: singleRepoTeam,
+        single_repository: singleRepoTeam,
       },
     });
     return createdTeam;
