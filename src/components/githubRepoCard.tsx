@@ -1,7 +1,5 @@
 import {
-  ChevronDownIcon,
   CircleIcon,
-  PlusIcon,
   StarIcon,
 } from "@radix-ui/react-icons"
 import {
@@ -11,16 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
 import { Button } from "./ui/button"
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto"
 import { stringToColour } from "@/lib/utils"
@@ -31,47 +19,20 @@ interface GithubRepoCardProps {
 }
 
 export function GithubRepoCard({ githubRepoDto }: GithubRepoCardProps) {
-  console.log(githubRepoDto);
   return (
     <Card>
-      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0">
+      <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0 h-3/4">
         <div className="space-y-1">
           <CardTitle>{githubRepoDto.name}</CardTitle>
-          <CardDescription className="pt-1">
+          <CardDescription className="pt-1 flex justify-between h-full">
             {githubRepoDto.description || "No description detected"}
           </CardDescription>
         </div>
-        <div className="flex items-center space-x-0 rounded-md bg-secondary text-secondary-foreground">
-          <Button variant="secondary" className="px-3 shadow-none">
+        <div className="flex items-center rounded-md bg-secondary text-secondary-foreground">
+          <Button variant="secondary" className="shadow-none">
             <BookUpIcon className="mr-2 h-4 w-4" />
             Select
           </Button>
-          <Separator orientation="vertical" className="h-[20px]" />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" className="px-1 shadow-none">
-                <ChevronDownIcon className="h-4 w-4 text-secondary-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              alignOffset={-5}
-              className="w-[200px]"
-              forceMount
-            >
-              <DropdownMenuLabel>Suggested Lists</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem checked>
-                Future Ideas
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>My Stack</DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem>Inspiration</DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <PlusIcon className="mr-2 h-4 w-4" /> Create List
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent>

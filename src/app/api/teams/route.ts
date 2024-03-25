@@ -1,6 +1,6 @@
 import { options } from "@/app/api/auth/[...nextauth]/options";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { fetchUserTeams } from "./fetchUserTeams";
 import { fetchUserTeam } from "./fetchTeam";
 import { TeamRegisterDto } from "./types/team.dto";

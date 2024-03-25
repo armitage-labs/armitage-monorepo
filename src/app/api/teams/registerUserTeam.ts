@@ -4,6 +4,7 @@ import prisma from "db";
 export async function registerUserTeam(
   userId: string,
   teamName: string,
+  singleRepoTeam: boolean = false,
 ): Promise<Team> {
   const foundTeam = await prisma.team.findFirst({
     where: {
@@ -16,6 +17,7 @@ export async function registerUserTeam(
       data: {
         name: teamName,
         owner_user_id: userId,
+        singleRepository: singleRepoTeam,
       },
     });
     return createdTeam;
