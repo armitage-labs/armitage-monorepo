@@ -8,12 +8,12 @@ import { CreateTeamCard } from "@/components/teams/createTeam";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Team } from "@/app/api/teams/fetchUserTeams";
+import { LoadingCircle } from "@/components/navigation/loading";
 import { Button } from "@/components/ui/button";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import TeamGithubRepositoriesTable from "@/components/teams/teamGithubRepositoriesTable";
-import { LoadingCircle } from "@/components/navigation/loading";
 
 const breadcrumbItems = [
   { title: "Teams", link: "/teams" },
