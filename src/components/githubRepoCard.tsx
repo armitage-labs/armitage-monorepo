@@ -38,7 +38,7 @@ export function GithubRepoCard({
       <Card>
         <CardHeader className="grid grid-cols-[1fr_110px] items-start gap-4 space-y-0 h-3/4">
           <div className="space-y-1">
-            <CardTitle>{githubRepoDto.name}</CardTitle>
+            <CardTitle>{githubRepoDto.full_name}</CardTitle>
             <CardDescription className="pt-1 flex justify-between h-full">
               {githubRepoDto.description || "No description detected"}
             </CardDescription>
