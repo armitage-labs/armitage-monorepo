@@ -19,8 +19,8 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
             {overview?.totalScore.toFixed(2)}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            {overview?.weekGrowth?.toFixed(2) || 0}% all time growth during current
-            week
+            {overview?.weekGrowth?.toFixed(2) || 0}% all time growth during
+            current week
           </p>
         </CardContent>
       </Card>
