@@ -16,7 +16,7 @@ export function TeamControbutionTable({ teamId }: TeamControbutionTableProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleFetchUserContributors = async () => {
-    const { data } = await axios.get(`/api/contributors?teamId=${teamId}`);
+    const { data } = await axios.get(`/api/contributors?team_id=${teamId}`);
     if (data.success) {
       setContributors(data.contributors);
       setIsLoading(false);
