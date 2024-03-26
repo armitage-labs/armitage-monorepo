@@ -25,12 +25,6 @@ export const signedInNavItems: NavItem[] = [
     icon: "heartHandshake",
     label: "contributors",
   },
-  {
-    title: "Feedback",
-    href: "https://armitage.canny.io/feedback",
-    icon: "help",
-    label: "help",
-  },
 ];
 
 export const signedOutNavItems: NavItem[] = [
