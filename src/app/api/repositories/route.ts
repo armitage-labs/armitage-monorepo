@@ -1,20 +1,28 @@
-import { options } from "@/app/api/auth/[...nextauth]/options";
-import { NextRequest, NextResponse } from "next/server";
+import prisma from "db";
 import { getServerSession } from "next-auth";
-import { fetchUserTeams } from "./fetchUserTeams";
-import { fetchUserTeam } from "./fetchTeam";
-import { TeamRegisterDto } from "./types/team.dto";
-import { registerUserTeam } from "./registerUserTeam";
+import { NextRequest, NextResponse } from "next/server";
+import { registerUserTeam } from "../teams/registerUserTeam";
+import { options } from "../auth/[...nextauth]/options";
+import { fetchUserSingleRepoTeams } from "../teams/fetchUserTeams";
+import { fetchUserTeam } from "../teams/fetchTeam";
 
+export type SingleRepositoryTeamRegisterDto = {
+  repositoryFullName: string;
+  repositoryName: string;
+};
+
+// fetch teams that are singleRepo teams
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
   const teamId = req.nextUrl.searchParams.get("team_id");
   if (session?.userId) {
     if (teamId == null) {
-      const userTeams = await fetchUserTeams(session.userId);
+      const userSingleRepoTeams = await fetchUserSingleRepoTeams(
+        session.userId,
+      );
       return NextResponse.json({
         success: true,
-        userTeams: userTeams,
+        userTeams: userSingleRepoTeams,
       });
     } else {
       const userTeam = await fetchUserTeam(session.userId, teamId);
@@ -24,18 +32,26 @@ export async function GET(req: NextRequest) {
       });
     }
   }
-  return NextResponse.json({ success: true, userTeams: [] });
 }
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(options);
-    const registerRepoDto = (await req.json()) as TeamRegisterDto;
+    const registerRepoDto =
+      (await req.json()) as SingleRepositoryTeamRegisterDto;
     if (session?.userId) {
       const createdTeam = await registerUserTeam(
         session.userId,
-        registerRepoDto.name,
+        registerRepoDto.repositoryFullName,
+        true,
       );
+      await prisma.githubRepo.create({
+        data: {
+          team_id: createdTeam.id,
+          name: registerRepoDto.repositoryName,
+          full_name: registerRepoDto.repositoryFullName,
+        },
+      });
       return NextResponse.json({ success: true, createdTeam: createdTeam });
     }
     return NextResponse.json({ success: true, createdTeam: null });
