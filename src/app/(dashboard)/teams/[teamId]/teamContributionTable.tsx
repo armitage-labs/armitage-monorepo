@@ -6,11 +6,11 @@ import { ContributorsDataTable } from "../../contributors/contributorsDataTable"
 import { contributorsColumns } from "../../contributors/contributorsColumns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface TeamControbutionTableProps {
+interface TeamContributionTableProps {
   teamId?: string;
 }
 
-export function TeamControbutionTable({ teamId }: TeamControbutionTableProps) {
+export function TeamContributionTable({ teamId }: TeamContributionTableProps) {
   const { data: session } = useSession();
   const [contributors, setContributors] = useState<ContributorDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);

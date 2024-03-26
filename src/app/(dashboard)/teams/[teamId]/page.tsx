@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
-import { TeamControbutionTable } from "./teamControbutionTable";
+import { TeamContributionTable } from "./teamContributionTable";
 
 interface PageProps {
   params: { teamId: string };
@@ -223,9 +223,9 @@ export default function TeamDetailsPage({ params }: PageProps) {
 
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
-                    <TeamControbutionTable
+                    <TeamContributionTable
                       teamId={teamId}
-                    ></TeamControbutionTable>
+                    ></TeamContributionTable>
                   </div>
                 </div>
               </div>
