@@ -35,6 +35,7 @@ model Team {
   ContributionCalculation ContributionCalculation[]
   created_at              DateTime                  @default(now()) @db.Timestamp(6)
   ContributionRequest     ContributionRequest[]
+  single_repository       Boolean                   @default(false)
 }
 
 model ContributionCalculation {
