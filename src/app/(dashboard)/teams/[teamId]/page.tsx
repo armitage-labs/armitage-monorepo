@@ -203,14 +203,6 @@ export default function TeamDetailsPage({ params }: PageProps) {
 
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
-                    <TeamControbutionTable
-                      teamId={teamId}
-                    ></TeamControbutionTable>
-                  </div>
-                </div>
-
-                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                  <div className="col-span-3 md:col-span-3">
                     <CalculationResult
                       userCredDtoList={userCredDtos
                         .filter((user) => user.type === "USER")
@@ -226,6 +218,14 @@ export default function TeamDetailsPage({ params }: PageProps) {
                         .filter((user) => user.type === "USER")
                         .sort((a, b) => b.totalCred - a.totalCred)}
                     />
+                  </div>
+                </div>
+
+                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="col-span-3 md:col-span-3">
+                    <TeamControbutionTable
+                      teamId={teamId}
+                    ></TeamControbutionTable>
                   </div>
                 </div>
               </div>
