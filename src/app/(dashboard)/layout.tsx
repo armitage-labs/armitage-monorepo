@@ -9,7 +9,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <div>
       <Header />
       <div className="flex h-screen">
         <SessionRefreshProvider>
@@ -17,6 +17,6 @@ export default async function DashboardLayout({
           <main className="w-full pt-16">{children}</main>
         </SessionRefreshProvider>
       </div>
-    </html>
+    </div>
   );
 }

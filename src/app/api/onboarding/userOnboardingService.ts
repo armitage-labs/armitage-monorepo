@@ -4,6 +4,7 @@ export enum OnboardingFlow {
   UNKNOWN,
   PRIVATE,
   PUBLIC,
+  BETA,
 }
 
 export enum OnboardingStep {
@@ -23,6 +24,31 @@ export async function getOnboardingStatusForUser(
     },
   });
   return userOnboarding;
+}
+
+export async function updateOnboardingStatusForUser(
+  userId: string,
+  flow: OnboardingFlow,
+  step: OnboardingStep,
+) {
+  const userOnboarding = await prisma.userOnboarding.findFirst({
+    where: {
+      user_id: userId,
+    },
+  });
+  if (userOnboarding !== null) {
+    await prisma.userOnboarding.update({
+      where: {
+        user_id: userId,
+        id: userOnboarding.id,
+      },
+      data: {
+        flow: OnboardingFlow[flow],
+        flow_step: OnboardingStep[step],
+        updated_at: new Date(),
+      },
+    });
+  }
 }
 
 export async function saveCreateOnboardingStatusForUser(

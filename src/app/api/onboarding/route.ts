@@ -5,33 +5,29 @@ import {
   OnboardingStep,
   getOnboardingStatusForUser,
   saveCreateOnboardingStatusForUser,
+  updateOnboardingStatusForUser,
 } from "./userOnboardingService";
 import { NextRequest, NextResponse } from "next/server";
 import { UpdateOnboardingStatusRequestDto } from "./updateOnboardingStatusRequest.dto";
 
 /**
- * Creates / updates onboarding status
+ * Updates onboarding status
  */
 export async function POST(req: NextRequest) {
   const session = await getServerSession(options);
   let success = false;
-  let onboardingStatus = null;
   if (session?.userId) {
     success = true;
     const updateOnboardingStatusRequest =
       (await req.json()) as UpdateOnboardingStatusRequestDto;
-    onboardingStatus = await getOnboardingStatusForUser(session.userId);
-    if (onboardingStatus == null) {
-      onboardingStatus = await saveCreateOnboardingStatusForUser(
-        session.userId,
-        updateOnboardingStatusRequest.onboardingFlow,
-        updateOnboardingStatusRequest.onboardingStep,
-      );
-    }
+    await updateOnboardingStatusForUser(
+      session.userId,
+      updateOnboardingStatusRequest.onboardingFlow,
+      updateOnboardingStatusRequest.onboardingStep,
+    );
   }
   return NextResponse.json({
     success: success,
-    onboardingStatus: onboardingStatus,
   });
 }
 
