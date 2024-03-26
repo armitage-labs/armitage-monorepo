@@ -24,7 +24,7 @@ export type UserScoreDto = {
 };
 
 export async function fetchUserContributorsByUser(
-  userId: string
+  userId: string,
 ): Promise<ContributorDto[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -48,7 +48,7 @@ export async function fetchUserContributorsByUser(
 }
 
 export async function fetchUserContributorsByTeam(
-  teamId: string
+  teamId: string,
 ): Promise<ContributorDto[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -72,7 +72,7 @@ export async function fetchUserContributorsByTeam(
 }
 
 export async function fetchUserContributorsInterval(
-  userId: string
+  userId: string,
 ): Promise<any[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -95,7 +95,7 @@ export async function fetchUserContributorsInterval(
 }
 
 export async function fetchUserContributorsIntervalByTeam(
-  teamId: string
+  teamId: string,
 ): Promise<any[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -120,7 +120,7 @@ export async function fetchUserContributorsIntervalByTeam(
 // export async function mergeContributorDtoWithTeams():
 
 function transformUserScoresToContributors(
-  userScoresArray: UserScoreDto[]
+  userScoresArray: UserScoreDto[],
 ): ContributorDto[] {
   // Transforms userScore into contributorDto
   // Sums up all contributions and divide the sum of a unique user name
@@ -133,7 +133,7 @@ function transformUserScoresToContributors(
       contributionScoreSumMap[userScore.username] = parseFloat(userScore.score);
     } else {
       contributionScoreSumMap[userScore.username] += parseFloat(
-        userScore.score
+        userScore.score,
       );
     }
     allContributionsSum += parseFloat(userScore.score);
