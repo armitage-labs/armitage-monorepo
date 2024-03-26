@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import { TeamContributionTable } from "./teamContributionTable";
 
 interface PageProps {
   params: { teamId: string };
@@ -217,6 +218,14 @@ export default function TeamDetailsPage({ params }: PageProps) {
                         .filter((user) => user.type === "USER")
                         .sort((a, b) => b.totalCred - a.totalCred)}
                     />
+                  </div>
+                </div>
+
+                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="col-span-3 md:col-span-3">
+                    <TeamContributionTable
+                      teamId={teamId}
+                    ></TeamContributionTable>
                   </div>
                 </div>
               </div>

@@ -23,7 +23,7 @@ export type UserScoreDto = {
   created_at: Date;
 };
 
-export async function fetchUserContributors(
+export async function fetchUserContributorsByUser(
   userId: string,
 ): Promise<ContributorDto[]> {
   try {
@@ -35,6 +35,30 @@ export async function fetchUserContributors(
         contribution_calculation: {
           Team: {
             owner_user_id: userId,
+          },
+        },
+      },
+    });
+    const userContributors = transformUserScoresToContributors(foundUserScores);
+    return userContributors;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+export async function fetchUserContributorsByTeam(
+  teamId: string,
+): Promise<ContributorDto[]> {
+  try {
+    // fetch userScores where calculation is part of a team
+    // which the owner is the userId
+    const foundUserScores = await prisma.userScore.findMany({
+      where: {
+        user_type: "USER",
+        contribution_calculation: {
+          Team: {
+            id: teamId,
           },
         },
       },
