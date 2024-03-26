@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { RowSkeleton } from "@/components/skeleton/rowSkeleton";
+import { RowSkeleton } from "@/components/skeleton/row-skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
