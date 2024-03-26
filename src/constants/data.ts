@@ -5,25 +5,19 @@ export const signedInNavItems: NavItem[] = [
     title: "Dashboard",
     href: "/overview",
     icon: "dashboard",
-    label: "dashboard",
-  },
-  {
-    title: "Repositories",
-    href: "/repositories",
-    icon: "folderGit2",
-    label: "repositories",
+    label: "Dashboard",
   },
   {
     title: "Teams",
     href: "/teams",
     icon: "users",
-    label: "teams",
+    label: "employee",
   },
   {
     title: "Contributors",
     href: "/contributors",
-    icon: "heartHandshake",
-    label: "contributors",
+    icon: "kanban",
+    label: "employee",
   },
 ];
 

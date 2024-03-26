@@ -25,8 +25,7 @@ export default function TeamsPage() {
   const handleFetchUserTeams = async () => {
     const { data } = await axios.get("/api/teams");
     if (data.success) {
-      const userTeams = data.userTeams as Team[];
-      setTeams(userTeams.filter((team) => team.single_repository !== true));
+      setTeams(data.userTeams);
       setIsLoading(false);
     }
   };

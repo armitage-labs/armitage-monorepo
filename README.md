@@ -83,4 +83,3 @@ Please make sure to check the Request for Contributions (RFC) and the issues/dis
 https://ui.shadcn.com/
 https://next-shadcn-dashboard-starter.vercel.app/dashboard
 https://ui.aceternity.com/
-https://tailwindcss.com/docs/customizing-colors
