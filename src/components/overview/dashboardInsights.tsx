@@ -1,5 +1,5 @@
 import { OverviewDto } from "@/app/api/teams/types/overview.dto";
-import { CardSkeleton } from "../skeleton/card-skeleton";
+import { CardSkeleton } from "../skeleton/cardSkeleton";
 import { TotalContributorsCard } from "./totalContributorsCard";
 import { WeeklyImpactCard } from "./weeklyImpactCard";
 import { TotalImpactCard } from "./totalImpactCard";
