@@ -12,6 +12,8 @@ import {
   FolderGit2,
   FolderGit2Icon,
   File,
+  MessageCircleHeart,
+  MessagesSquare,
   FileText,
   HelpCircle,
   Image,
@@ -43,6 +45,8 @@ export type Icon = LucideIcon;
 export const Icons = {
   dashboard: LayoutDashboardIcon,
   gitBranch: GitBranch,
+  messageCircleHeart: MessageCircleHeart,
+  messagesSquare: MessagesSquare,
   logo: Command,
   login: LogIn,
   close: X,

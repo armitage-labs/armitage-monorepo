@@ -16,7 +16,7 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {overview?.totalScore.toFixed(2)}
+            {overview?.totalScore?.toFixed(2) || 0}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
             {overview?.weekGrowth?.toFixed(2) || 0}% all time growth during
@@ -34,10 +34,10 @@ export function DashboardInsights({ overview }: DashboardInsightsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {overview?.weekScore.toFixed(2)}
+            {overview?.weekScore?.toFixed(2) || 0}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            {overview?.wowScore?.toFixed(2)}% compared to last week
+            {overview?.wowScore?.toFixed(2) || 0}% compared to last week
           </p>
         </CardContent>
       </Card>
