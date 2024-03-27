@@ -20,6 +20,16 @@ export const productTourData: DriveStep[] = [
     },
   },
   {
+    element: 'a[href="/repositories"]',
+    popover: {
+      title: "Repositories",
+      description:
+        "You can start analyzing a repository, by navigating to the repositories tab, where you are right now",
+      side: "left",
+      align: "start",
+    },
+  },
+  {
     element: 'a[href="/teams"]',
     popover: {
       title: "Teams",

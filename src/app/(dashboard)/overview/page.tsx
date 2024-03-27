@@ -19,6 +19,7 @@ import { productTourData } from "@/content/product-tour";
 import { TeamIntervalsOverview } from "@/components/overview/teamIntervalsOverview";
 import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 import { LoadingCircle } from "@/components/navigation/loading";
+import { redirect } from "next/navigation";
 
 export default function OverviewPage() {
   const { data: session } = useSession();
@@ -91,6 +92,7 @@ export default function OverviewPage() {
   useEffect(() => {
     if (!hasSeenProductTour) {
       driverObj.drive();
+      redirect("/repositories/new");
     }
   }, [hasSeenProductTour]);
 
