@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ContributorsDataTable } from "../../contributors/contributorsDataTable";
 import { contributorsColumns } from "../../contributors/contributorsColumns";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface TeamContributionTableProps {
   teamId?: string;
@@ -30,19 +29,10 @@ export function TeamContributionTable({ teamId }: TeamContributionTableProps) {
   }, [session]);
 
   return (
-    <>
-      <Card className="col-span-2">
-        <CardHeader>
-          <CardTitle>Contributors</CardTitle>
-        </CardHeader>
-        <CardContent className="pl-2">
-          <ContributorsDataTable
-            columns={contributorsColumns}
-            data={contributors}
-            isLoading={isLoading}
-          ></ContributorsDataTable>
-        </CardContent>
-      </Card>
-    </>
+    <ContributorsDataTable
+      columns={contributorsColumns}
+      data={contributors}
+      isLoading={isLoading}
+    ></ContributorsDataTable>
   );
 }
