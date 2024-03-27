@@ -21,6 +21,15 @@ import { OverviewDto } from "@/app/api/teams/types/overview.dto";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { TeamContributionTable } from "./teamContributionTable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface PageProps {
   params: { teamId: string };
@@ -200,17 +209,37 @@ export default function TeamDetailsPage({ params }: PageProps) {
                     ></CalculationIntervalChart>
                   </div>
                 </div>
-
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
-                    <CalculationResult
-                      userCredDtoList={userCredDtos
-                        .filter((user) => user.type === "USER")
-                        .sort((a, b) => b.totalCred - a.totalCred)}
-                    ></CalculationResult>
+                    <Card className="col-span-2">
+                      <Tabs defaultValue="graph" className="w-full">
+                        <CardHeader>
+                          <CardTitle className="grid grid-cols-2">
+                            <div>Contributors</div>
+                            <TabsList className="grid grid-cols-2 justify-end">
+                              <TabsTrigger value="graph">Graph</TabsTrigger>
+                              <TabsTrigger value="table">Table</TabsTrigger>
+                            </TabsList>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                          <TabsContent value="graph">
+                            <CalculationResult
+                              userCredDtoList={userCredDtos
+                                .filter((user) => user.type === "USER")
+                                .sort((a, b) => b.totalCred - a.totalCred)}
+                            ></CalculationResult>
+                          </TabsContent>
+                          <TabsContent value="table">
+                            <TeamContributionTable
+                              teamId={teamId}
+                            ></TeamContributionTable>
+                          </TabsContent>
+                        </CardContent>
+                      </Tabs>
+                    </Card>
                   </div>
                 </div>
-
                 <div className="pt-16">
                   <div className="flex flex-row items-center justify-center mb-10 w-full">
                     <AnimatedTooltip
@@ -218,14 +247,6 @@ export default function TeamDetailsPage({ params }: PageProps) {
                         .filter((user) => user.type === "USER")
                         .sort((a, b) => b.totalCred - a.totalCred)}
                     />
-                  </div>
-                </div>
-
-                <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                  <div className="col-span-3 md:col-span-3">
-                    <TeamContributionTable
-                      teamId={teamId}
-                    ></TeamContributionTable>
                   </div>
                 </div>
               </div>
