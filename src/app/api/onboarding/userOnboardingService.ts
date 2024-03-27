@@ -1,5 +1,4 @@
 import { UserOnboarding } from "@prisma/client";
-import prisma from "db";
 
 export enum OnboardingFlow {
   UNKNOWN,
