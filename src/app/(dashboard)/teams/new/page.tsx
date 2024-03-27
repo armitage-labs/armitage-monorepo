@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadCrumb from "@/components/breadcrumbs";
 import { CreateTeamStepper } from "@/components/createTeamSteps";
 import { CreateTeamCard } from "@/components/teams/createTeam";
@@ -11,7 +11,7 @@ import { Team } from "@/app/api/teams/fetchUserTeams";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { Button } from "@/components/ui/button";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import TeamGithubRepositoriesTable from "@/components/teams/teamGithubRepositoriesTable";
 
@@ -60,6 +60,14 @@ export default function CreateTeamPage() {
       }
     }
   };
+
+  useEffect(() => {
+    if (currentStep === 2) {
+      redirect(`/teams/${selectedTeam?.id}`);
+    }
+  }, [
+    currentStep
+  ]);
 
   return (
     <>

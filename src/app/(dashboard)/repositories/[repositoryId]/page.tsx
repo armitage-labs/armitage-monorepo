@@ -50,6 +50,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
   const [hasContributionRequest, setHasContributionRequest] = useState(false);
   const [contributionCalculation, setContributionCalculation] =
     useState<ContributionCalculation>();
+  const [pollingCount, setPollingCount] = useState<number>(0);
 
   const router = useRouter();
 
@@ -137,6 +138,22 @@ export default function TeamDetailsPage({ params }: PageProps) {
       setUserCredDtos(data.userCreds);
     }
   };
+
+  useEffect(() => {
+    if (hasContributionRequest) {
+      const delayDebounceFn = setTimeout(() => {
+        handleFetchContributionRequest();
+        setPollingCount(pollingCount + 1);
+      }, 5000);
+      return () => clearTimeout(delayDebounceFn);
+    } else if (pollingCount > 0 && !hasContributionRequest) {
+      handleFetchTeams();
+      handleFetchUserCreds();
+      handleFetchRegisteredRepos();
+      handleFetchContributionCalculation();
+      handleFetchTeamOverview();
+    }
+  }, [hasContributionRequest, pollingCount]);
 
   return (
     <>

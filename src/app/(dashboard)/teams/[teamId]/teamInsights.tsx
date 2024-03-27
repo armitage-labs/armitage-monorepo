@@ -18,10 +18,10 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {overview?.totalScore.toFixed(2)}
+            {overview?.totalScore?.toFixed(2) || 0}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            +{overview?.weekGrowth.toFixed(2)}% CRED earned
+            +{overview?.weekGrowth?.toFixed(2) || 0}% CRED earned
           </p>
         </CardContent>
       </Card>
@@ -35,11 +35,10 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">
-            {overview?.weekScore.toFixed(2)}
+            {overview?.weekScore?.toFixed(2) || 0}
           </div>
           <p className="pt-1 text-xs text-muted-foreground">
-            {overview?.wowScore ? (overview?.wowScore > 0 ? "+" : "-") : ""}{" "}
-            {overview?.wowScore.toFixed(2)}% over last week
+            {overview?.wowScore?.toFixed(2) || 0}% over last week
           </p>
         </CardContent>
       </Card>
