@@ -65,9 +65,7 @@ export default function CreateTeamPage() {
     if (currentStep === 2) {
       redirect(`/teams/${selectedTeam?.id}`);
     }
-  }, [
-    currentStep
-  ]);
+  }, [currentStep]);
 
   return (
     <>

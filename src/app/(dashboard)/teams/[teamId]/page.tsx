@@ -22,12 +22,7 @@ import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { TeamContributionTable } from "./teamContributionTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PageProps {
   params: { teamId: string };
@@ -162,7 +157,6 @@ export default function TeamDetailsPage({ params }: PageProps) {
       handleFetchTeamOverview();
     }
   }, [hasContributionRequest, pollingCount]);
-
 
   return (
     <>
