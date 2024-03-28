@@ -20,7 +20,7 @@ export function TotalContributorsCard({
       <CardContent>
         <div className="text-2xl font-bold">{overview?.totalContributors}</div>
         <p className="pt-1 text-xs text-muted-foreground">
-          Contributors on team
+          Contributors on teams
         </p>
       </CardContent>
     </Card>

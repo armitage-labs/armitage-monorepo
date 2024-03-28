@@ -13,6 +13,7 @@ import {
 import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { HoverExplainer } from "@/components/hoverExplainer";
 
 interface CalculationIntervalChartProps {
   intervals: any[];
@@ -42,7 +43,15 @@ export function CalculationIntervalChart({
       <div className=""></div>
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle>Overview</CardTitle>
+          <div className="flex justify-between">
+            <CardTitle>Overview</CardTitle>
+            <HoverExplainer
+              title="Understand the most engaged periods of your team."
+              description="This chart can help you understand the most engaged periods of your team. The x-axis represents the time and the y-axis represents the engagement score."
+              subtitle="Rolling week basis"
+              imageSrc="https://www.svgrepo.com/download/311488/activity.svg"
+            />
+          </div>
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={150}>

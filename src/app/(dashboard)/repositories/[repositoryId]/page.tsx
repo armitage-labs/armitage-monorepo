@@ -20,6 +20,9 @@ import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { TeamInsights } from "../../teams/[teamId]/teamInsights";
 import { CalculationIntervalChart } from "../../teams/[teamId]/calculationIntervalChart";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TeamContributionTable } from "../../teams/[teamId]/teamContributionTable";
 
 interface PageProps {
   params: { repositoryId: string };
@@ -208,14 +211,35 @@ export default function TeamDetailsPage({ params }: PageProps) {
                     ></CalculationIntervalChart>
                   </div>
                 </div>
-
                 <div className="pt-4 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                   <div className="col-span-3 md:col-span-3">
-                    <CalculationResult
-                      userCredDtoList={userCredDtos
-                        .filter((user) => user.type === "USER")
-                        .sort((a, b) => b.totalCred - a.totalCred)}
-                    ></CalculationResult>
+                    <Card className="col-span-2">
+                      <Tabs defaultValue="graph" className="w-full">
+                        <CardHeader>
+                          <CardTitle className="grid grid-cols-2">
+                            <div>Contributors</div>
+                            <TabsList className="grid grid-cols-2 justify-end">
+                              <TabsTrigger value="graph">Graph</TabsTrigger>
+                              <TabsTrigger value="table">Table</TabsTrigger>
+                            </TabsList>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pl-2">
+                          <TabsContent value="graph">
+                            <CalculationResult
+                              userCredDtoList={userCredDtos
+                                .filter((user) => user.type === "USER")
+                                .sort((a, b) => b.totalCred - a.totalCred)}
+                            ></CalculationResult>
+                          </TabsContent>
+                          <TabsContent value="table">
+                            <TeamContributionTable
+                              teamId={teamId}
+                            ></TeamContributionTable>
+                          </TabsContent>
+                        </CardContent>
+                      </Tabs>
+                    </Card>
                   </div>
                 </div>
 
