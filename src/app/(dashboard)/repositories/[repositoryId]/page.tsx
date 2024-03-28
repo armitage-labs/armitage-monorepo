@@ -53,6 +53,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
   const [hasContributionRequest, setHasContributionRequest] = useState(false);
   const [contributionCalculation, setContributionCalculation] =
     useState<ContributionCalculation>();
+  const [pollingCount, setPollingCount] = useState<number>(0);
 
   const router = useRouter();
 
@@ -141,6 +142,22 @@ export default function TeamDetailsPage({ params }: PageProps) {
     }
   };
 
+  useEffect(() => {
+    if (hasContributionRequest) {
+      const delayDebounceFn = setTimeout(() => {
+        handleFetchContributionRequest();
+        setPollingCount(pollingCount + 1);
+      }, 5000);
+      return () => clearTimeout(delayDebounceFn);
+    } else if (pollingCount > 0 && !hasContributionRequest) {
+      handleFetchTeams();
+      handleFetchUserCreds();
+      handleFetchRegisteredRepos();
+      handleFetchContributionCalculation();
+      handleFetchTeamOverview();
+    }
+  }, [hasContributionRequest, pollingCount]);
+
   return (
     <>
       <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
@@ -162,10 +179,10 @@ export default function TeamDetailsPage({ params }: PageProps) {
               <Button
                 variant="default"
                 onClick={() => {
-                  router.push("/teams");
+                  router.push("/repositories");
                 }}
               >
-                Return to teams
+                Return to repositories
               </Button>
             </div>
           </div>

@@ -22,14 +22,7 @@ import { LoadingCircle } from "@/components/navigation/loading";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { TeamContributionTable } from "./teamContributionTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PageProps {
   params: { teamId: string };
@@ -60,6 +53,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
   const [hasContributionRequest, setHasContributionRequest] = useState(false);
   const [contributionCalculation, setContributionCalculation] =
     useState<ContributionCalculation>();
+  const [pollingCount, setPollingCount] = useState<number>(0);
 
   const router = useRouter();
 
@@ -80,6 +74,13 @@ export default function TeamDetailsPage({ params }: PageProps) {
       setIsLoading(false);
     }
   }, [registeredGitRepos, team, userCredDtos]);
+
+  const handleFetchUserCreds = async () => {
+    const { data } = await axios.get(`/api/cred?team_id=${teamId}`);
+    if (data.success) {
+      setUserCredDtos(data.userCreds);
+    }
+  };
 
   const handleFetchContributionRequest = async () => {
     const { data } = await axios.get(
@@ -141,12 +142,21 @@ export default function TeamDetailsPage({ params }: PageProps) {
     }
   }, [userCredDtos]);
 
-  const handleFetchUserCreds = async () => {
-    const { data } = await axios.get(`/api/cred?team_id=${teamId}`);
-    if (data.success) {
-      setUserCredDtos(data.userCreds);
+  useEffect(() => {
+    if (hasContributionRequest) {
+      const delayDebounceFn = setTimeout(() => {
+        handleFetchContributionRequest();
+        setPollingCount(pollingCount + 1);
+      }, 5000);
+      return () => clearTimeout(delayDebounceFn);
+    } else if (pollingCount > 0 && !hasContributionRequest) {
+      handleFetchTeams();
+      handleFetchUserCreds();
+      handleFetchRegisteredRepos();
+      handleFetchContributionCalculation();
+      handleFetchTeamOverview();
     }
-  };
+  }, [hasContributionRequest, pollingCount]);
 
   return (
     <>
