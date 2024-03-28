@@ -47,7 +47,7 @@ export function TeamInsights({ overview }: TeamInsightsProps) {
 
           <div className="flex justify-between">
             <p className="pt-1 text-xs text-muted-foreground">
-            {overview?.wowScore?.toFixed(2) || 0}% over last week
+              {overview?.wowScore?.toFixed(2) || 0}% over last week
             </p>
             <HoverExplainer
               title="How the current week compares to the previous week"
