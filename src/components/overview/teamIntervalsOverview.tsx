@@ -20,6 +20,7 @@ import {
   TeamUtils,
 } from "./types";
 import { indexToColor } from "./utils";
+import { HoverExplainer } from "../hoverExplainer";
 
 const CustomTooltip = ({
   active,
@@ -118,7 +119,15 @@ export function TeamIntervalsOverview({
       <div className=""></div>
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle>3 Month Engagement Overview</CardTitle>
+          <div className="flex justify-between">
+            <CardTitle>3 Month Engagement Overview</CardTitle>
+            <HoverExplainer
+              title="Understand the most engaged periods of your teams."
+              description="This chart can help you understand how engaged were your teams compared to each other during the last 3 months."
+              subtitle="Rolling week basis"
+              imageSrc="https://www.svgrepo.com/download/311488/activity.svg"
+            />
+          </div>
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={150}>

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Team } from "@prisma/client";
 import { RepositoryTeamCard } from "@/components/repositoryTeamCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 
 const breadcrumbItems = [
   { title: "Repositories", link: "/dashboard/repositories" },
@@ -53,7 +53,7 @@ export default function TeamsPage() {
         </div>
         <Separator />
         <div>
-          {repositoryTeams.length !== 0 && (
+          {repositoryTeams.length !== 0 ? (
             <div className="grid gap-4 lg:grid-cols-2">
               {repositoryTeams.map((team) => {
                 return (
@@ -62,6 +62,10 @@ export default function TeamsPage() {
                   </div>
                 );
               })}
+            </div>
+          ) : (
+            <div className="pl-36 pr-36 flex justify-center">
+              <TextGenerateEffect words="Seems like there are no github repositories on this team, fix this by clicking on the manage repositories button above." />
             </div>
           )}
         </div>
