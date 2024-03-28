@@ -179,10 +179,10 @@ export default function TeamDetailsPage({ params }: PageProps) {
               <Button
                 variant="default"
                 onClick={() => {
-                  router.push("/teams");
+                  router.push("/repositories");
                 }}
               >
-                Return to teams
+                Return to repositories
               </Button>
             </div>
           </div>
