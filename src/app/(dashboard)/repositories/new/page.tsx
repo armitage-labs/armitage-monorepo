@@ -34,7 +34,10 @@ export default function CreateTeamPage() {
   const [open, setOpen] = useState<boolean>(false);
   const [selectedRepo, setSelectedRepo] = useState<GithubRepoDto>();
   const [canPrevious, setCanPrevious] = useState<boolean>(false);
-  const [isLoading, setIsisLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [repositoryTeams, setRepositoryTeams] = useState<Team[]>([]);
+  const [registeredRepositoryNameArray, setRegisteredRepositoryNameArray] =
+    useState<string[]>([]);
   const [loadingTeamTransition, setLoadingTeamTransition] =
     useState<boolean>(false);
   const router = useRouter();
@@ -42,12 +45,21 @@ export default function CreateTeamPage() {
   const [team, setTeam] = useState<Team>();
 
   const handleQueryGithubRepos = async (page: number = 1) => {
-    setIsisLoading(true);
+    setIsLoading(true);
     const { data } = await axios.get(`/api/github/repo?page=${page}`);
     if (data.success && data.gitRepos.length > 0) {
       setGithubRepos(data.gitRepos);
     }
-    setIsisLoading(false);
+    setIsLoading(false);
+  };
+
+  const handleQueryRegisteredSingleRepositoryTeams = async () => {
+    setIsLoading(true);
+    const { data } = await axios.get(`/api/repositories`);
+    if (data.success && data.userTeams) {
+      setRepositoryTeams(data.userTeams);
+      setIsLoading(false);
+    }
   };
 
   const handleOpenRepoDialog = async (repo: GithubRepoDto) => {
@@ -80,6 +92,15 @@ export default function CreateTeamPage() {
   }, [team]);
 
   useEffect(() => {
+    if (repositoryTeams.length > 0) {
+      setRegisteredRepositoryNameArray(
+        repositoryTeams.map((team) => team.name),
+      );
+    }
+  }, [repositoryTeams]);
+
+  useEffect(() => {
+    handleQueryRegisteredSingleRepositoryTeams();
     handleQueryGithubRepos();
   }, []);
 
@@ -110,14 +131,19 @@ export default function CreateTeamPage() {
           {!isLoading ? (
             <div>
               <div className="grid gap-4 lg:grid-cols-2">
-                {githubRepos.map((repo) => {
-                  return (
-                    <GithubRepoCard
-                      githubRepoDto={repo}
-                      onSelectRepo={handleOpenRepoDialog}
-                    ></GithubRepoCard>
-                  );
-                })}
+                {githubRepos
+                  .filter(
+                    (repo) =>
+                      !registeredRepositoryNameArray.includes(repo.full_name),
+                  )
+                  .map((repo) => {
+                    return (
+                      <GithubRepoCard
+                        githubRepoDto={repo}
+                        onSelectRepo={handleOpenRepoDialog}
+                      ></GithubRepoCard>
+                    );
+                  })}
               </div>
               <div className="flex justify-between pt-16">
                 <div>

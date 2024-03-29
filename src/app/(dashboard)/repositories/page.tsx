@@ -18,7 +18,7 @@ const breadcrumbItems = [
 
 export default function TeamsPage() {
   const [repositoryTeams, setRepositoryTeams] = useState<Team[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const handleQueryRepositoryTeams = async () => {
