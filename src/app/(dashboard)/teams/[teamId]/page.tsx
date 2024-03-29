@@ -172,8 +172,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
               router.push(`/teams/${teamId}/settings`);
             }}
           >
-            {" "}
-            Manage repositories{" "}
+            Manage repositories
           </Button>
         </div>
         <Separator />

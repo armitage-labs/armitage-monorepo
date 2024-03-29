@@ -6,13 +6,9 @@ import axios from "axios";
 
 interface RepoSearchInputProps {
   onSelectRepo: (repo: GithubRepoDto) => void;
-  loadingTeamTransition?: boolean;
 }
 
-export function RepoSearchInput({
-  onSelectRepo,
-  loadingTeamTransition,
-}: RepoSearchInputProps) {
+export function RepoSearchInput({ onSelectRepo }: RepoSearchInputProps) {
   const [search, setSearch] = useState<string>("");
   const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -51,9 +47,7 @@ export function RepoSearchInput({
             onSelectRepo(foundAddRepo);
           }
         }}
-        disabled={
-          foundAddRepo == null || searchLoading || loadingTeamTransition
-        }
+        disabled={foundAddRepo == null || searchLoading}
       >
         {searchLoading ? (
           <>Loading...</>
