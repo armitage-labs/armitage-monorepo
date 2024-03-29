@@ -100,13 +100,6 @@ export default function TeamDetailsPage({ params }: PageProps) {
     }
   };
 
-  const handleCalculate = async () => {
-    const { data } = await axios.get(`/api/credmanager?team_id=${team!.id}`);
-    if (data && data.success) {
-      setHasContributionRequest(true);
-    }
-  };
-
   const handleFetchRegisteredRepos = async () => {
     const { data } = await axios.get(
       `/api/github/repo/registered?team_id=${teamId}`,
@@ -174,23 +167,13 @@ export default function TeamDetailsPage({ params }: PageProps) {
             title={team ? team.name : ""}
             description={`View the details of your team`}
           />
-          <div>
-            <Button
-              onClick={() => {
-                router.push(`/teams/${teamId}/settings`);
-              }}
-            >
-              Settings
-            </Button>
-            <Button
-              className="ml-2"
-              onClick={() => {
-                handleCalculate();
-              }}
-            >
-              Analyze
-            </Button>
-          </div>
+          <Button
+            onClick={() => {
+              router.push(`/teams/${teamId}/settings`);
+            }}
+          >
+            Manage repositories
+          </Button>
         </div>
         <Separator />
 
