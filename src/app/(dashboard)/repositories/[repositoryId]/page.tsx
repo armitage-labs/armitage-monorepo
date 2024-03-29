@@ -84,6 +84,13 @@ export default function TeamDetailsPage({ params }: PageProps) {
     }
   };
 
+  const handleCalculate = async () => {
+    const { data } = await axios.get(`/api/credmanager?team_id=${team!.id}`);
+    if (data && data.success) {
+      setHasContributionRequest(true);
+    }
+  };
+
   const handleFetchContributionCalculation = async () => {
     const { data } = await axios.get(
       `/api/contribution-calculation?team_id=${teamId}`,
@@ -167,6 +174,14 @@ export default function TeamDetailsPage({ params }: PageProps) {
             title={team ? team.name : ""}
             description={`View the details of your repository`}
           />
+          <Button
+            disabled={hasContributionRequest}
+            onClick={() => {
+              handleCalculate();
+            }}
+          >
+            Analyze
+          </Button>
         </div>
         <Separator />
 
