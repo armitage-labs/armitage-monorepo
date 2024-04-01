@@ -8,10 +8,22 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CalculationQueueService } from './service/calculationQueue.service';
 import { EmailService } from 'src/email/email.service';
 import { EmailModule } from 'src/email/email.module';
+import { WeightConfigService } from './service/weightConfig.service';
 
 @Module({
-  imports: [EmailModule, GitRepoModule, ConfigModule.forRoot(), ScheduleModule.forRoot()],
+  imports: [
+    EmailModule,
+    GitRepoModule,
+    ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+  ],
   controllers: [SourceCredController],
-  providers: [SourceCredService, PrismaService, CalculationQueueService, EmailService],
+  providers: [
+    SourceCredService,
+    PrismaService,
+    CalculationQueueService,
+    EmailService,
+    WeightConfigService,
+  ],
 })
-export class SourceCredModule { }
+export class SourceCredModule {}

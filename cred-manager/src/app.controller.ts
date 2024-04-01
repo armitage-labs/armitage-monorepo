@@ -3,7 +3,6 @@ import { AppService } from './app.service';
 import { PrismaService } from './prisma/prisma.service';
 import fetch from 'node-fetch';
 
-
 @Controller()
 export class AppController {
   constructor(
@@ -14,7 +13,7 @@ export class AppController {
   @Get()
   async getHello(): Promise<string> {
     return JSON.stringify({
-      "status" : "OK"
+      status: 'OK',
     });
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
   CredGrainView,
   ParticipantCredGrain,
@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { EmailService } from 'src/email/email.service';
 import { Prisma } from '@prisma/client';
 import * as fs from 'fs';
+import { WeightConfigService } from './weightConfig.service';
 
 @Injectable()
 export class SourceCredService {
@@ -22,6 +23,7 @@ export class SourceCredService {
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
+    private readonly weightConfigService: WeightConfigService,
     private readonly emailService: EmailService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
@@ -56,6 +58,7 @@ export class SourceCredService {
       userRegisteredRepos.map((repo) => repo.full_name),
     );
     await this.resetSourceCred();
+    await this.configureWeights(teamId);
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
@@ -114,6 +117,7 @@ export class SourceCredService {
     try {
       await executeCommand(`cd ${this.sourceCredPath} && yarn clean-all`);
       await executeCommand(`rm -rf ${this.sourceCredPath}/data/ledger.json`);
+      await executeCommand(`rm -rf ${this.sourceCredPath}/config/weights.json`);
       await this.resetDependencies();
     } catch (error) {
       console.error('execute command failed', error);
@@ -128,6 +132,16 @@ export class SourceCredService {
       delete value.id;
     });
     fs.writeFileSync(filePath, JSON.stringify(content, null, 2));
+  }
+
+  async configureWeights(teamId: string) {
+    const configs = await this.weightConfigService.getTeamWeightConfigs(teamId);
+    const sCConfig =
+      await this.weightConfigService.transformTeamWeightConfigsToScJsonStringified(
+        configs,
+      );
+    const filePath = `${this.sourceCredPath}/config/weights.json`;
+    fs.writeFileSync(filePath, JSON.stringify(sCConfig, null, 2));
   }
 
   async loadLocalScInstance(): Promise<CredGrainView> {
@@ -222,7 +236,7 @@ export class SourceCredService {
     userCredDtos: UserCredDto[],
   ) {
     try {
-      for (var i = 0; i < userCredDtos.length; i++) {
+      for (let i = 0; i < userCredDtos.length; i++) {
         const userScore = await this.prismaService.userScore.create({
           data: {
             username: userCredDtos[i].userName,

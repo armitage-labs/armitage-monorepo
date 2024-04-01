@@ -2,7 +2,7 @@ export interface UserCredJson {
   totalCred: number;
   userName: string;
   type: string;
-  credPerInterval?:  any[],
+  credPerInterval?: any[];
   grainEarnedPerInterval?: string[];
 }
 
@@ -12,7 +12,7 @@ export class UserCredDto {
     public userName: string,
     public type: string,
     public credPerInterval?: any[],
-    public grainEarnedPerInterval?: string[]
+    public grainEarnedPerInterval?: string[],
   ) {}
 
   toJSON(): UserCredJson {
@@ -21,11 +21,17 @@ export class UserCredDto {
       userName: this.userName,
       type: this.type,
       credPerInterval: this.credPerInterval,
-      grainEarnedPerInterval: this.grainEarnedPerInterval
+      grainEarnedPerInterval: this.grainEarnedPerInterval,
     };
   }
 
   static fromJSON(json: UserCredJson): UserCredDto {
-    return new UserCredDto(json.totalCred, json.userName, json.type, json.credPerInterval, json.grainEarnedPerInterval);
+    return new UserCredDto(
+      json.totalCred,
+      json.userName,
+      json.type,
+      json.credPerInterval,
+      json.grainEarnedPerInterval,
+    );
   }
 }
