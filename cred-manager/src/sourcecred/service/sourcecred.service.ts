@@ -59,7 +59,7 @@ export class SourceCredService {
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
-    await this.resetSourceCred();
+    // await this.resetSourceCred();
 
     const userCredDtoArray = this.extractUserData(credGrainView);
     await this.deleteContribution(teamId);

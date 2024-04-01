@@ -1,8 +1,8 @@
-version: '3'
+version: "3"
 services:
   # db:
   #   image: postgres
-  #   volumes: 
+  #   volumes:
   #     - ./data/pg-volume:/var/lib/postgresql/data
   #   environment:
   #     POSTGRES_USER: postgres
@@ -14,6 +14,11 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    volumes:
+      - /Users/alecerasmus/development/web3/sourcecred/armitage-dashboard/cred-manager/output/data/:/instance/data/
+      - /Users/alecerasmus/development/web3/sourcecred/armitage-dashboard/cred-manager/output/cache/:/instance/cache/
+      - /Users/alecerasmus/development/web3/sourcecred/armitage-dashboard/cred-manager/output/output/:/instance/output/
+
     environment:
       - NEW_RELIC_APP_NAME=ENROLLMENT_LOCAL
       - NODE_ENV=development
@@ -23,7 +28,7 @@ services:
       - 8080:8080
   # web:
   #   build: .
-  #   volumes: 
+  #   volumes:
   #     - .:/app
   #   ports:
   #     - 8080:3000
