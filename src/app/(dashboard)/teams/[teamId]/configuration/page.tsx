@@ -105,6 +105,10 @@ export default function TeamSettingsPage({ params }: PageProps) {
           )}
         </div>
         <Separator />
+        <p className="leading-7 [&:not(:first-child)]:mt-6">
+          Customize your experience and reward impactful contributions by
+          adjusting sliders to align with your preferences.
+        </p>
 
         <div className="grid grid-cols-2 gap-4">
           {weightConfig == null ? (

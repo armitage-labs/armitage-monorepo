@@ -6,7 +6,7 @@ import {
 } from "./weightConfig.dto";
 
 export async function getTeamWeightConfigs(
-  teamId: string
+  teamId: string,
 ): Promise<WeightConfigDto[]> {
   const teamWeightConfigs = await prisma.teamWeightConfig.findMany({
     where: { team_id: teamId },
@@ -18,7 +18,7 @@ export async function getTeamWeightConfigs(
 
 export async function saveTeamWeightConfig(
   teamId: string,
-  weightConfig: WeightConfig
+  weightConfig: WeightConfig,
 ): Promise<boolean> {
   for (const key in weightConfig) {
     deleteIgnoreErrors(teamId, key);
