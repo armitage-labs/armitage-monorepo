@@ -177,6 +177,14 @@ export default function TeamDetailsPage({ params }: PageProps) {
           <div>
             <Button
               onClick={() => {
+                router.push(`/teams/${teamId}/configuration`);
+              }}
+            >
+              Config
+            </Button>
+            <Button
+              className="ml-2"
+              onClick={() => {
                 router.push(`/teams/${teamId}/settings`);
               }}
             >
