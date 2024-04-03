@@ -174,14 +174,24 @@ export default function TeamDetailsPage({ params }: PageProps) {
             title={team ? team.name : ""}
             description={`View the details of your repository`}
           />
-          <Button
-            disabled={hasContributionRequest}
-            onClick={() => {
-              handleCalculate();
-            }}
-          >
-            Analyze
-          </Button>
+          <div>
+            <Button
+              className="mr-2"
+              onClick={() => {
+                router.push(`/teams/${teamId}/configuration`);
+              }}
+            >
+              Config
+            </Button>
+            <Button
+              disabled={hasContributionRequest}
+              onClick={() => {
+                handleCalculate();
+              }}
+            >
+              Analyze
+            </Button>
+          </div>
         </div>
         <Separator />
 

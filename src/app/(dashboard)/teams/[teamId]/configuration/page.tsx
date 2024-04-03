@@ -68,7 +68,11 @@ export default function TeamConfigurationPage({ params }: PageProps) {
   const handleCalculate = async () => {
     const { data } = await axios.get(`/api/credmanager?team_id=${team!.id}`);
     if (data && data.success) {
-      router.push(`/teams/${teamId}`);
+      if (team?.single_repository) {
+        router.push(`/repositories/${teamId}`);
+      } else {
+        router.push(`/teams/${teamId}`);
+      }
     }
   };
 
