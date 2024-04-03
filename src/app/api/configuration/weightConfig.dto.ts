@@ -3,7 +3,7 @@ export const defaultConfigResponse: WeightConfig = {
     lable: "Pull Request Review",
     title: "Pull Request Review Weight",
     description:
-      "This slider adjusts the amount of credits you would like to generate for pull requests reviews.",
+      "This slider adjusts the relevance and weight you would like to assign for pull requests reviews.",
     value: 5, // default value
     min: 0,
     max: 10,
@@ -13,7 +13,7 @@ export const defaultConfigResponse: WeightConfig = {
     lable: "Pull Request",
     title: "Pull Request Weight",
     description:
-      "This slider adjusts the amount of credits you would like to generate for merged pull requests.",
+      "This slider adjusts the relevance and weight that pull pull requests are assigned after they are merged.",
     value: 7, // default value
     min: 0,
     max: 10,
@@ -23,7 +23,7 @@ export const defaultConfigResponse: WeightConfig = {
     lable: "Issue",
     title: "Issue Weight",
     description:
-      "This slider adjusts the amount of credits you would like to generate for completed issues.",
+      "This slider adjusts the relevance and weight you would like to assign for issues created, completed, and discussed.",
     value: 0, // default value
     min: 0,
     max: 10,
@@ -33,7 +33,7 @@ export const defaultConfigResponse: WeightConfig = {
     lable: "Commit",
     title: "Commit Weight",
     description:
-      "This slider adjusts the amount of credits you would like to generate for commits that accepted.",
+      "This slider adjusts the relevance and weight you would like to assign for commits that were successfully merged.",
     value: 0, // default value
     min: 0,
     max: 10,
@@ -43,7 +43,7 @@ export const defaultConfigResponse: WeightConfig = {
     lable: "Comment",
     title: "Comment Weight",
     description:
-      "This slider adjusts the amount of credits you would like to generate for comment on pull requests.",
+      "This slider adjusts the relevance and weight of a comment on pull requests and issues.",
     value: 0, // default value
     min: 0,
     max: 10,

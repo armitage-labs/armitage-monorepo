@@ -12,6 +12,8 @@ import { WeightConfig } from "@/app/api/configuration/weightConfig.dto";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import WeightSlider from "@/components/weightSlider";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Icons } from "@/components/icons";
 
 interface PageProps {
   params: { teamId: string };
@@ -116,10 +118,17 @@ export default function TeamConfigurationPage({ params }: PageProps) {
           )}
         </div>
         <Separator />
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
-          Customize your experience and reward impactful contributions by
-          adjusting sliders to align with your preferences.
-        </p>
+        <div className="pt-6 leading-7 [&:not(:first-child)]:mt-6">
+          <Alert>
+            <Icons.settings className="mr-2 h-4 w-4" />
+            <AlertTitle>Customize your team impact</AlertTitle>
+            <AlertDescription>
+              Impactful contributions by adjusting sliders to align with your
+              preferences. These values are quasi-exponential and nodes on the
+              graph will be weighted accordingly.
+            </AlertDescription>
+          </Alert>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           {weightConfig == null ? (
