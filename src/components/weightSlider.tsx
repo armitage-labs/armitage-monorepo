@@ -27,10 +27,7 @@ export default function WeightSlider({
         <h4 className="text-xl font-semibold tracking-tight pb-3 pr-3">
           {weight.lable}
         </h4>
-        <HoverExplainer
-          title={weight.title}
-          description={weight.description}
-        />
+        <HoverExplainer title={weight.title} description={weight.description} />
       </div>
       <div className="flex">
         <Slider
