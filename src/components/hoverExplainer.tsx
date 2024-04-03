@@ -12,8 +12,8 @@ import Link from "next/link";
 interface HoverExplainerProps {
   title: string;
   description: string;
-  subtitle: string;
-  imageSrc: string;
+  subtitle?: string;
+  imageSrc?: string;
 }
 
 export function HoverExplainer({
@@ -31,15 +31,16 @@ export function HoverExplainer({
       </HoverCardTrigger>
       <HoverCardContent className="w-80">
         <div className="flex justify-between space-x-4">
-          <Avatar>
-            <AvatarImage src={imageSrc} />
-            <AvatarFallback>{title[0] + title[1]}</AvatarFallback>
-          </Avatar>
+          {imageSrc != null && (
+            <Avatar>
+              <AvatarImage src={imageSrc} />
+            </Avatar>
+          )}
+
           <div className="space-y-1">
             <h4 className="text-sm font-semibold">{title}</h4>
             <p className="text-sm">{description}</p>
             <div className="flex items-center pt-2">
-              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
               <span className="text-xs text-muted-foreground">{subtitle}</span>
             </div>
           </div>

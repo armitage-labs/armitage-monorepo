@@ -68,10 +68,21 @@ export default function TeamSettingsPage({ params }: PageProps) {
           {team == null ? (
             <Skeleton className="h-10 w-[520px]" />
           ) : (
-            <Heading
-              title={`${team ? team.name : ""} settings`}
-              description={`Manage your repositories`}
-            />
+            <>
+              <Heading
+                title={`${team ? team.name : ""} settings`}
+                description={`Manage your repositories`}
+              />
+              <div>
+                <Button
+                  onClick={() => {
+                    router.push(`/teams/${teamId}/configuration`);
+                  }}
+                >
+                  Config
+                </Button>
+              </div>
+            </>
           )}
         </div>
         <Separator />

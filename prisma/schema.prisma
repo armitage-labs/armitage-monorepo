@@ -102,6 +102,6 @@ model TeamWeightConfig {
   id      String @id @default(uuid())
   type    String @db.VarChar(255)
   value   Float
-  team_id String @unique
+  team_id String
   team    Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
 }
