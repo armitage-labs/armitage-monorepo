@@ -7,7 +7,7 @@ import {
 } from "./weightConfig.dto";
 
 export async function getTeamWeightConfigs(
-  teamId: string
+  teamId: string,
 ): Promise<WeightConfig> {
   const teamWeightConfigs = await prisma.teamWeightConfig.findMany({
     where: { team_id: teamId },
@@ -15,13 +15,13 @@ export async function getTeamWeightConfigs(
   return mapToDto(
     teamWeightConfigs.map((config) => {
       return WeightConfigDto.fromJSON(config);
-    })
+    }),
   );
 }
 
 export async function saveTeamWeightConfig(
   teamId: string,
-  weightConfig: WeightConfig
+  weightConfig: WeightConfig,
 ): Promise<boolean> {
   for (const key in weightConfig) {
     await prisma.teamWeightConfig.deleteMany({

@@ -8,10 +8,10 @@ import { Team } from "@prisma/client";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { Slider } from "@/components/ui/slider";
 import { WeightConfig } from "@/app/api/configuration/weightConfig.dto";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import WeightSlider from "@/components/weightSlider";
 
 interface PageProps {
   params: { teamId: string };
@@ -44,14 +44,14 @@ export default function TeamConfigurationPage({ params }: PageProps) {
     }
   };
 
-  const onChange = async (value: number[], key: string) => {
+  const onChange = async (value: number, key: string) => {
     let newWeightConfig: WeightConfig;
     if (weightConfig) {
       newWeightConfig = weightConfig;
     } else {
       newWeightConfig = {};
     }
-    newWeightConfig[key].value = value[0];
+    newWeightConfig[key].value = value;
     setWeightConfig(newWeightConfig);
   };
 
@@ -61,6 +61,13 @@ export default function TeamConfigurationPage({ params }: PageProps) {
       weightConfig,
     );
     if (data.success) {
+      handleCalculate();
+    }
+  };
+
+  const handleCalculate = async () => {
+    const { data } = await axios.get(`/api/credmanager?team_id=${team!.id}`);
+    if (data && data.success) {
       router.push(`/teams/${teamId}`);
     }
   };
@@ -117,16 +124,11 @@ export default function TeamConfigurationPage({ params }: PageProps) {
             <>
               {Object.keys(weightConfig).map((key) => (
                 <div className="p-4">
-                  <h4 className="text-xl font-semibold tracking-tight pb-3">
-                    {weightConfig[key].lable}
-                  </h4>
-                  <Slider
-                    defaultValue={[weightConfig[key].value]}
-                    max={weightConfig[key].max}
-                    min={weightConfig[key].min}
-                    step={weightConfig[key].step}
-                    onValueChange={(event) => onChange(event, key)}
-                  />
+                  <WeightSlider
+                    weightName={key}
+                    weight={weightConfig[key]}
+                    onChange={onChange}
+                  ></WeightSlider>
                 </div>
               ))}
             </>
