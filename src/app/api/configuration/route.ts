@@ -3,14 +3,9 @@ import { options } from "../auth/[...nextauth]/options";
 import {
   getTeamWeightConfigs,
   saveTeamWeightConfig,
-} from "./configuartionSerice";
+} from "./configurationService";
 import { getServerSession } from "next-auth";
-import {
-  WeightConfigDto,
-  WeightConfig,
-  defaultConfigResponse,
-  weightValueMap,
-} from "./weightConfig.dto";
+import { WeightConfig } from "./weightConfig.dto";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
@@ -19,7 +14,7 @@ export async function GET(req: NextRequest) {
     const weightConfigDto = await getTeamWeightConfigs(teamId);
     return NextResponse.json({
       success: true,
-      weights: mapToDto(weightConfigDto),
+      weights: weightConfigDto,
     });
   }
   return NextResponse.json({ success: false, weights: [] });
@@ -37,14 +32,4 @@ export async function POST(req: NextRequest) {
     });
   }
   return NextResponse.json({ success: false, weights: [] });
-}
-
-function mapToDto(weights: WeightConfigDto[]): WeightConfig {
-  const response = defaultConfigResponse;
-  weights.forEach((weight) => {
-    if (response[weight.type]) {
-      response[weight.type].value = weightValueMap.indexOf(weight.value);
-    }
-  });
-  return response;
 }
