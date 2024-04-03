@@ -1,6 +1,7 @@
 import { WeightConfigField } from "@/app/api/configuration/weightConfig.dto";
 import { Slider } from "./ui/slider";
 import { useState } from "react";
+import { HoverExplainer } from "./hoverExplainer";
 
 interface WeightSliderProps {
   weightName: string;
@@ -22,9 +23,15 @@ export default function WeightSlider({
 
   return (
     <>
-      <h4 className="text-xl font-semibold tracking-tight pb-3">
-        {weight.lable}
-      </h4>
+      <div className="flex">
+        <h4 className="text-xl font-semibold tracking-tight pb-3 pr-3">
+          {weight.lable}
+        </h4>
+        <HoverExplainer
+          title={weight.title}
+          description={weight.description}
+        />
+      </div>
       <div className="flex">
         <Slider
           defaultValue={[weight.value]}

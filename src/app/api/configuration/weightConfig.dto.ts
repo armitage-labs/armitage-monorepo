@@ -1,6 +1,9 @@
 export const defaultConfigResponse: WeightConfig = {
   NODE_REVIEW: {
     lable: "Pull Request Review",
+    title: "Pull Request Review Weight",
+    description:
+      "This slider adjusts the amount of credits you would like to generate for pull requests reviews.",
     value: 5, // default value
     min: 0,
     max: 10,
@@ -8,6 +11,9 @@ export const defaultConfigResponse: WeightConfig = {
   },
   NODE_PULL: {
     lable: "Pull Request",
+    title: "Pull Request Weight",
+    description:
+      "This slider adjusts the amount of credits you would like to generate for merged pull requests.",
     value: 7, // default value
     min: 0,
     max: 10,
@@ -15,6 +21,9 @@ export const defaultConfigResponse: WeightConfig = {
   },
   NODE_ISSUE: {
     lable: "Issue",
+    title: "Issue Weight",
+    description:
+      "This slider adjusts the amount of credits you would like to generate for completed issues.",
     value: 0, // default value
     min: 0,
     max: 10,
@@ -22,6 +31,9 @@ export const defaultConfigResponse: WeightConfig = {
   },
   NODE_COMMIT: {
     lable: "Commit",
+    title: "Commit Weight",
+    description:
+      "This slider adjusts the amount of credits you would like to generate for commits that accepted.",
     value: 0, // default value
     min: 0,
     max: 10,
@@ -29,6 +41,9 @@ export const defaultConfigResponse: WeightConfig = {
   },
   NODE_COMMENT: {
     lable: "Comment",
+    title: "Comment Weight",
+    description:
+      "This slider adjusts the amount of credits you would like to generate for comment on pull requests.",
     value: 0, // default value
     min: 0,
     max: 10,
@@ -38,6 +53,8 @@ export const defaultConfigResponse: WeightConfig = {
 
 export interface WeightConfigField {
   lable: string;
+  title: string;
+  description: string;
   value: number;
   min: number;
   max: number;
@@ -60,7 +77,7 @@ export class WeightConfigDto {
     public id: string,
     public type: string,
     public value: number,
-    public teamId: string,
+    public teamId: string
   ) {}
 
   toJSON(): WeightConfigJson {
