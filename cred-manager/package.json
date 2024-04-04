@@ -9,6 +9,8 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "sqllite:generate": "npx prisma generate --schema prisma-lite/schema.prisma",
+    "sqllite:push": "npx prisma db push --schema prisma-lite/schema.prisma",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -31,7 +33,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "sourcecred": "^0.11.2"
+    "sourcecred": "^0.11.2",
+    "better-sqlite3": "^7.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",

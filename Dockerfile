@@ -6,7 +6,7 @@ RUN apk add git
 COPY cred-manager/package.json /app/package.json
 COPY cred-manager/yarn.lock /app/yarn.lock
 
-RUN yarn install --ignore-scripts --frozen-lockfile
+RUN yarn install --frozen-lockfile
 
 COPY cred-manager/ /app/
 

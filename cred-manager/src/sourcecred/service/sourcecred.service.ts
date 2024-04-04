@@ -15,18 +15,25 @@ import { EmailService } from 'src/email/email.service';
 import { Prisma } from '@prisma/client';
 import * as fs from 'fs';
 import { WeightConfigService } from './weightConfig.service';
+import { CacheService } from './cache.service';
+import { UsersContibutionMetricsDto } from '../types/userContibutionMetric.dto';
 
 @Injectable()
 export class SourceCredService {
   private readonly sourceCredPath: string;
+  private readonly sourceCredCacheDbPath: string;
   constructor(
     private readonly gitRepoService: GitRepoService,
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
     private readonly weightConfigService: WeightConfigService,
     private readonly emailService: EmailService,
+    private readonly cacheService: CacheService,
   ) {
     this.sourceCredPath = this.configService.get('SOURCECRED_INSTANCE_PATH');
+    this.sourceCredCacheDbPath = this.configService.get(
+      'SOURCECRED_CACHE_DB_PATH',
+    );
   }
 
   async createContributionRequest(
@@ -62,11 +69,12 @@ export class SourceCredService {
     await this.configureSourcecredGithubPlugin(pluginConfigString);
     await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
-    await this.resetSourceCred();
-
     const userCredDtoArray = this.extractUserData(credGrainView);
+    const credMetrics = await this.loadLocalScMetrics();
+    await this.resetSourceCred();
     await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId, credGrainView);
+    await this.saveUserMetrics(contribution.id, credMetrics);
     await this.saveUserScore(contribution.id, userCredDtoArray);
     await this.emailService.sendCalculationCompletedMail(email);
     return userCredDtoArray;
@@ -100,6 +108,7 @@ export class SourceCredService {
     let success = true;
     const cmdList = [
       `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
+      `ls -la ${this.sourceCredPath}/cache/sourcecred/github`,
     ];
     for (let i = 0; i < cmdList.length; i++) {
       try {
@@ -118,6 +127,7 @@ export class SourceCredService {
       await executeCommand(`cd ${this.sourceCredPath} && yarn clean-all`);
       await executeCommand(`rm -rf ${this.sourceCredPath}/data/ledger.json`);
       await executeCommand(`rm -rf ${this.sourceCredPath}/config/weights.json`);
+      await executeCommand(`rm -rf ${this.sourceCredPath}/cache/*`);
       await this.resetDependencies();
     } catch (error) {
       console.error('execute command failed', error);
@@ -149,6 +159,14 @@ export class SourceCredService {
     const localInstance = await new sc.instance.LocalInstance(HARDCODED_DIR);
     const graph: CredGrainView = await localInstance.readCredGrainView();
     return graph;
+  }
+
+  async loadLocalScMetrics(): Promise<UsersContibutionMetricsDto[]> {
+    const database = await this.cacheService.getSqlLiteDatabase(
+      this.sourceCredCacheDbPath,
+    );
+    console.log(this.sourceCredCacheDbPath);
+    return await this.cacheService.getUsersContributiosnMetrics(database);
   }
 
   extractUserData(graph: CredGrainView): UserCredDto[] {
@@ -249,6 +267,25 @@ export class SourceCredService {
       }
     } catch (error) {
       console.error('Error creating users scores', error);
+      throw error;
+    }
+  }
+
+  async saveUserMetrics(
+    contributionCalculationId: string,
+    usersContibutionMetrics: UsersContibutionMetricsDto[],
+  ) {
+    try {
+      const userScore = await this.prismaService.userTeamMetric.createMany({
+        data: usersContibutionMetrics.map((metrics) => ({
+          username: metrics.username,
+          contribution_calculation_id: contributionCalculationId,
+          metric_name: metrics.metric,
+          metric_count: metrics.count.toString(),
+        })),
+      });
+    } catch (error) {
+      console.error('Error creating users metrics', error);
       throw error;
     }
   }

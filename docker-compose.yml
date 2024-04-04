@@ -1,8 +1,8 @@
-version: '3'
+version: "3"
 services:
   # db:
   #   image: postgres
-  #   volumes: 
+  #   volumes:
   #     - ./data/pg-volume:/var/lib/postgresql/data
   #   environment:
   #     POSTGRES_USER: postgres
@@ -17,13 +17,14 @@ services:
     environment:
       - NEW_RELIC_APP_NAME=ENROLLMENT_LOCAL
       - NODE_ENV=development
+      - SOURCECRED_CACHE_DB_PATH=/instance/cache/sourcecred/github
     env_file:
       - .env
     ports:
       - 8080:8080
   # web:
   #   build: .
-  #   volumes: 
+  #   volumes:
   #     - .:/app
   #   ports:
   #     - 8080:3000

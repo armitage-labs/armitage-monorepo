@@ -38,15 +38,17 @@ model Team {
   created_at              DateTime                  @default(now()) @db.Timestamp(6)
   ContributionRequest     ContributionRequest[]
   single_repository       Boolean                   @default(false)
+  UserTeamMetric          UserTeamMetric[]
 }
 
 model ContributionCalculation {
-  id             String      @id @default(uuid())
+  id             String           @id @default(uuid())
   team_id        String
   score_interval Json?
-  Team           Team        @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  Team           Team             @relation(fields: [team_id], references: [id], onDelete: Cascade)
   UserScore      UserScore[]
-  created_at     DateTime    @default(now()) @db.Timestamp(6)
+  created_at     DateTime         @default(now()) @db.Timestamp(6)
+  UserTeamMetric UserTeamMetric[]
 }
 
 model ContributionRequest {
@@ -104,4 +106,16 @@ model TeamWeightConfig {
   value   Float
   team_id String
   team    Team   @relation(fields: [team_id], references: [id], onDelete: Cascade)
+}
+
+model UserTeamMetric {
+  id                          String                  @id @default(uuid())
+  username                    String                  @db.VarChar(255)
+  contribution_calculation_id String
+  metric_name                 String                  @db.VarChar(1000)
+  metric_count                String                  @db.VarChar(1000)
+  created_at                  DateTime                @default(now()) @db.Timestamp(6)
+  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id], onDelete: Cascade)
+  Team                        Team?                   @relation(fields: [teamId], references: [id])
+  teamId                      String?
 }
