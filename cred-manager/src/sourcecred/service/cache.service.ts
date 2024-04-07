@@ -9,12 +9,12 @@ import { readdirSync } from 'fs';
 export class CacheService {
   private readonly logger = new Logger(CacheService.name);
 
-  public getSqlLiteDatabase(dbPath: string): any {
+  public getSqlLiteDatabase(dbPath: string): any[] {
     const dbFiles = this.findFilesWithExtension(dbPath, '.db');
-    if (dbFiles.length != 1) {
-      this.logger.warn('More or less than 1 db found in cache: ' + dbFiles);
-    }
-    return new Database(dbFiles[0], { verbose: console.log });
+    return dbFiles.map((db) => {
+      // return new Database(db, { verbose: console.log });
+      return new Database(db);
+    });
   }
 
   public async getUsersContributiosnMetrics(
@@ -37,6 +37,19 @@ export class CacheService {
       metric: row.metric,
       count: row.count,
     }));
+  }
+
+  public async getRepositoryName(database: any): Promise<string> {
+    const sqlQuery = `
+    select primitives.value from objects 
+      join primitives on primitives.object_id = objects.id 
+    where objects.typename = ?
+      and fieldname = ?
+    `;
+    const row = database.prepare(sqlQuery).bind('Repository', 'url').all();
+    const parsedUrl = new URL(JSON.parse(row[0].value));
+    const pathname = parsedUrl.pathname.replace('/', '');
+    return pathname;
   }
 
   findFilesWithExtension(directory: string, extension: string): string[] {

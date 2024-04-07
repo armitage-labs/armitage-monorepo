@@ -70,13 +70,24 @@ export class SourceCredService {
     await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
     const userCredDtoArray = this.extractUserData(credGrainView);
-    const credMetrics = await this.loadLocalScMetrics();
-    await this.resetSourceCred();
+
+    const databases = await this.cacheService.getSqlLiteDatabase(
+      this.sourceCredCacheDbPath,
+    );
+
     await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId, credGrainView);
-    await this.saveUserMetrics(contribution.id, credMetrics);
     await this.saveUserScore(contribution.id, userCredDtoArray);
+
+    for (let i = 0; i < databases.length; i++) {
+      const database = databases[i];
+      const credMetrics = await this.loadLocalScMetrics(database);
+      const repoName = await this.getRepositoryName(database);
+      await this.saveUserMetrics(contribution.id, repoName, credMetrics);
+    }
+
     await this.emailService.sendCalculationCompletedMail(email);
+    await this.resetSourceCred();
     return userCredDtoArray;
   }
 
@@ -127,7 +138,6 @@ export class SourceCredService {
       await executeCommand(`cd ${this.sourceCredPath} && yarn clean-all`);
       await executeCommand(`rm -rf ${this.sourceCredPath}/data/ledger.json`);
       await executeCommand(`rm -rf ${this.sourceCredPath}/config/weights.json`);
-      await executeCommand(`rm -rf ${this.sourceCredPath}/cache/*`);
       await this.resetDependencies();
     } catch (error) {
       console.error('execute command failed', error);
@@ -161,12 +171,14 @@ export class SourceCredService {
     return graph;
   }
 
-  async loadLocalScMetrics(): Promise<UsersContibutionMetricsDto[]> {
-    const database = await this.cacheService.getSqlLiteDatabase(
-      this.sourceCredCacheDbPath,
-    );
-    console.log(this.sourceCredCacheDbPath);
+  async loadLocalScMetrics(
+    database: any,
+  ): Promise<UsersContibutionMetricsDto[]> {
     return await this.cacheService.getUsersContributiosnMetrics(database);
+  }
+
+  async getRepositoryName(database: any): Promise<string> {
+    return await this.cacheService.getRepositoryName(database);
   }
 
   extractUserData(graph: CredGrainView): UserCredDto[] {
@@ -273,6 +285,7 @@ export class SourceCredService {
 
   async saveUserMetrics(
     contributionCalculationId: string,
+    repoName: string,
     usersContibutionMetrics: UsersContibutionMetricsDto[],
   ) {
     try {
@@ -280,6 +293,7 @@ export class SourceCredService {
         data: usersContibutionMetrics.map((metrics) => ({
           username: metrics.username,
           contribution_calculation_id: contributionCalculationId,
+          repo_name: repoName,
           metric_name: metrics.metric,
           metric_count: metrics.count.toString(),
         })),
