@@ -9,8 +9,6 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "sqllite:generate": "npx prisma generate --schema prisma-lite/schema.prisma",
-    "sqllite:push": "npx prisma db push --schema prisma-lite/schema.prisma",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

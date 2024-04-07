@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:/Users/alecerasmus/development/web3/sourcecred/armitage-dashboard/cred-manager/cache/github_armitage-labs_armitage-monorepo.db"
+  url      = "file:" + env("SOURCECRED_CACHE_DB_PATH")
 }
 
 model ConnectionEntry {

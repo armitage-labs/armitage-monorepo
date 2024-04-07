@@ -12,7 +12,6 @@ export class CacheService {
   public getSqlLiteDatabase(dbPath: string): any[] {
     const dbFiles = this.findFilesWithExtension(dbPath, '.db');
     return dbFiles.map((db) => {
-      // return new Database(db, { verbose: console.log });
       return new Database(db);
     });
   }

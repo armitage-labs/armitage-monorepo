@@ -70,14 +70,24 @@ export class SourceCredService {
     await this.startSourceCredCalculation(gitHubToken);
     const credGrainView = await this.loadLocalScInstance();
     const userCredDtoArray = this.extractUserData(credGrainView);
+    await this.saveArtifacts(teamId, credGrainView, userCredDtoArray);
+    await this.emailService.sendCalculationCompletedMail(email);
+    await this.resetSourceCred();
+    return userCredDtoArray;
+  }
 
+  async saveArtifacts(
+    teamId: string,
+    credGrainView: CredGrainView,
+    userCredDtos: UserCredDto[],
+  ) {
     const databases = await this.cacheService.getSqlLiteDatabase(
       this.sourceCredCacheDbPath,
     );
 
     await this.deleteContribution(teamId);
     const contribution = await this.saveContribution(teamId, credGrainView);
-    await this.saveUserScore(contribution.id, userCredDtoArray);
+    await this.saveUserScore(contribution.id, userCredDtos);
 
     for (let i = 0; i < databases.length; i++) {
       const database = databases[i];
@@ -85,10 +95,6 @@ export class SourceCredService {
       const repoName = await this.getRepositoryName(database);
       await this.saveUserMetrics(contribution.id, repoName, credMetrics);
     }
-
-    await this.emailService.sendCalculationCompletedMail(email);
-    await this.resetSourceCred();
-    return userCredDtoArray;
   }
 
   craftPluginConfigString(githubReposFullNames: string[]): string {
@@ -119,7 +125,6 @@ export class SourceCredService {
     let success = true;
     const cmdList = [
       `export SOURCECRED_GITHUB_TOKEN=${gitHubToken} && cd ${this.sourceCredPath} && yarn sourcecred go`,
-      `ls -la ${this.sourceCredPath}/cache/sourcecred/github`,
     ];
     for (let i = 0; i < cmdList.length; i++) {
       try {
