@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma-lite/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:" + env("SOURCECRED_CACHE_DB_PATH")
+}
+
+model ConnectionEntry {
+  rowid         Int     @id @default(autoincrement())
+  connection_id Int
+  idx           Int
+  child_id      String?
+
+  // Define foreign key relationships
+  connection Connection @relation(fields: [connection_id], references: [rowid])
+  object     Object?    @relation(fields: [child_id], references: [id])
+
+  // Ensure uniqueness of (connection_id, idx) pair
+  @@unique([connection_id, idx])
+
+  @@map("connection_entries")
+}
+
+// Define the Connections model
+model Connection {
+  rowid         Int      @id @default(autoincrement())
+  object_id     String
+  fieldname     String
+  last_update   Int?
+  total_count   Int?
+  has_next_page Boolean?
+  end_cursor    String?
+
+  // Define foreign key relationships
+  object Object  @relation(fields: [object_id], references: [id])
+  update Update? @relation(fields: [last_update], references: [rowid])
+
+  // Define the opposite relation field
+  connection_entries ConnectionEntry[]
+
+  // Ensure uniqueness of (object_id, fieldname) pair
+  @@unique([object_id, fieldname])
+
+  @@map("connections")
+}
+
+// Define the Links model
+model Link {
+  rowid     Int     @id @default(autoincrement())
+  parent_id String
+  fieldname String
+  child_id  String?
+
+  // Define foreign key relationships
+  parentObject Object  @relation("ParentObject", fields: [parent_id], references: [id])
+  childObject  Object? @relation("ChildObject", fields: [child_id], references: [id])
+
+  // Ensure uniqueness of (parent_id, fieldname) pair
+  @@unique([parent_id, fieldname])
+
+  @@map("links")
+}
+
+// Define the Meta model
+model Meta {
+  zero   Int    @id
+  config String
+
+  @@map("meta")
+}
+
+// Define the NetworkLog model
+model NetworkLog {
+  rowid                      Int     @id @default(autoincrement())
+  query                      String?
+  query_parameters           String?
+  request_time_epoch_millis  BigInt?
+  response                   String?
+  response_time_epoch_millis BigInt?
+  update_id                  Int?
+
+  // Define foreign key relationships
+  update Update? @relation(fields: [update_id], references: [rowid])
+
+  @@map("network_log")
+}
+
+// Define the Object model
+model Object {
+  id          String  @id
+  typename    String?
+  last_update Int?
+
+  // Define foreign key relationships
+  lastUpdate Update? @relation(fields: [last_update], references: [rowid])
+
+  // Define the opposite relation field
+  connection_entries ConnectionEntry[]
+  parentLinks        Link[]            @relation("ParentObject")
+  childLinks         Link[]            @relation("ChildObject")
+  connection         Connection[]
+  updates            Update[]          @relation("lastUpdate")
+  Primitive          Primitive[]
+
+  @@map("objects")
+}
+
+// Define the Primitives model
+model Primitive {
+  rowid     Int     @id @default(autoincrement())
+  object_id String
+  fieldname String
+  value     String?
+
+  // Define foreign key relationships
+  object Object @relation(fields: [object_id], references: [id])
+
+  // Ensure uniqueness of (object_id, fieldname) pair
+  @@unique([object_id, fieldname])
+
+  @@map("primitives")
+}
+
+// Define the Updates model
+model Update {
+  rowid             Int @id @default(autoincrement())
+  time_epoch_millis Int
+
+  // Define foreign key relationships
+  connection Connection[]
+  networkLog NetworkLog[]
+  objects    Object[]     @relation("lastUpdate")
+  Object     Object[]
+
+  @@map("updates")
+}

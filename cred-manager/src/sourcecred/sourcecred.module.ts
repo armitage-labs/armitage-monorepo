@@ -9,6 +9,7 @@ import { CalculationQueueService } from './service/calculationQueue.service';
 import { EmailService } from 'src/email/email.service';
 import { EmailModule } from 'src/email/email.module';
 import { WeightConfigService } from './service/weightConfig.service';
+import { CacheService } from './service/cache.service';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { WeightConfigService } from './service/weightConfig.service';
     CalculationQueueService,
     EmailService,
     WeightConfigService,
+    CacheService,
   ],
 })
 export class SourceCredModule {}
