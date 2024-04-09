@@ -10,7 +10,7 @@ export type UserMetric = {
 
 export async function fetchTeamUserMetrics(
   teamId: string,
-  repoName: string
+  repoName: string,
 ): Promise<UserTeamMetric[]> {
   console.log(repoName);
   const teamMetrics = await prisma.userTeamMetric.findMany({
@@ -27,7 +27,7 @@ export async function fetchTeamUserMetrics(
 }
 
 export async function feachMaxTeamMetrics(
-  userTeamMetric: UserTeamMetric[]
+  userTeamMetric: UserTeamMetric[],
 ): Promise<Map<string, UserTeamMetric>> {
   const hashmap = new Map<string, UserTeamMetric>();
 
@@ -45,26 +45,27 @@ export async function feachMaxTeamMetrics(
 
 export async function feachUsersTeamMetrics(
   username: string,
-  userTeamMetric: UserTeamMetric[]
+  userTeamMetric: UserTeamMetric[],
 ): Promise<UserTeamMetric[]> {
   return userTeamMetric.filter((metric) => metric.username === username);
 }
 
 export async function feachUsersTeamRpgMetics(
   userTeamMetric: UserTeamMetric[],
-  topUserMetric: Map<string, UserTeamMetric>
+  topUserMetric: Map<string, UserTeamMetric>,
 ): Promise<UserMetric[]> {
   const value: UserMetric[] = userTeamMetric.map((metric) => ({
     metricName: metric.metric_name,
     metricValue: parseInt(metric.metric_count),
     metricMax: parseInt(
-      topUserMetric.get(metric.metric_name)?.metric_count ?? metric.metric_count
+      topUserMetric.get(metric.metric_name)?.metric_count ??
+        metric.metric_count,
     ),
     metricScore:
       (parseInt(metric.metric_count) /
         parseInt(
           topUserMetric.get(metric.metric_name)?.metric_count ??
-            metric.metric_count
+            metric.metric_count,
         )) *
       100,
   }));

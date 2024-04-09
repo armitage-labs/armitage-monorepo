@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const userMetrics = await feachUsersTeamMetrics(username, teamUserMetrics);
     const rpgMetric = await feachUsersTeamRpgMetics(
       userMetrics,
-      topTeamMetrics
+      topTeamMetrics,
     );
     return NextResponse.json({
       success: true,
