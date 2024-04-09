@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ContributorsDataTable } from "../../contributors/contributorsDataTable";
-import { contributorsColumns } from "../../contributors/contributorsColumns";
+import TeamContributorsColumns from "./contributors/[contributorUserName]/contributorsColumns";
 
 interface TeamContributionTableProps {
   teamId?: string;
@@ -30,7 +30,9 @@ export function TeamContributionTable({ teamId }: TeamContributionTableProps) {
 
   return (
     <ContributorsDataTable
-      columns={contributorsColumns}
+      columns={TeamContributorsColumns({
+        teamId: teamId!,
+      })}
       data={contributors}
       isLoading={isLoading}
     ></ContributorsDataTable>
