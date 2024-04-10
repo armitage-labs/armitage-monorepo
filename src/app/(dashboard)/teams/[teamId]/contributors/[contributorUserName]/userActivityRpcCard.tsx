@@ -10,24 +10,21 @@ import {
 } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Icons } from "@/components/icons";
 
-interface UserRepoRpcCardProps {
+interface UserActivityRpcCardProps {
   teamId: string;
-  repoName: string;
   contributorUserName: string;
 }
 
-export default function UserRepoRpcCard({
+export default function UserActivityRpcCard({
   teamId,
-  repoName,
   contributorUserName,
-}: UserRepoRpcCardProps) {
+}: UserActivityRpcCardProps) {
   const [userMetric, setUserMetric] = useState<UserMetric[]>();
 
   const handleUserMetrics = async () => {
     const { data } = await axios.get(
-      `/api/user-metrics?username=${contributorUserName}&team_id=${teamId}&repo_name=${repoName}`,
+      `/api/user-metrics/teams/activity?username=${contributorUserName}&team_id=${teamId}`,
     );
     if (data.success) {
       setUserMetric(data.metrics);
@@ -43,10 +40,7 @@ export default function UserRepoRpcCard({
       <Card className="col-span-2">
         <CardHeader>
           <CardTitle>
-            <div className="flex">
-              {repoName}
-              <Icons.gitHub className="ml-3 h-5 w-5" />
-            </div>
+            <div className="flex">{contributorUserName} Activity</div>
           </CardTitle>
         </CardHeader>
         <CardContent>

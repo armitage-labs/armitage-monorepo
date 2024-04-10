@@ -8,11 +8,30 @@ export type UserMetric = {
   metricScore: number;
 };
 
+export type UserMetricSum = {
+  metricName: string;
+  metricValue: number;
+};
+
 export async function fetchTeamUserMetrics(
-  teamId: string,
-  repoName: string,
+  teamId: string
 ): Promise<UserTeamMetric[]> {
-  console.log(repoName);
+  const teamMetrics = await prisma.userTeamMetric.findMany({
+    where: {
+      contribution_calculation: {
+        Team: {
+          id: teamId,
+        },
+      },
+    },
+  });
+  return teamMetrics;
+}
+
+export async function fetchTeamUserMetricsByRepo(
+  teamId: string,
+  repoName: string
+): Promise<UserTeamMetric[]> {
   const teamMetrics = await prisma.userTeamMetric.findMany({
     where: {
       repo_name: repoName,
@@ -27,7 +46,7 @@ export async function fetchTeamUserMetrics(
 }
 
 export async function feachMaxTeamMetrics(
-  userTeamMetric: UserTeamMetric[],
+  userTeamMetric: UserTeamMetric[]
 ): Promise<Map<string, UserTeamMetric>> {
   const hashmap = new Map<string, UserTeamMetric>();
 
@@ -43,29 +62,67 @@ export async function feachMaxTeamMetrics(
   return hashmap;
 }
 
+export async function sumUsersTeamMetrics(
+  userTeamMetric: UserTeamMetric[]
+): Promise<UserMetricSum[]> {
+  const mergedMetricsMap: { [key: string]: UserMetricSum } = {};
+
+  // Merge objects on metric_name by summing the metric_count
+  for (const metric of userTeamMetric) {
+    if (mergedMetricsMap.hasOwnProperty(metric.metric_name)) {
+      mergedMetricsMap[metric.metric_name].metricValue += parseInt(
+        metric.metric_count
+      );
+    } else {
+      mergedMetricsMap[metric.metric_name] = {
+        metricName: metric.metric_name,
+        metricValue: parseInt(metric.metric_count),
+      }; // Create a copy of the metric object
+    }
+  }
+  // Convert the mergedMetricsMap back to an array
+  const mergedMetrics: UserMetricSum[] = Object.values(mergedMetricsMap);
+  return mergedMetrics;
+}
+
+export async function activityUserMetrics(
+  userTeamMetric: UserMetricSum[]
+): Promise<UserMetric[]> {
+  const maxCount = userTeamMetric.reduce(
+    (acc, metric) => acc + metric.metricValue,
+    0
+  );
+
+  return userTeamMetric.map((metric) => ({
+    metricName: metric.metricName,
+    metricValue: metric.metricValue,
+    metricMax: maxCount,
+    metricScore: (metric.metricValue / maxCount) * 100,
+  }));
+}
+
 export async function feachUsersTeamMetrics(
   username: string,
-  userTeamMetric: UserTeamMetric[],
+  userTeamMetric: UserTeamMetric[]
 ): Promise<UserTeamMetric[]> {
   return userTeamMetric.filter((metric) => metric.username === username);
 }
 
 export async function feachUsersTeamRpgMetics(
   userTeamMetric: UserTeamMetric[],
-  topUserMetric: Map<string, UserTeamMetric>,
+  topUserMetric: Map<string, UserTeamMetric>
 ): Promise<UserMetric[]> {
   const value: UserMetric[] = userTeamMetric.map((metric) => ({
     metricName: metric.metric_name,
     metricValue: parseInt(metric.metric_count),
     metricMax: parseInt(
-      topUserMetric.get(metric.metric_name)?.metric_count ??
-        metric.metric_count,
+      topUserMetric.get(metric.metric_name)?.metric_count ?? metric.metric_count
     ),
     metricScore:
       (parseInt(metric.metric_count) /
         parseInt(
           topUserMetric.get(metric.metric_name)?.metric_count ??
-            metric.metric_count,
+            metric.metric_count
         )) *
       100,
   }));
