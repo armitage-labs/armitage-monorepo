@@ -3,20 +3,21 @@ import {
   feachMaxTeamMetrics,
   feachUsersTeamMetrics,
   feachUsersTeamRpgMetics,
-  fetchTeamUserMetricsByRepo,
+  fetchTeamUserMetrics,
 } from "../../userMetricService";
 
 export async function GET(req: NextRequest) {
-  const teamId = req.nextUrl.searchParams.get("team_id");
   const username = req.nextUrl.searchParams.get("username");
-  const repoName = req.nextUrl.searchParams.get("repo_name");
-  if (teamId && username && repoName) {
-    const teamUserMetrics = await fetchTeamUserMetricsByRepo(teamId, repoName);
+  const teamId = req.nextUrl.searchParams.get("team_id");
+  if (teamId && username) {
+    const teamUserMetrics = await fetchTeamUserMetrics(teamId);
     const topTeamMetrics = await feachMaxTeamMetrics(teamUserMetrics);
     const userMetrics = await feachUsersTeamMetrics(username, teamUserMetrics);
     const rpgMetric = await feachUsersTeamRpgMetics(
+      username,
       userMetrics,
       topTeamMetrics,
+      teamUserMetrics
     );
     return NextResponse.json({
       success: true,
