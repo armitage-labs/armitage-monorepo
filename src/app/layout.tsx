@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -23,6 +24,7 @@ export default async function RootLayout({
         <Providers>
           <NextAuthProvider>
             <div>{children}</div>
+            <Analytics />
             <Toaster />
           </NextAuthProvider>
         </Providers>
