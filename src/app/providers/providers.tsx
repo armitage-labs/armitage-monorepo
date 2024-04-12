@@ -32,7 +32,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 accentColor: "#84cc16",
                 accentColorForeground: "black",
                 borderRadius: "medium",
-                fontStack: 'system',
+                fontStack: "system",
               })}
             >
               <ThemeProvider
@@ -49,7 +49,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 accentColor: "#84cc16",
                 accentColorForeground: "black",
                 borderRadius: "medium",
-                fontStack: 'system',
+                fontStack: "system",
               })}
             >
               <ThemeProvider

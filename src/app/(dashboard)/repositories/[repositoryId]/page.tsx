@@ -298,7 +298,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
             )}
           </div>
         )}
-      </div >
+      </div>
     </>
   );
 }

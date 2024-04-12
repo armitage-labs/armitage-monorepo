@@ -120,9 +120,10 @@ model UserTeamMetric {
 }
 
 model Attestation {
-  id         String @id @default(uuid())
-  onchain_id String @db.VarChar(255)
-  user_id    String
-  user       User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id               String @id @default(uuid())
+  chain_id         String @db.VarChar(255)
+  attestation_uuid String @db.VarChar(255)
+  user_id          String
+  user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
