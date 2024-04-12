@@ -8,7 +8,6 @@ export interface UserCredDto {
 }
 
 export async function GET(req: NextRequest) {
-  // try {
   const teamId = req.nextUrl.searchParams.get("team_id");
   if (teamId) {
     const userTeams = await fetchUserCred(teamId);
@@ -17,8 +16,4 @@ export async function GET(req: NextRequest) {
       userCreds: userTeams,
     });
   }
-  // } catch (error) {
-  //   console.error(error);
-  //   return NextResponse.json({ success: false, userCredDtos: [] });
-  // }
 }
