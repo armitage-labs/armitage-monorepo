@@ -10,10 +10,9 @@ export async function GET(req: NextRequest) {
       // contributor: [],
       // measuredAt: "2022-11-28",
       // weightsConfig: { "prReview": "1", "pr": "1" }
-    }
-
-  })
+    },
+  });
   return NextResponse.json({
-    success: true
-  })
+    success: true,
+  });
 }

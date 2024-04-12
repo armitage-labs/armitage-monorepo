@@ -49,7 +49,7 @@ export const merkleValueAbiEncoding: EncodedMerkleValue = [
 ];
 
 export function encodeValuesToMerkleTree(
-  valuesWithSalt: MerkleValueWithSalt[]
+  valuesWithSalt: MerkleValueWithSalt[],
 ) {
   const encodedValues = encodeMerkleValues(valuesWithSalt);
 
@@ -57,7 +57,7 @@ export function encodeValuesToMerkleTree(
 }
 
 export function encodeMerkleValues(
-  inValues: MerkleValueWithSalt[]
+  inValues: MerkleValueWithSalt[],
 ): EncodedMerkleValue[] {
   const abiCoder = new AbiCoder();
   return inValues.map((v) => [
@@ -72,13 +72,13 @@ export function verifyFullMerkleTree(tree: FullMerkleDataTree): string {
   const encodedValues = encodeMerkleValues(tree.values);
   const merkleTree = StandardMerkleTree.of(
     encodedValues,
-    merkleValueAbiEncoding
+    merkleValueAbiEncoding,
   );
   return merkleTree.root;
 }
 
 export function decodeMerkleValues(
-  inValues: EncodedMerkleValue[]
+  inValues: EncodedMerkleValue[],
 ): MerkleValueWithSalt[] {
   const abiCoder = new AbiCoder();
   return inValues.map((v) => ({
@@ -91,7 +91,7 @@ export function decodeMerkleValues(
 
 export function verifyMultiProof(
   root: string,
-  proof: MerkleMultiProof
+  proof: MerkleMultiProof,
 ): boolean {
   const multiproof = {
     ...proof,
@@ -101,6 +101,6 @@ export function verifyMultiProof(
   return StandardMerkleTree.verifyMultiProof(
     root,
     merkleValueAbiEncoding,
-    multiproof
+    multiproof,
   );
 }

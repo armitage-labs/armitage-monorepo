@@ -1,12 +1,16 @@
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { AlchemyProvider } from 'ethers';
+import { AlchemyProvider } from "ethers";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
-import { EncodedMerkleValue, MerkleValueWithSalt, encodeValuesToMerkleTree } from "./utils/merkle-utils";
+import {
+  EncodedMerkleValue,
+  MerkleValueWithSalt,
+  encodeValuesToMerkleTree,
+} from "./utils/merkle-utils";
 
 export type CreateAttestationBodyDto = {
   address: string;
   privateData: AttestationPrivateDataDto;
-}
+};
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
@@ -14,22 +18,22 @@ export type AttestationPrivateDataDto = {
   // contributor: ContributorDataDto[];
   // measuredAt: string;
   // weightsConfig: WeightsConfigDto;
-}
+};
 
 export type ContributorDataDto = {
   githubUsername: string;
   rank: string;
   score: string;
-}
+};
 
 export type WeightsConfigDto = {
   prReview: string;
   pr: string;
-}
+};
 
 export type AttestationUuidDto = {
   attestationUuid: string;
-}
+};
 
 export async function createAttestation({
   address,
@@ -47,7 +51,7 @@ export async function createAttestation({
   const schemaEncoder = new SchemaEncoder("bytes32 privateData");
   const encodedData = schemaEncoder.encodeData([
     { name: "privateData", value: merkleRoot, type: "bytes32" },
-  ])
+  ]);
 
   const tx = await eas.attest({
     schema: schemaUID,
@@ -57,27 +61,27 @@ export async function createAttestation({
       revocable: false,
       data: encodedData,
     },
-  })
+  });
   const attestationUuid = await tx.wait();
 
-  return { attestationUuid: attestationUuid }
+  return { attestationUuid: attestationUuid };
 }
 
 export function createMerkleTree(
-  privateData: AttestationPrivateDataDto
+  privateData: AttestationPrivateDataDto,
 ): StandardMerkleTree<EncodedMerkleValue> {
   const salt =
     "0xeba1f9c5ad55ba8569528641b3d105fb1ba09cf42b9918b9d535cebffaba8db4"; //FIXME
-  let merkleTreeValuesWithSalt: MerkleValueWithSalt[] = []
+  const merkleTreeValuesWithSalt: MerkleValueWithSalt[] = [];
 
   let privateDataKey: keyof AttestationPrivateDataDto;
   for (privateDataKey in privateData) {
     merkleTreeValuesWithSalt.push({
-      type: 'string',
+      type: "string",
       name: privateDataKey,
       value: privateData[privateDataKey],
       salt: salt,
-    } as MerkleValueWithSalt)
+    } as MerkleValueWithSalt);
   }
   return encodeValuesToMerkleTree(merkleTreeValuesWithSalt);
 }
@@ -86,7 +90,10 @@ export async function initializeEAS(): Promise<EAS> {
   // Sepolia v0.26 schema contract
   const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
   const eas = new EAS(easContractAddress);
-  const provider = await (new AlchemyProvider("sepolia", process.env.ALCHEMY_API_KEY).getSigner());
+  const provider = await new AlchemyProvider(
+    "sepolia",
+    process.env.ALCHEMY_API_KEY,
+  ).getSigner();
   // eas.connect(provider);
   return eas;
 }
