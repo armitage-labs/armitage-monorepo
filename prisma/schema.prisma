@@ -15,6 +15,7 @@ model User {
   Team            Team[]
   ProductTourView ProductTourView?
   UserOnboarding  UserOnboarding[]
+  Attestation     Attestation[]
 }
 
 model GithubRepo {
@@ -116,4 +117,12 @@ model UserTeamMetric {
   metric_count                String                  @db.VarChar(1000)
   created_at                  DateTime                @default(now()) @db.Timestamp(6)
   contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id], onDelete: Cascade)
+}
+
+model Attestation {
+  id               String @id @default(uuid())
+  chain_id         String @db.VarChar(255)
+  attestation_uuid String @db.VarChar(255)
+  user_id          String
+  user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

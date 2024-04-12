@@ -23,6 +23,7 @@ import { CalculationIntervalChart } from "../../teams/[teamId]/calculationInterv
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TeamContributionTable } from "../../teams/[teamId]/teamContributionTable";
+import { useAccount } from "wagmi";
 
 interface PageProps {
   params: { repositoryId: string };
@@ -42,6 +43,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
     { title: "Repository details", link: `/repositories/${teamId}` },
   ];
   const { data: session } = useSession();
+  const account = useAccount();
 
   const [isLoading, setIsLoading] = useState(true);
   const [emptyTeam, setEmptyTeam] = useState(false);
@@ -175,6 +177,21 @@ export default function TeamDetailsPage({ params }: PageProps) {
             description={`View the details of your repository`}
           />
           <div>
+            <Button
+              className="mr-2"
+              disabled={!account.isConnected}
+              onClick={() => {
+                console.log("Create attestation");
+              }}
+            >
+              {account.isConnected ? (
+                <>Create Attestation</>
+              ) : account.isConnecting || account.isReconnecting ? (
+                <>Connecting...</>
+              ) : (
+                <>Connect wallet to create attestation</>
+              )}
+            </Button>
             <Button
               className="mr-2"
               onClick={() => {
