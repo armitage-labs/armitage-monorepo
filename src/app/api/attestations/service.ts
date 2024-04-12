@@ -34,7 +34,7 @@ export type AttestationUuidDto = {
 export async function createAttestation({
   address,
   privateData,
-}: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
+}: CreateAttestationBodyDto) {
   // Sepolia private data schema
   // @TODO Implement a mapping to reference the correct private data schema for each network
   const schemaUID =
@@ -43,24 +43,26 @@ export async function createAttestation({
   const merkleTree = createMerkleTree(privateData);
   const merkleRoot = merkleTree.root;
 
-  const eas = await initializeEAS();
-  const schemaEncoder = new SchemaEncoder("bytes32 privateData");
-  const encodedData = schemaEncoder.encodeData([
-    { name: "privateData", value: merkleRoot, type: "bytes32" },
-  ])
+  console.log(merkleTree);
 
-  const tx = await eas.attest({
-    schema: schemaUID,
-    data: {
-      recipient: address,
-      expirationTime: undefined,
-      revocable: false,
-      data: encodedData,
-    },
-  })
-  const attestationUuid = await tx.wait();
-
-  return { attestationUuid: attestationUuid }
+  // const eas = await initializeEAS();
+  // const schemaEncoder = new SchemaEncoder("bytes32 privateData");
+  // const encodedData = schemaEncoder.encodeData([
+  //   { name: "privateData", value: merkleRoot, type: "bytes32" },
+  // ])
+  //
+  // const tx = await eas.attest({
+  //   schema: schemaUID,
+  //   data: {
+  //     recipient: address,
+  //     expirationTime: undefined,
+  //     revocable: false,
+  //     data: encodedData,
+  //   },
+  // })
+  // const attestationUuid = await tx.wait();
+  //
+  // return { attestationUuid: attestationUuid }
 }
 
 export function createMerkleTree(
