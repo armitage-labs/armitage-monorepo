@@ -6,6 +6,7 @@ import { Icons } from "../icons";
 import ThemeToggle from "../theme/theme-toggle";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { ConnectButton, darkTheme } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
   const { resolvedTheme } = useTheme();
@@ -34,6 +35,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
+          <ConnectButton />
           <UserNav />
           <ThemeToggle></ThemeToggle>
         </div>
