@@ -87,6 +87,6 @@ export async function initializeEAS(): Promise<EAS> {
   const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
   const eas = new EAS(easContractAddress);
   const provider = await (new AlchemyProvider("sepolia", process.env.ALCHEMY_API_KEY).getSigner());
-  eas.connect(provider);
+  // eas.connect(provider);
   return eas;
 }
