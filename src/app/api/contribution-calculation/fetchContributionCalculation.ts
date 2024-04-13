@@ -4,7 +4,7 @@ export type ContributionCalculation = {
   id: string;
   team_id: string;
   created_at: Date;
-  score_interal: object[];
+  score_interval: object[] | null;
 };
 
 export async function fetchContributionCalculation(
