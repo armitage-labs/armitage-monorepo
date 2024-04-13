@@ -18,6 +18,7 @@ import { useAccount } from "wagmi";
 import { createAttestation, createProofs } from "./utils/attestation-utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type GenerateAttestationModalProps = {
   teamId: string;
@@ -29,6 +30,7 @@ export function GenerateAttestationModal({
   const account = useAccount();
   const signer = useEthersSigner();
   const session = useSession();
+  const router = useRouter();
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
@@ -135,7 +137,13 @@ export function GenerateAttestationModal({
                   </Button>
                 </Link>
                 <div className="pt-6">
-                  <Button>Generate Proofs</Button>
+                  <Button
+                    onClick={() => {
+                      router.push(`/attestation/${registeredAttestationUuid}`);
+                    }}
+                  >
+                    Generate Proofs
+                  </Button>
                 </div>
               </div>
             </div>

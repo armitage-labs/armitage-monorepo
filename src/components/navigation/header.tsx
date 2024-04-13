@@ -35,7 +35,9 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <ConnectButton />
+          <div className="mr-6">
+            <ConnectButton />
+          </div>
           <UserNav />
           <ThemeToggle></ThemeToggle>
         </div>
