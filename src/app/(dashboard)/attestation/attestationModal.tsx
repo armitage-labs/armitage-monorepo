@@ -88,6 +88,7 @@ export function GenerateAttestationModal({
     const { data } = await axios.post("/api/attestations", {
       chain_id: "11155111",
       attestation_uuid: attestationUuid,
+      team_id: props.teamId,
     });
     if (data.success) {
       setRegisteredAttestationUuid(attestationUuid);

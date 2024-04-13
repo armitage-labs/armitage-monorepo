@@ -11,6 +11,7 @@ interface AttestationDataResponse {
 export interface SaveAttestationRequestDto {
   chain_id: string;
   attestation_uuid: string;
+  team_id: string;
 }
 
 export async function GET(req: NextRequest) {
