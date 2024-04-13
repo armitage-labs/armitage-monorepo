@@ -3,6 +3,7 @@ import { fetchContributionCalculation } from "../contribution-calculation/fetchC
 import { fetchUserContributorsByTeam } from "../contributors/fetchUserContributors";
 import { fetchRegisteredGitRepos } from "../github/repo/registered/fetchRegisteredRepos";
 import { WeightConfigAttestation } from "../configuration/weightConfig.dto";
+import { SaveAttestationRequestDto } from "./route";
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
@@ -54,4 +55,18 @@ export async function getTeamAttestationData(
     measuredAt: contributionCalculation.created_at.toDateString(),
     weightsConfig: weightsConfig,
   };
+}
+
+export async function saveAttestation(
+  userId: string,
+  attestation: SaveAttestationRequestDto,
+): Promise<boolean> {
+  await prisma.attestation.create({
+    data: {
+      chain_id: attestation.chain_id,
+      attestation_uuid: attestation.attestation_uuid,
+      user_id: userId,
+    },
+  });
+  return true;
 }
