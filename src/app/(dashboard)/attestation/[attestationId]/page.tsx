@@ -220,11 +220,8 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                 id="contributor"
                 defaultChecked
                 onCheckedChange={(checked) => {
-                  if (checked) {
-                    setProofFields([
-                      ...proofFields,
-                      userLogin ? userLogin : "",
-                    ]);
+                  if (checked && userLogin) {
+                    setProofFields([...proofFields, userLogin]);
                   } else {
                     setProofFields(
                       proofFields.filter((field) => field !== userLogin),
@@ -241,11 +238,50 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   contributors that participated on this project.
                 </span>
               </Label>
-              <Switch id="allcontributors" />
+              <Switch
+                id="allcontributors"
+                onCheckedChange={(checked) => {
+                  if (userLogin && attestationPrivateData) {
+                    const staticFields = [
+                      "measuredAt",
+                      "organizationName",
+                      "repositoryName",
+                      "weightsConfig",
+                      userLogin,
+                    ];
+                    const peerContributorsFields = Object.keys(
+                      attestationPrivateData,
+                    ).filter((field) => !staticFields.includes(field));
+                    if (checked) {
+                      setProofFields([
+                        ...proofFields,
+                        ...peerContributorsFields,
+                      ]);
+                    } else {
+                      setProofFields(
+                        proofFields.filter(
+                          (field) => !peerContributorsFields.includes(field),
+                        ),
+                      );
+                    }
+                  }
+                }}
+              />
             </div>
           </CardContent>
           <CardFooter>
             <div className="pt-16"></div>
+
+            <a
+              target="_blank"
+              href={`https://app.armitage.xyz/verify-attestation/${attestationId}`}
+              rel="noopener noreferrer"
+              className="mr-3"
+            >
+              <Button type="button" variant="secondary">
+                Share Attestation authenticity
+              </Button>
+            </a>
             <Dialog>
               <DialogTrigger asChild>
                 <Button
