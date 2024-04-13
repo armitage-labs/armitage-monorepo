@@ -5,6 +5,7 @@ import { fetchRegisteredGitRepos } from "../github/repo/registered/fetchRegister
 import { WeightConfigAttestation } from "../configuration/weightConfig.dto";
 import { SaveAttestationRequestDto } from "./route";
 import prisma from "db";
+import { fetchTeam } from "../teams/fetchTeam";
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
@@ -31,6 +32,10 @@ export type AttestationDto = {
   team_id: string;
   contribution_calculation_id: string;
   attestation_uuid: string;
+  team?: {
+    id: string;
+    teamName: string;
+  };
 };
 
 export async function findAttestation(uuid: string): Promise<AttestationDto> {
@@ -50,7 +55,7 @@ export async function findAttestationByUserId(
       user_id: userId,
     },
   });
-  return attestation as AttestationDto[];
+  return addTeamNameToAttestation(attestation as AttestationDto[]);
 }
 
 export async function getTeamAttestationData(
@@ -106,4 +111,17 @@ export async function saveAttestation(
     });
   }
   return true;
+}
+
+async function addTeamNameToAttestation(
+  attestations: AttestationDto[],
+): Promise<AttestationDto[]> {
+  for (const attestation of attestations) {
+    const team = await fetchTeam(attestation.team_id);
+    attestation.team = {
+      id: team.id,
+      teamName: team.name,
+    };
+  }
+  return attestations;
 }
