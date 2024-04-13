@@ -72,6 +72,11 @@ export interface WeightConfigJson {
   team_id: string;
 }
 
+export interface WeightConfigAttestation {
+  type: string;
+  value: number;
+}
+
 export class WeightConfigDto {
   constructor(
     public id: string,

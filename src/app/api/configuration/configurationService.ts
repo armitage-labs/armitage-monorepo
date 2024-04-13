@@ -1,6 +1,7 @@
 import prisma from "db";
 import {
   WeightConfig,
+  WeightConfigAttestation,
   WeightConfigDto,
   defaultConfigResponse,
   weightValueMap,
@@ -15,6 +16,23 @@ export async function getTeamWeightConfigs(
   return mapToDto(
     teamWeightConfigs.map((config) => {
       return WeightConfigDto.fromJSON(config);
+    }),
+  );
+}
+
+export async function getTeamWeightConfigsForAttestation(
+  teamId: string,
+): Promise<WeightConfigAttestation[]> {
+  const teamWeightConfigs = await prisma.teamWeightConfig.findMany({
+    where: { team_id: teamId },
+  });
+
+  return populateDefaults(
+    teamWeightConfigs.map((config) => {
+      return {
+        type: config.type,
+        value: config.value,
+      };
     }),
   );
 }
@@ -49,4 +67,19 @@ function mapToDto(weights: WeightConfigDto[]): WeightConfig {
     }
   });
   return response;
+}
+
+function populateDefaults(
+  weights: WeightConfigAttestation[],
+): WeightConfigAttestation[] {
+  const defaults = defaultConfigResponse;
+  for (const key in defaults) {
+    if (!weights.find((weight) => weight.type === key)) {
+      weights.push({
+        type: key,
+        value: weightValueMap[defaults[key].value],
+      });
+    }
+  }
+  return weights;
 }
