@@ -23,7 +23,7 @@ export type AttestationUuidDto = {
 };
 
 export async function getTeamAttestationData(
-  teamId: string
+  teamId: string,
 ): Promise<AttestationPrivateDataDto | null> {
   const repoList = await fetchRegisteredGitRepos(teamId);
   if (repoList.length != 1) {
