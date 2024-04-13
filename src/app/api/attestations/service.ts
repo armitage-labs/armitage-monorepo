@@ -42,6 +42,17 @@ export async function findAttestation(uuid: string): Promise<AttestationDto> {
   return attestation as AttestationDto;
 }
 
+export async function findAttestationByUserId(
+  userId: string,
+): Promise<AttestationDto[]> {
+  const attestation = await prisma.attestation.findMany({
+    where: {
+      user_id: userId,
+    },
+  });
+  return attestation as AttestationDto[];
+}
+
 export async function getTeamAttestationData(
   teamId: string,
 ): Promise<AttestationPrivateDataDto> {

@@ -52,6 +52,13 @@ export function UserNav() {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
+                router.push("/attestation");
+              }}
+            >
+              Attestations
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
                 router.push("/settings");
               }}
             >
