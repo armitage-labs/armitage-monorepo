@@ -1,99 +1,57 @@
-import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { AlchemyProvider } from "ethers";
-import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
-import {
-  EncodedMerkleValue,
-  MerkleValueWithSalt,
-  encodeValuesToMerkleTree,
-} from "./utils/merkle-utils";
-
-export type CreateAttestationBodyDto = {
-  address: string;
-  privateData: AttestationPrivateDataDto;
-};
+import { getTeamWeightConfigsForAttestation } from "../configuration/configurationService";
+import { fetchContributionCalculation } from "../contribution-calculation/fetchContributionCalculation";
+import { fetchUserContributorsByTeam } from "../contributors/fetchUserContributors";
+import { fetchRegisteredGitRepos } from "../github/repo/registered/fetchRegisteredRepos";
+import { WeightConfigAttestation } from "../configuration/weightConfig.dto";
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
-  // repositoryName: string;
-  // contributor: ContributorDataDto[];
-  // measuredAt: string;
-  // weightsConfig: WeightsConfigDto;
+  repositoryName: string;
+  contributor: ContributorDataDto[];
+  measuredAt: string;
+  weightsConfig: WeightConfigAttestation[];
 };
 
 export type ContributorDataDto = {
   githubUsername: string;
-  rank: string;
-  score: string;
-};
-
-export type WeightsConfigDto = {
-  prReview: string;
-  pr: string;
+  rank: number;
+  score: number;
 };
 
 export type AttestationUuidDto = {
   attestationUuid: string;
 };
 
-export async function createAttestation({
-  address,
-  privateData,
-}: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
-  // Sepolia private data schema
-  // @TODO Implement a mapping to reference the correct private data schema for each network
-  const schemaUID =
-    "0x20351f973fdec1478924c89dfa533d8f872defa108d9c3c6512267d7e7e5dbc2";
-
-  const merkleTree = createMerkleTree(privateData);
-  const merkleRoot = merkleTree.root;
-
-  const eas = await initializeEAS();
-  const schemaEncoder = new SchemaEncoder("bytes32 privateData");
-  const encodedData = schemaEncoder.encodeData([
-    { name: "privateData", value: merkleRoot, type: "bytes32" },
-  ]);
-
-  const tx = await eas.attest({
-    schema: schemaUID,
-    data: {
-      recipient: address,
-      expirationTime: undefined,
-      revocable: false,
-      data: encodedData,
-    },
-  });
-  const attestationUuid = await tx.wait();
-
-  return { attestationUuid: attestationUuid };
-}
-
-export function createMerkleTree(
-  privateData: AttestationPrivateDataDto,
-): StandardMerkleTree<EncodedMerkleValue> {
-  const salt =
-    "0xeba1f9c5ad55ba8569528641b3d105fb1ba09cf42b9918b9d535cebffaba8db4"; //FIXME
-  const merkleTreeValuesWithSalt: MerkleValueWithSalt[] = [];
-
-  let privateDataKey: keyof AttestationPrivateDataDto;
-  for (privateDataKey in privateData) {
-    merkleTreeValuesWithSalt.push({
-      type: "string",
-      name: privateDataKey,
-      value: privateData[privateDataKey],
-      salt: salt,
-    } as MerkleValueWithSalt);
+export async function getTeamAttestationData(
+  teamId: string
+): Promise<AttestationPrivateDataDto | null> {
+  const repoList = await fetchRegisteredGitRepos(teamId);
+  if (repoList.length != 1) {
+    throw new Error("Team has more than one repo");
   }
-  return encodeValuesToMerkleTree(merkleTreeValuesWithSalt);
-}
 
-export async function initializeEAS(): Promise<EAS> {
-  // Sepolia v0.26 schema contract
-  const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
-  const eas = new EAS(easContractAddress);
-  const provider = await new AlchemyProvider(
-    "sepolia",
-    process.env.ALCHEMY_API_KEY,
-  ).getSigner();
-  // eas.connect(provider);
-  return eas;
+  const contributionCalculation = await fetchContributionCalculation(teamId);
+  if (contributionCalculation == null) {
+    throw new Error("Team does not have calculation");
+  }
+
+  const repo = repoList[0];
+  const contributors = await fetchUserContributorsByTeam(teamId);
+  const weightsConfig = await getTeamWeightConfigsForAttestation(teamId);
+
+  return {
+    organizationName: repo.full_name.split("/")[0],
+    repositoryName: repo.full_name,
+    contributor: contributors
+      .sort((a, b) => b.contributionScore - a.contributionScore)
+      .map((contributor, index) => {
+        return {
+          githubUsername: contributor.userName,
+          rank: index + 1,
+          score: contributor.contributionScore,
+        };
+      }),
+    measuredAt: contributionCalculation.created_at.toDateString(),
+    weightsConfig: weightsConfig,
+  };
 }
