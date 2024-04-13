@@ -178,7 +178,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
             description={`View the details of your repository`}
           />
           <div>
-            <GenerateAttestationModal teamId={teamId} />
+            {hasContributionRequest ? (<div></div>) : (<GenerateAttestationModal teamId={teamId} />)}
             <Button
               className="mr-2"
               onClick={() => {
