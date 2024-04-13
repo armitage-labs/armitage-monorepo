@@ -1,7 +1,16 @@
-"use client"
+"use client";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useEthersSigner } from "@/lib/ethersUtils";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -13,13 +22,17 @@ type GenerateAttestationModalProps = {
   teamId: string;
 };
 
-export function GenerateAttestationModal({ ...props }: GenerateAttestationModalProps) {
+export function GenerateAttestationModal({
+  ...props
+}: GenerateAttestationModalProps) {
   const account = useAccount();
   const signer = useEthersSigner();
   const session = useSession();
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
-  const [attestationUuid, setAttestationUuid] = useState<string | undefined>(undefined);
+  const [attestationUuid, setAttestationUuid] = useState<string | undefined>(
+    undefined,
+  );
   const [userLogin, setUserLogin] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -36,14 +49,12 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
 
   useEffect(() => {
     if (signer && userAddress && attestationPrivateData && userLogin) {
-      createAttestation(
-        {
-          address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
-          privateData: attestationPrivateData,
-          signer: signer
-        }
-      ).then((attestationUuid) => {
-        setAttestationUuid(attestationUuid.attestationUuid)
+      createAttestation({
+        address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
+        privateData: attestationPrivateData,
+        signer: signer,
+      }).then((attestationUuid) => {
+        setAttestationUuid(attestationUuid.attestationUuid);
         const proof = createProofs(attestationPrivateData, [userLogin]);
         console.log(JSON.stringify(proof));
       });
@@ -51,16 +62,17 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
   }, [signer, userAddress, attestationPrivateData]);
 
   const handleFetchAttestationPrivateData = async () => {
-    const { data } = await axios.get("/api/attestations?team_id=" + props.teamId);
+    const { data } = await axios.get(
+      "/api/attestations?team_id=" + props.teamId,
+    );
     console.log(data);
     if (data.success) {
       setAttestationPrivateData(data.privateAttestationData);
     }
   };
 
-
   return (
-    <Dialog >
+    <Dialog>
       <DialogTrigger asChild>
         <Button
           className="mr-2"
@@ -89,10 +101,9 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
           <LoadingCircle></LoadingCircle>
         </div>
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild onClick={() => {
-          }}></DialogClose>
+          <DialogClose asChild onClick={() => {}}></DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}

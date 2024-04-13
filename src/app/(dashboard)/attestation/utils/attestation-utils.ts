@@ -1,4 +1,3 @@
-
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import { JsonRpcSigner } from "ethers";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
@@ -15,7 +14,6 @@ export type CreateAttestationBodyDto = {
   privateData: AttestationPrivateDataDto;
   signer: JsonRpcSigner;
 };
-
 
 export type AttestationPrivateDataDto = {
   [key: string]: string;
@@ -39,7 +37,7 @@ export type AttestationUuidDto = {
 export async function createAttestation({
   address,
   privateData,
-  signer
+  signer,
 }: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
   // Sepolia private data schema
   // @TODO Implement a mapping to reference the correct private data schema for each network
@@ -93,15 +91,14 @@ export function createProofs(
   privateData: AttestationPrivateDataDto,
   fields: string[],
 ) {
-
   const merkleTree = createMerkleTree(privateData);
   let privateDataKey: keyof AttestationPrivateDataDto;
-  let valuesWithSalt: MerkleValueWithSalt[] = [];
+  const valuesWithSalt: MerkleValueWithSalt[] = [];
   for (privateDataKey in privateData) {
     if (fields.includes(privateDataKey)) {
       valuesWithSalt.push(
-        valueWithSalt(privateDataKey, privateData[privateDataKey])
-      )
+        valueWithSalt(privateDataKey, privateData[privateDataKey]),
+      );
     }
   }
   const merkleValues = encodeMerkleValues(valuesWithSalt);
@@ -115,11 +112,7 @@ export function createProofs(
   return { proofs: proofs };
 }
 
-
-function valueWithSalt(
-  field: string,
-  value: string,
-): MerkleValueWithSalt {
+function valueWithSalt(field: string, value: string): MerkleValueWithSalt {
   const salt =
     "0xeba1f9c5ad55ba8569528641b3d105fb1ba09cf42b9918b9d535cebffaba8db4"; //FIXME
 
