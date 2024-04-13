@@ -4,6 +4,7 @@ import { fetchUserContributorsByTeam } from "../contributors/fetchUserContributo
 import { fetchRegisteredGitRepos } from "../github/repo/registered/fetchRegisteredRepos";
 import { WeightConfigAttestation } from "../configuration/weightConfig.dto";
 import { SaveAttestationRequestDto } from "./route";
+import prisma from "db";
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
@@ -22,6 +23,24 @@ export type ContributorDataDto = {
 export type AttestationUuidDto = {
   attestationUuid: string;
 };
+
+export type AttestationDto = {
+  id: string;
+  chain_id: string;
+  user_id: string;
+  team_id: string;
+  contribution_calculation_id: string;
+  attestation_uuid: string;
+};
+
+export async function findAttestation(uuid: string): Promise<AttestationDto> {
+  const attestation = await prisma.attestation.findFirst({
+    where: {
+      attestation_uuid: uuid,
+    },
+  });
+  return attestation as AttestationDto;
+}
 
 export async function getTeamAttestationData(
   teamId: string,
