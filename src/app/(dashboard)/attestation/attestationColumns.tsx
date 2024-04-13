@@ -49,12 +49,17 @@ export const attestationColumns: ColumnDef<AttestationDto>[] = [
         <div className="">
           <Button
             variant={"secondary"}
+            disabled={attestation.contribution_calculation_id == null}
             className="text-xs md:text-sm"
             onClick={() => {
               router.push(`/attestation/${attestation.attestation_uuid}`);
             }}
           >
-            Generate proofs
+            {attestation.contribution_calculation_id == null ? (
+              <>Out of date</>
+            ) : (
+              <>Generate proofs</>
+            )}
           </Button>
         </div>
       );

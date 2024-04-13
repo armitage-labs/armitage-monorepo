@@ -30,7 +30,7 @@ export type AttestationDto = {
   chain_id: string;
   user_id: string;
   team_id: string;
-  contribution_calculation_id: string;
+  contribution_calculation_id?: string;
   attestation_uuid: string;
   team?: {
     id: string;

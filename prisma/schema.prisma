@@ -122,14 +122,14 @@ model UserTeamMetric {
 }
 
 model Attestation {
-  id                          String                  @id @default(uuid())
-  chain_id                    String                  @db.VarChar(255)
+  id                          String                   @id @default(uuid())
+  chain_id                    String                   @db.VarChar(255)
   team_id                     String
-  Team                        Team                    @relation(fields: [team_id], references: [id], onDelete: Cascade)
-  contribution_calculation_id String
-  contribution_calculation    ContributionCalculation @relation(fields: [contribution_calculation_id], references: [id])
-  attestation_uuid            String                  @db.VarChar(255)
+  Team                        Team                     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  contribution_calculation_id String?
+  contribution_calculation    ContributionCalculation? @relation(fields: [contribution_calculation_id], references: [id], onDelete: SetNull)
+  attestation_uuid            String                   @db.VarChar(255)
   user_id                     String
-  user                        User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  created_at                  DateTime                @default(now()) @db.Timestamp(6)
+  user                        User                     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at                  DateTime                 @default(now()) @db.Timestamp(6)
 }
