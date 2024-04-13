@@ -24,10 +24,10 @@ export type AttestationUuidDto = {
 
 export async function getTeamAttestationData(
   teamId: string,
-): Promise<AttestationPrivateDataDto | null> {
+): Promise<AttestationPrivateDataDto> {
   const repoList = await fetchRegisteredGitRepos(teamId);
   if (repoList.length != 1) {
-    throw new Error("Team has more than one repo");
+    throw new Error("Team has to have one repo");
   }
 
   const contributionCalculation = await fetchContributionCalculation(teamId);
@@ -41,7 +41,7 @@ export async function getTeamAttestationData(
 
   return {
     organizationName: repo.full_name.split("/")[0],
-    repositoryName: repo.full_name,
+    repositoryName: repo.full_name.split("/")[1],
     contributor: contributors
       .sort((a, b) => b.contributionScore - a.contributionScore)
       .map((contributor, index) => {
