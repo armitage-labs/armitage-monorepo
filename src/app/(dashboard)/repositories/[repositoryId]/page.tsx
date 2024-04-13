@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TeamContributionTable } from "../../teams/[teamId]/teamContributionTable";
 import { useAccount } from "wagmi";
+import { GenerateAttestationModal } from "../../attestation/attestationModal";
 
 interface PageProps {
   params: { repositoryId: string };
@@ -177,21 +178,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
             description={`View the details of your repository`}
           />
           <div>
-            <Button
-              className="mr-2"
-              disabled={!account.isConnected}
-              onClick={() => {
-                console.log("Create attestation");
-              }}
-            >
-              {account.isConnected ? (
-                <>Create Attestation</>
-              ) : account.isConnecting || account.isReconnecting ? (
-                <>Connecting...</>
-              ) : (
-                <>Connect wallet to create attestation</>
-              )}
-            </Button>
+            <GenerateAttestationModal teamId={teamId} />
             <Button
               className="mr-2"
               onClick={() => {
