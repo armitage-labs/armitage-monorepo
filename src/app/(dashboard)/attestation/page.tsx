@@ -16,7 +16,6 @@ export default function GitRepo() {
 
   const handleFetchAttestation = async () => {
     const { data } = await axios.get("/api/attestations/details");
-    console.log(data);
     if (data.success) {
       setAttestations(data.attestations);
     }
