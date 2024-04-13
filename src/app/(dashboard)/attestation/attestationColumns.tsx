@@ -20,10 +20,11 @@ export const attestationColumns: ColumnDef<AttestationDto>[] = [
   {
     accessorKey: "team_id",
     header: () => {
-      return <>Team ID</>;
+      return <>Repo</>;
     },
     cell: ({ row }) => {
-      return <div className="text-left">{row.getValue("team_id")}</div>;
+      const team = row.original.team;
+      return <div className="text-left">{team?.teamName}</div>;
     },
   },
   {
@@ -42,7 +43,7 @@ export const attestationColumns: ColumnDef<AttestationDto>[] = [
   {
     id: "generate",
     cell: ({ row }) => {
-      const team = row.original;
+      const attestation = row.original;
       const router = useRouter();
       return (
         <div className="">
@@ -50,7 +51,7 @@ export const attestationColumns: ColumnDef<AttestationDto>[] = [
             variant={"secondary"}
             className="text-xs md:text-sm"
             onClick={() => {
-              router.push(`/teams/${team.id}`);
+              router.push(`/attestation/${attestation.attestation_uuid}`);
             }}
           >
             Generate proofs
