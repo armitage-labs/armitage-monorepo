@@ -116,15 +116,12 @@ export async function saveAttestation(
 async function addTeamNameToAttestation(
   attestations: AttestationDto[],
 ): Promise<AttestationDto[]> {
-  const processedAttestations: AttestationDto[] = [];
-  for (let i = 0; i < attestations.length; i++) {
-    const attestation = attestations[i];
+  for (const attestation of attestations) {
     const team = await fetchTeam(attestation.team_id);
     attestation.team = {
       id: team.id,
       teamName: team.name,
     };
-    processedAttestations.push(attestation);
   }
-  return processedAttestations;
+  return attestations;
 }
