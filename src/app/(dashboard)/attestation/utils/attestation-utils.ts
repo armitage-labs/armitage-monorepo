@@ -13,6 +13,7 @@ export type CreateAttestationBodyDto = {
   address: string;
   privateData: AttestationPrivateDataDto;
   signer: JsonRpcSigner;
+  salt: string;
 };
 
 export type AttestationPrivateDataDto = {
@@ -38,15 +39,15 @@ export async function createAttestation({
   address,
   privateData,
   signer,
+  salt,
 }: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
   // Sepolia private data schema
   // @TODO Implement a mapping to reference the correct private data schema for each network
   const schemaUID =
     "0x20351f973fdec1478924c89dfa533d8f872defa108d9c3c6512267d7e7e5dbc2";
 
-  const merkleTree = createMerkleTree(privateData);
+  const merkleTree = createMerkleTree(privateData, salt);
   const merkleRoot = merkleTree.root;
-  console.log(merkleTree);
 
   const eas = await initializeEAS(signer);
   const schemaEncoder = new SchemaEncoder("bytes32 privateData");
@@ -70,9 +71,8 @@ export async function createAttestation({
 
 export function createMerkleTree(
   privateData: AttestationPrivateDataDto,
+  salt: string,
 ): StandardMerkleTree<EncodedMerkleValue> {
-  const salt =
-    "0xeba1f9c5ad55ba8569528641b3d105fb1ba09cf42b9918b9d535cebffaba8db4"; //FIXME
   const merkleTreeValuesWithSalt: MerkleValueWithSalt[] = [];
 
   let privateDataKey: keyof AttestationPrivateDataDto;
@@ -90,14 +90,15 @@ export function createMerkleTree(
 export function createProofs(
   privateData: AttestationPrivateDataDto,
   fields: string[],
+  salt: string,
 ) {
-  const merkleTree = createMerkleTree(privateData);
+  const merkleTree = createMerkleTree(privateData, salt);
   let privateDataKey: keyof AttestationPrivateDataDto;
   const valuesWithSalt: MerkleValueWithSalt[] = [];
   for (privateDataKey in privateData) {
     if (fields.includes(privateDataKey)) {
       valuesWithSalt.push(
-        valueWithSalt(privateDataKey, privateData[privateDataKey]),
+        valueWithSalt(privateDataKey, privateData[privateDataKey], salt),
       );
     }
   }
@@ -107,15 +108,15 @@ export function createProofs(
     ...multiproof,
     leaves: decodeMerkleValues(multiproof.leaves),
   };
-  console.log(proofs);
 
   return { proofs: proofs };
 }
 
-function valueWithSalt(field: string, value: string): MerkleValueWithSalt {
-  const salt =
-    "0xeba1f9c5ad55ba8569528641b3d105fb1ba09cf42b9918b9d535cebffaba8db4"; //FIXME
-
+function valueWithSalt(
+  field: string,
+  value: string,
+  salt: string,
+): MerkleValueWithSalt {
   return {
     type: "string",
     name: field,

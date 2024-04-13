@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as crypto from "crypto";
 import { getTeamAttestationData, saveAttestation } from "./service";
 import { getServerSession } from "next-auth";
 import { options } from "../auth/[...nextauth]/options";
@@ -30,16 +31,22 @@ export async function GET(req: NextRequest) {
         score: contributor.score,
       }).toString();
     });
+    const userSalt = crypto
+      .createHash("sha256")
+      .update(session.userId + process.env.ATTESTATION_SECRET)
+      .digest("hex");
 
     return NextResponse.json({
       success: true,
       privateAttestationData: reponse,
+      userSalt: "0x" + userSalt,
     });
   }
 
   return NextResponse.json({
     success: false,
     privateAttestationData: null,
+    userSalt: null,
   });
 }
 

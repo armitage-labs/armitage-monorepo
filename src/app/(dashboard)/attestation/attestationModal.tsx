@@ -33,6 +33,7 @@ export function GenerateAttestationModal({
   const [attestationUuid, setAttestationUuid] = useState<string | undefined>(
     undefined,
   );
+  const [userSalt, setUserSalt] = useState<string | undefined>(undefined);
   const [userLogin, setUserLogin] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -48,26 +49,37 @@ export function GenerateAttestationModal({
   }, [session]);
 
   useEffect(() => {
-    if (signer && userAddress && attestationPrivateData && userLogin) {
+    if (
+      signer &&
+      userAddress &&
+      attestationPrivateData &&
+      userLogin &&
+      userSalt
+    ) {
       createAttestation({
         address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
         privateData: attestationPrivateData,
         signer: signer,
+        salt: userSalt,
       }).then((attestationUuid) => {
         setAttestationUuid(attestationUuid.attestationUuid);
-        const proof = createProofs(attestationPrivateData, [userLogin]);
+        const proof = createProofs(
+          attestationPrivateData,
+          [userLogin],
+          userSalt,
+        );
         console.log(JSON.stringify(proof));
       });
     }
-  }, [signer, userAddress, attestationPrivateData]);
+  }, [signer, userAddress, attestationPrivateData, userSalt]);
 
   const handleFetchAttestationPrivateData = async () => {
     const { data } = await axios.get(
       "/api/attestations?team_id=" + props.teamId,
     );
-    console.log(data);
     if (data.success) {
       setAttestationPrivateData(data.privateAttestationData);
+      setUserSalt(data.userSalt);
     }
   };
 
