@@ -1,5 +1,11 @@
-import { ContributionCalculation } from "@prisma/client";
 import prisma from "db";
+
+export type ContributionCalculation = {
+  id: string;
+  team_id: string;
+  created_at: Date;
+  score_interval: object[] | null;
+};
 
 export async function fetchContributionCalculation(
   teamId: string,
@@ -12,5 +18,5 @@ export async function fetchContributionCalculation(
         },
       },
     });
-  return contributionCalculation;
+  return contributionCalculation as ContributionCalculation;
 }

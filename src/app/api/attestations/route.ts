@@ -1,18 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAttestation } from "./service";
+import { getTeamAttestationData } from "./service";
+import { getServerSession } from "next-auth";
+import { options } from "../auth/[...nextauth]/options";
+
+interface AttestationResponse {
+  [key: string]: string;
+}
 
 export async function GET(req: NextRequest) {
-  const attestation = createAttestation({
-    address: "0x1234567890123456789012345678901234567890",
-    privateData: {
-      organizationName: "armitagelabs",
-      // repositoryName: "monorepo",
-      // contributor: [],
-      // measuredAt: "2022-11-28",
-      // weightsConfig: { "prReview": "1", "pr": "1" }
-    },
-  });
+  const session = await getServerSession(options);
+  const teamId = req.nextUrl.searchParams.get("team_id");
+
+  if (session?.userId && teamId) {
+    const attestationData = await getTeamAttestationData(teamId);
+    const reponse: AttestationResponse = {
+      organizationName: attestationData.organizationName,
+      repositoryName: attestationData.repositoryName,
+      measuredAt: attestationData.measuredAt,
+      weightsConfig: JSON.stringify(attestationData.weightsConfig),
+    };
+    attestationData.contributor.forEach((contributor) => {
+      reponse[contributor.githubUsername] = JSON.stringify({
+        rank: contributor.rank,
+        score: contributor.score,
+      }).toString();
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: reponse,
+    });
+  }
+
   return NextResponse.json({
-    success: true,
+    success: false,
+    data: null,
   });
 }
