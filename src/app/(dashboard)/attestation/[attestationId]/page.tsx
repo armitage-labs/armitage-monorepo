@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
-import { Check, Copy } from "lucide-react"
+import { Check, Copy } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import axios from "axios";
@@ -19,7 +19,16 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { createProofs } from "../utils/attestation-utils";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Play } from "next/font/google";
 
@@ -121,13 +130,18 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   allowing an observer to verify it is recent.
                 </span>
               </Label>
-              <Switch id="date" onCheckedChange={(checked) => {
-                if (checked) {
-                  setProofFields([...proofFields, "measuredAt"]);
-                } else {
-                  setProofFields(proofFields.filter((field) => field !== "measuredAt"));
-                }
-              }} />
+              <Switch
+                id="date"
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setProofFields([...proofFields, "measuredAt"]);
+                  } else {
+                    setProofFields(
+                      proofFields.filter((field) => field !== "measuredAt"),
+                    );
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="functional" className="flex flex-col space-y-1">
@@ -137,13 +151,20 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   github for which this attestation was created for.
                 </span>
               </Label>
-              <Switch id="orgname" onCheckedChange={(checked) => {
-                if (checked) {
-                  setProofFields([...proofFields, "organizationName"]);
-                } else {
-                  setProofFields(proofFields.filter((field) => field !== "organizationName"));
-                }
-              }} />
+              <Switch
+                id="orgname"
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setProofFields([...proofFields, "organizationName"]);
+                  } else {
+                    setProofFields(
+                      proofFields.filter(
+                        (field) => field !== "organizationName",
+                      ),
+                    );
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="performance" className="flex flex-col space-y-1">
@@ -153,13 +174,18 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   attestation was created for.
                 </span>
               </Label>
-              <Switch id="reponame" onCheckedChange={(checked) => {
-                if (checked) {
-                  setProofFields([...proofFields, "repositoryName"]);
-                } else {
-                  setProofFields(proofFields.filter((field) => field !== "repositoryName"));
-                }
-              }} />
+              <Switch
+                id="reponame"
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setProofFields([...proofFields, "repositoryName"]);
+                  } else {
+                    setProofFields(
+                      proofFields.filter((field) => field !== "repositoryName"),
+                    );
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="functional" className="flex flex-col space-y-1">
@@ -169,13 +195,18 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   weights and configuration.
                 </span>
               </Label>
-              <Switch id="weights" onCheckedChange={(checked) => {
-                if (checked) {
-                  setProofFields([...proofFields, "weightsConfig"]);
-                } else {
-                  setProofFields(proofFields.filter((field) => field !== "weightsConfig"));
-                }
-              }} />
+              <Switch
+                id="weights"
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setProofFields([...proofFields, "weightsConfig"]);
+                  } else {
+                    setProofFields(
+                      proofFields.filter((field) => field !== "weightsConfig"),
+                    );
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="functional" className="flex flex-col space-y-1">
@@ -185,13 +216,22 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   rank on this specific project.
                 </span>
               </Label>
-              <Switch id="contributor" defaultChecked onCheckedChange={(checked) => {
-                if (checked) {
-                  setProofFields([...proofFields, userLogin ? userLogin : ""]);
-                } else {
-                  setProofFields(proofFields.filter((field) => field !== userLogin));
-                }
-              }} />
+              <Switch
+                id="contributor"
+                defaultChecked
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setProofFields([
+                      ...proofFields,
+                      userLogin ? userLogin : "",
+                    ]);
+                  } else {
+                    setProofFields(
+                      proofFields.filter((field) => field !== userLogin),
+                    );
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center justify-between space-x-2">
               <Label htmlFor="functional" className="flex flex-col space-y-1">
@@ -205,11 +245,17 @@ export default function AttestationDetailsPage({ params }: PageProps) {
             </div>
           </CardContent>
           <CardFooter>
-
             <div className="pt-16"></div>
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline" onClick={() => { handleCreateProof() }}>Create Proof</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    handleCreateProof();
+                  }}
+                >
+                  Create Proof
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
@@ -223,16 +269,17 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                     <Label htmlFor="link" className="sr-only">
                       Link
                     </Label>
-                    <Input
-                      id="link"
-                      defaultValue={generatedProof}
-                      readOnly
-                    />
+                    <Input id="link" defaultValue={generatedProof} readOnly />
                   </div>
-                  <Button type="submit" size="sm" className="px-3" onClick={() => {
-                    navigator.clipboard.writeText(generatedProof);
-                    setCopyClicked(true);
-                  }}>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="px-3"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedProof);
+                      setCopyClicked(true);
+                    }}
+                  >
                     <span className="sr-only">Copy</span>
                     {copyClicked ? (
                       <Check className="h-4 w-4" />
@@ -243,11 +290,21 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                 </div>
                 <DialogFooter className="sm:justify-start">
                   <DialogClose asChild>
-                    <Button type="button" variant="secondary" onClick={() => { setCopyClicked(false) }}>
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => {
+                        setCopyClicked(false);
+                      }}
+                    >
                       Close
                     </Button>
                   </DialogClose>
-                  <a target="_blank" href={`https://sepolia.easscan.org/attestation/view/${attestationId}`} rel="noopener noreferrer">
+                  <a
+                    target="_blank"
+                    href={`https://sepolia.easscan.org/attestation/view/${attestationId}`}
+                    rel="noopener noreferrer"
+                  >
                     <Button type="button" variant="secondary">
                       Verify proof at EAS
                     </Button>
@@ -255,9 +312,6 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-
-
-
           </CardFooter>
         </Card>
       </div>
