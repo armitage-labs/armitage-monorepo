@@ -88,6 +88,7 @@ export function GenerateAttestationModal({
     const { data } = await axios.post("/api/attestations", {
       chain_id: "11155111",
       attestation_uuid: attestationUuid,
+      team_id: props.teamId,
     });
     if (data.success) {
       setRegisteredAttestationUuid(attestationUuid);
@@ -129,7 +130,7 @@ export function GenerateAttestationModal({
                 <Link
                   href={`https://sepolia.easscan.org/attestation/view/${registeredAttestationUuid}`}
                 >
-                  <Button variant={"outline"} onClick={() => {}}>
+                  <Button variant={"outline"} onClick={() => { }}>
                     Open in EAS
                   </Button>
                 </Link>
@@ -143,7 +144,7 @@ export function GenerateAttestationModal({
           )}
         </div>
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild onClick={() => {}}></DialogClose>
+          <DialogClose asChild onClick={() => { }}></DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

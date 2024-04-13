@@ -61,12 +61,17 @@ export async function saveAttestation(
   userId: string,
   attestation: SaveAttestationRequestDto,
 ): Promise<boolean> {
-  await prisma.attestation.create({
-    data: {
-      chain_id: attestation.chain_id,
-      attestation_uuid: attestation.attestation_uuid,
-      user_id: userId,
-    },
-  });
+  const lastTeamCalculation = await fetchContributionCalculation(attestation.team_id);
+  if (lastTeamCalculation) {
+    await prisma.attestation.create({
+      data: {
+        chain_id: attestation.chain_id,
+        attestation_uuid: attestation.attestation_uuid,
+        user_id: userId,
+        team_id: attestation.team_id,
+        contribution_calculation_id: lastTeamCalculation.id,
+      },
+    });
+  }
   return true;
 }
