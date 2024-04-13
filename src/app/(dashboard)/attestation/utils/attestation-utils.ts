@@ -1,6 +1,6 @@
 
 import { EAS, SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-import { AlchemyProvider, JsonRpcSigner } from "ethers";
+import { JsonRpcSigner } from "ethers";
 import { StandardMerkleTree } from "@openzeppelin/merkle-tree";
 import {
   EncodedMerkleValue,
@@ -16,12 +16,9 @@ export type CreateAttestationBodyDto = {
   signer: JsonRpcSigner;
 };
 
+
 export type AttestationPrivateDataDto = {
-  organizationName: string;
-  repositoryName: string;
-  // contributor: ContributorDataDto[];
-  // measuredAt: string;
-  // weightsConfig: WeightsConfigDto;
+  [key: string]: string;
 };
 
 export type ContributorDataDto = {

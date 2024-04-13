@@ -28,12 +28,12 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: reponse,
+      privateAttestationData: reponse,
     });
   }
 
   return NextResponse.json({
     success: false,
-    data: null,
+    privateAttestationData: null,
   });
 }

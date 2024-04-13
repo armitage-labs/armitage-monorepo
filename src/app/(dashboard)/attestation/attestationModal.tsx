@@ -7,6 +7,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { createAttestation, createProofs } from "./utils/attestation-utils";
+import { useSession } from "next-auth/react";
 
 type GenerateAttestationModalProps = {
   teamId: string;
@@ -15,9 +16,11 @@ type GenerateAttestationModalProps = {
 export function GenerateAttestationModal({ ...props }: GenerateAttestationModalProps) {
   const account = useAccount();
   const signer = useEthersSigner();
+  const session = useSession();
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [attestationUuid, setAttestationUuid] = useState<string | undefined>(undefined);
+  const [userLogin, setUserLogin] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (account) {
@@ -26,16 +29,22 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
   }, [account]);
 
   useEffect(() => {
-    if (signer && userAddress && attestationPrivateData) {
+    if (session.data?.user?.name) {
+      setUserLogin(session.data.githubLogin);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (signer && userAddress && attestationPrivateData && userLogin) {
       createAttestation(
         {
-          address: userAddress,
+          address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
           privateData: attestationPrivateData,
           signer: signer
         }
       ).then((attestationUuid) => {
         setAttestationUuid(attestationUuid.attestationUuid)
-        const proof = createProofs(attestationPrivateData, ["organizationName"]);
+        const proof = createProofs(attestationPrivateData, [userLogin]);
         console.log(JSON.stringify(proof));
       });
     }
@@ -45,11 +54,7 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
     const { data } = await axios.get("/api/attestations?team_id=" + props.teamId);
     console.log(data);
     if (data.success) {
-      const mockedData = {
-        organizationName: "armitagelabs",
-        repositoryName: "monorepo",
-      };
-      setAttestationPrivateData(mockedData);
+      setAttestationPrivateData(data.privateAttestationData);
     }
   };
 
@@ -64,7 +69,6 @@ export function GenerateAttestationModal({ ...props }: GenerateAttestationModalP
             handleFetchAttestationPrivateData();
           }}
         >
-
           {account.isConnected ? (
             <>Create Attestation</>
           ) : account.isConnecting || account.isReconnecting ? (
