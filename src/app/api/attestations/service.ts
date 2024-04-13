@@ -61,7 +61,9 @@ export async function saveAttestation(
   userId: string,
   attestation: SaveAttestationRequestDto,
 ): Promise<boolean> {
-  const lastTeamCalculation = await fetchContributionCalculation(attestation.team_id);
+  const lastTeamCalculation = await fetchContributionCalculation(
+    attestation.team_id,
+  );
   if (lastTeamCalculation) {
     await prisma.attestation.create({
       data: {
