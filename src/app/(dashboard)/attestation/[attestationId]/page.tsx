@@ -274,7 +274,7 @@ export default function AttestationDetailsPage({ params }: PageProps) {
 
             <a
               target="_blank"
-              href={`https://app.armitage.xyz/verify-attestation/${attestationId}`}
+              href={`/verify-attestation/${attestationId}`}
               rel="noopener noreferrer"
               className="mr-3"
             >
