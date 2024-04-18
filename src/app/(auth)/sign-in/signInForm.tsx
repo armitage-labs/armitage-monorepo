@@ -11,17 +11,29 @@ export default function SignInForm() {
   const [anonymousUserUid, setAnonymousUserUid] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isValid, setIsValid] = useState(true);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSignInForm = async () => {
-    localStorage.setItem("anonymousUserUid", email);
-    setAnonymousUserUid(email);
-    const { data } = await axios.post("/api/users", {
-      email: email,
-    });
+    const valid = validateEmail(email);
+    setIsValid(valid);
 
-    if (data?.id) {
-      localStorage.setItem("anonymousUserUid", data.id);
-      setAnonymousUserUid(data.id);
+    if (valid) {
+      localStorage.setItem("anonymousUserUid", email);
+      setAnonymousUserUid(email);
+
+      const { data } = await axios.post("/api/users", {
+        email: email,
+      });
+
+      if (data?.id) {
+        localStorage.setItem("anonymousUserUid", data.id);
+        setAnonymousUserUid(data.id);
+      }
     }
   };
 
@@ -50,7 +62,15 @@ export default function SignInForm() {
                 placeholder="Email"
                 onChange={(event) => setEmail(event.target.value)}
                 value={email}
+                style={{
+                  border: isValid ? "1px solid black" : "1px solid red",
+                }}
               />
+              {!isValid && (
+                <p style={{ color: "red" }}>
+                  Please enter a valid email address
+                </p>
+              )}
               <Button variant={"secondary"} onClick={() => handleSignInForm()}>
                 <>Sign in</>
               </Button>
