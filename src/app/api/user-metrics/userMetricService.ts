@@ -15,7 +15,7 @@ export type UserMetricSum = {
 };
 
 export async function fetchTeamUserMetrics(
-  teamId: string
+  teamId: string,
 ): Promise<UserTeamMetric[]> {
   const teamMetrics = await prisma.userTeamMetric.findMany({
     where: {
@@ -31,7 +31,7 @@ export async function fetchTeamUserMetrics(
 
 export async function fetchTeamUserMetricsByUsername(
   teamId: string,
-  username: string
+  username: string,
 ): Promise<UserTeamMetric[]> {
   const teamMetrics = await prisma.userTeamMetric.findMany({
     where: {
@@ -48,7 +48,7 @@ export async function fetchTeamUserMetricsByUsername(
 
 export async function fetchTeamUserMetricsByRepo(
   teamId: string,
-  repoName: string
+  repoName: string,
 ): Promise<UserTeamMetric[]> {
   const teamMetrics = await prisma.userTeamMetric.findMany({
     where: {
@@ -64,7 +64,7 @@ export async function fetchTeamUserMetricsByRepo(
 }
 
 export async function feachMaxTeamMetrics(
-  userTeamMetric: UserTeamMetric[]
+  userTeamMetric: UserTeamMetric[],
 ): Promise<Map<string, UserTeamMetric>> {
   const hashmap = new Map<string, UserTeamMetric>();
 
@@ -81,7 +81,7 @@ export async function feachMaxTeamMetrics(
 }
 
 export async function sumUsersTeamMetrics(
-  userTeamMetric: UserTeamMetric[]
+  userTeamMetric: UserTeamMetric[],
 ): Promise<UserMetricSum[]> {
   const mergedMetricsMap: { [key: string]: UserMetricSum } = {};
 
@@ -89,7 +89,7 @@ export async function sumUsersTeamMetrics(
   for (const metric of userTeamMetric) {
     if (mergedMetricsMap.hasOwnProperty(metric.metric_name)) {
       mergedMetricsMap[metric.metric_name].metricValue += parseInt(
-        metric.metric_count
+        metric.metric_count,
       );
     } else {
       mergedMetricsMap[metric.metric_name] = {
@@ -104,11 +104,11 @@ export async function sumUsersTeamMetrics(
 }
 
 export async function activityUserMetrics(
-  userTeamMetric: UserMetricSum[]
+  userTeamMetric: UserMetricSum[],
 ): Promise<UserMetric[]> {
   const maxCount = userTeamMetric.reduce(
     (acc, metric) => acc + metric.metricValue,
-    0
+    0,
   );
 
   return userTeamMetric.map((metric) => ({
@@ -121,7 +121,7 @@ export async function activityUserMetrics(
 
 export async function feachUsersTeamMetrics(
   username: string,
-  userTeamMetric: UserTeamMetric[]
+  userTeamMetric: UserTeamMetric[],
 ): Promise<UserTeamMetric[]> {
   return userTeamMetric.filter((metric) => metric.username === username);
 }
@@ -130,21 +130,22 @@ export async function feachUsersTeamRpgMetics(
   username: string,
   userTeamMetric: UserTeamMetric[],
   topUserMetric: Map<string, UserTeamMetric>,
-  teamUserMetrics: UserTeamMetric[]
+  teamUserMetrics: UserTeamMetric[],
 ): Promise<UserMetric[]> {
   const metricsRanked = splitAndRankMetrics(teamUserMetrics);
   const value: UserMetric[] = userTeamMetric.map((metric) => ({
     metricName: metric.metric_name,
     metricValue: parseInt(metric.metric_count),
     metricMax: parseInt(
-      topUserMetric.get(metric.metric_name)?.metric_count ?? metric.metric_count
+      topUserMetric.get(metric.metric_name)?.metric_count ??
+        metric.metric_count,
     ),
     rank: getUserRank(username, metric.metric_name, metricsRanked),
     metricScore:
       (parseInt(metric.metric_count) /
         parseInt(
           topUserMetric.get(metric.metric_name)?.metric_count ??
-            metric.metric_count
+            metric.metric_count,
         )) *
       100,
   }));
@@ -153,7 +154,7 @@ export async function feachUsersTeamRpgMetics(
 }
 
 function splitAndRankMetrics(
-  teamUserMetrics: UserTeamMetric[]
+  teamUserMetrics: UserTeamMetric[],
 ): Map<string, UserTeamMetric[]> {
   const splitMap: Map<string, UserTeamMetric[]> = new Map<
     string,
@@ -180,7 +181,7 @@ function splitAndRankMetrics(
 function getUserRank(
   username: string,
   merticName: string,
-  teamUserMetrics: Map<string, UserTeamMetric[]>
+  teamUserMetrics: Map<string, UserTeamMetric[]>,
 ) {
   const group = teamUserMetrics.get(merticName);
   if (group) {

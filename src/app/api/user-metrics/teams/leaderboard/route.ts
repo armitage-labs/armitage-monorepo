@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       username,
       userMetrics,
       topTeamMetrics,
-      teamUserMetrics
+      teamUserMetrics,
     );
     return NextResponse.json({
       success: true,
