@@ -5,6 +5,7 @@ import { fetchUserTeams } from "./fetchUserTeams";
 import { fetchUserTeam } from "./fetchTeam";
 import { TeamRegisterDto } from "./types/team.dto";
 import { registerUserTeam } from "./registerUserTeam";
+import { deleteTeam } from "./deleteTeam";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
@@ -42,5 +43,19 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.log(error);
     return NextResponse.json({ success: false, createdTeam: null });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(options);
+    const teamId = req.nextUrl.searchParams.get("team_id");
+    if (teamId && session?.userId) {
+      await deleteTeam(teamId, session.userId);
+      return NextResponse.json({ success: true });
+    }
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false });
   }
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 import { Toaster } from "@/components/ui/sonner";
 import { NextAuthProvider } from "./providers/nextAuthProvider";
 import Providers from "./providers/providers";
@@ -11,7 +13,6 @@ export const metadata: Metadata = {
   title: "Armitage",
   description: "Engineering impact data platform",
 };
-
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -23,6 +24,7 @@ export default async function RootLayout({
         <Providers>
           <NextAuthProvider>
             <div>{children}</div>
+            <Analytics />
             <Toaster />
           </NextAuthProvider>
         </Providers>

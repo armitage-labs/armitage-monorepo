@@ -98,6 +98,16 @@ export const teamsColumns: ColumnDef<Team>[] = [
         }
       };
 
+      const handleDeleteTeam = async () => {
+        setIsLoading(true);
+        const { data } = await axios.delete(`/api/teams?team_id=${team.id}`);
+        if (data && data.success) {
+          window.location.reload();
+        } else {
+          setIsLoading(false);
+        }
+      };
+
       return (
         <AlertDialog>
           <DropdownMenu>
@@ -116,6 +126,13 @@ export const teamsColumns: ColumnDef<Team>[] = [
                 }}
               >
                 View team details
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  handleDeleteTeam();
+                }}
+              >
+                Delete team
               </DropdownMenuItem>
               <AlertDialogTrigger asChild>
                 <DropdownMenuItem>Calculate contributions</DropdownMenuItem>

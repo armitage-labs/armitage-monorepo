@@ -59,7 +59,7 @@ yarn prisma migrate deploy
 For resolving migrations
 
 ```bash
-yarn prisma migrate resolve --rolled-back 20240325202302_events
+yarn prisma migrate resolve --rolled-back 20240408133230_add_user_metrics
 ```
 
 
