@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { UserAuthForm } from "@/components/authentication/user-auth-form";
 import { Icons } from "@/components/icons";
+import SignInForm from "./signInForm";
 
 export const metadata: Metadata = {
   title: "Authentication",
@@ -24,6 +24,7 @@ export default function AuthenticationPage() {
           <footer className="text-sm pt-3">Measure what matters.</footer>
         </div>
       </div>
+
       <div className="p-4 lg:p-8 h-full flex items-center">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
@@ -34,7 +35,7 @@ export default function AuthenticationPage() {
               Or simply authenticate if you are already a member.
             </p>
           </div>
-          <UserAuthForm />
+          <SignInForm />
           <p className="px-8 text-center text-sm text-muted-foreground">
             By clicking continue, you agree to our{" "}
             <Link
