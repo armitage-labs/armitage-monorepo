@@ -1,14 +1,23 @@
 import prisma from "db";
 
-export async function createAnonymousUser(eamil: string): Promise<string> {
+export async function createAnonymousUser(email: string): Promise<string> {
   try {
-    const nonymousUser = await prisma.anonymousUsers.create({
-      data: {
-        email: eamil,
+    const foundAnonymousUser = await prisma.anonymousUsers.findFirst({
+      where: {
+        email: email,
       },
     });
-    return nonymousUser.id;
+    if (foundAnonymousUser) {
+      return foundAnonymousUser.id;
+    } else {
+      const anonymousUser = await prisma.anonymousUsers.create({
+        data: {
+          email: email,
+        },
+      });
+      return anonymousUser.id;
+    }
   } catch (error) {
-    return Math.random().toString();
+    throw new Error(`Error creating anonymous user: ${error}`);
   }
 }
