@@ -1,4 +1,3 @@
-import { Octokit } from "octokit";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 
