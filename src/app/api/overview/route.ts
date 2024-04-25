@@ -10,14 +10,8 @@ import {
   numberUniqueContributors,
   sumScore,
 } from "../utils/utils";
-import {
-  createAccessToken,
-  generateGitHubAppJWT,
-} from "../auth/[...nextauth]/github/githubService";
 
 export async function GET() {
-  const jwt = await generateGitHubAppJWT();
-  console.log(await createAccessToken(jwt, "50011847"));
   const session = await getServerSession(options);
   if (session?.userId) {
     const userContributors = await fetchUserContributorsInterval(
