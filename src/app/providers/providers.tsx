@@ -9,14 +9,14 @@ import {
   getDefaultConfig,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { base, sepolia } from "viem/chains";
+import { base, baseSepolia, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 const config = getDefaultConfig({
   appName: "Armitage",
   projectId: "a9f78ae7bcb14f2dfcdcdb88bfca121c",
-  chains: [sepolia],
+  chains: [sepolia, base, baseSepolia],
   ssr: true,
 });
 

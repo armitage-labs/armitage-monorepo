@@ -23,6 +23,7 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { chainsConfig } from "./utils/attestation-config";
 
 type GenerateAttestationModalProps = {
   teamId: string;
@@ -36,6 +37,7 @@ export function GenerateAttestationModal({
   const session = useSession();
   const router = useRouter();
   const chainId = useChainId();
+  const [easscanUrl, setEasscanUrl] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
@@ -55,6 +57,12 @@ export function GenerateAttestationModal({
       setUserLogin(session.data.githubLogin);
     }
   }, [session]);
+
+  useEffect(() => {
+    if (chainId) {
+      setEasscanUrl(chainsConfig[chainId].easscanUrl);
+    }
+  }, [chainId]);
 
   useEffect(() => {
     if (
@@ -140,9 +148,9 @@ export function GenerateAttestationModal({
               Your private attestation has been created 🥳
               <div className="pt-6">
                 <Link
-                  href={`https://sepolia.easscan.org/attestation/view/${registeredAttestationUuid}`}
+                  href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
                 >
-                  <Button variant={"outline"} onClick={() => {}}>
+                  <Button variant={"outline"} onClick={() => { }}>
                     Open in EAS
                   </Button>
                 </Link>
@@ -162,7 +170,7 @@ export function GenerateAttestationModal({
           )}
         </div>
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild onClick={() => {}}></DialogClose>
+          <DialogClose asChild onClick={() => { }}></DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
