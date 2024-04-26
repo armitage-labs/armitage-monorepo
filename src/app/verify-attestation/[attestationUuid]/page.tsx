@@ -9,6 +9,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Circles } from "react-loader-spinner";
+import { AttestationDto } from "@/app/api/attestations/service";
+import { chainsConfig } from "@/app/(dashboard)/attestation/utils/attestation-config";
 
 interface VerifyAttestationPage {
   params: { attestationUuid: string };
@@ -18,12 +20,36 @@ export default function VerifyAttestationPage({
   params,
 }: VerifyAttestationPage) {
   const [isAttestationVerified, setIsAttestationVerified] = useState<boolean>();
+  const [attestationDetails, setAttestationDetails] =
+    useState<AttestationDto>();
+  const [easscanUrl, setEasscanUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     if (params.attestationUuid) {
       handleVerifyAttestation();
+      handleFetchAttestationDetails();
     }
   }, []);
+
+  useEffect(() => {
+    if (attestationDetails) {
+      handleFetchConfig();
+    }
+  }, [attestationDetails]);
+
+  const handleFetchAttestationDetails = async () => {
+    const { data } = await axios.get(
+      `/api/attestations/details?uuid=${params.attestationUuid}`,
+    );
+    if (data.success) {
+      setAttestationDetails(data.attestation);
+    }
+  };
+
+  const handleFetchConfig = async () => {
+    const chainId = Number(attestationDetails?.chain_id);
+    setEasscanUrl(chainsConfig[chainId].easscanUrl);
+  };
 
   const handleVerifyAttestation = async () => {
     const { data } = await axios.get(
@@ -85,7 +111,7 @@ export default function VerifyAttestationPage({
                 <div>
                   <Button className="mt-10" asChild variant="secondary">
                     <Link
-                      href={`https://sepolia.easscan.org/attestation/view/${params.attestationUuid}`}
+                      href={`${easscanUrl}/attestation/view/${params.attestationUuid}`}
                     >
                       See this attestation on EAS
                     </Link>

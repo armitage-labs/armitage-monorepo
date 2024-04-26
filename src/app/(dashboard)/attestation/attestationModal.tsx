@@ -150,7 +150,7 @@ export function GenerateAttestationModal({
                 <Link
                   href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
                 >
-                  <Button variant={"outline"} onClick={() => { }}>
+                  <Button variant={"outline"} onClick={() => {}}>
                     Open in EAS
                   </Button>
                 </Link>
@@ -170,7 +170,7 @@ export function GenerateAttestationModal({
           )}
         </div>
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild onClick={() => { }}></DialogClose>
+          <DialogClose asChild onClick={() => {}}></DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
