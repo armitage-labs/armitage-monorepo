@@ -12,10 +12,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useEthersSigner } from "@/lib/ethersUtils";
+import { useChainId } from "wagmi";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { createAttestation, createProofs } from "./utils/attestation-utils";
+import {
+  createPrivateAttestation,
+  createProofs,
+} from "./utils/attestation-utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,6 +35,7 @@ export function GenerateAttestationModal({
   const signer = useEthersSigner();
   const session = useSession();
   const router = useRouter();
+  const chainId = useChainId();
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
@@ -57,15 +62,17 @@ export function GenerateAttestationModal({
       userAddress &&
       attestationPrivateData &&
       userLogin &&
+      chainId &&
       userSalt
     ) {
-      createAttestation({
+      createPrivateAttestation({
         address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
         privateData: attestationPrivateData,
         signer: signer,
+        chainId: chainId,
         salt: userSalt,
       }).then((attestationUuid) => {
-        handlePostAttestationCreated(attestationUuid.attestationUuid);
+        handlePostAttestationCreated(attestationUuid.attestationUuid, chainId);
         const proof = createProofs(
           attestationPrivateData,
           [userLogin],
@@ -74,7 +81,7 @@ export function GenerateAttestationModal({
         console.log(JSON.stringify(proof));
       });
     }
-  }, [signer, userAddress, attestationPrivateData, userSalt]);
+  }, [signer, userAddress, attestationPrivateData, userSalt, chainId]);
 
   const handleFetchAttestationPrivateData = async () => {
     const { data } = await axios.get(
@@ -86,9 +93,12 @@ export function GenerateAttestationModal({
     }
   };
 
-  const handlePostAttestationCreated = async (attestationUuid: string) => {
+  const handlePostAttestationCreated = async (
+    attestationUuid: string,
+    chainId: number,
+  ) => {
     const { data } = await axios.post("/api/attestations", {
-      chain_id: "11155111",
+      chain_id: chainId.toString(),
       attestation_uuid: attestationUuid,
       team_id: props.teamId,
     });

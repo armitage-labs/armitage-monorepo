@@ -9,7 +9,7 @@ import {
   getDefaultConfig,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
-import { sepolia } from "viem/chains";
+import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
