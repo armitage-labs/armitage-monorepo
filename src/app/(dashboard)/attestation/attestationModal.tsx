@@ -12,13 +12,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useEthersSigner } from "@/lib/ethersUtils";
+import { useChainId } from "wagmi";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { createAttestation, createProofs } from "./utils/attestation-utils";
+import {
+  createPrivateAttestation,
+  createProofs,
+} from "./utils/attestation-utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { chainsConfig } from "./utils/attestation-config";
 
 type GenerateAttestationModalProps = {
   teamId: string;
@@ -31,6 +36,8 @@ export function GenerateAttestationModal({
   const signer = useEthersSigner();
   const session = useSession();
   const router = useRouter();
+  const chainId = useChainId();
+  const [easscanUrl, setEasscanUrl] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
@@ -52,29 +59,42 @@ export function GenerateAttestationModal({
   }, [session]);
 
   useEffect(() => {
+    if (chainId) {
+      setEasscanUrl(chainsConfig[chainId].easscanUrl);
+    }
+  }, [chainId]);
+
+  useEffect(() => {
     if (
       signer &&
       userAddress &&
       attestationPrivateData &&
       userLogin &&
+      chainId &&
       userSalt
     ) {
-      createAttestation({
+      createPrivateAttestation({
         address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
         privateData: attestationPrivateData,
         signer: signer,
+        chainId: chainId,
         salt: userSalt,
       }).then((attestationUuid) => {
-        handlePostAttestationCreated(attestationUuid.attestationUuid);
-        const proof = createProofs(
-          attestationPrivateData,
-          [userLogin],
-          userSalt,
-        );
-        console.log(JSON.stringify(proof));
+        if (attestationUuid != null) {
+          handlePostAttestationCreated(
+            attestationUuid.attestationUuid,
+            chainId,
+          );
+          const proof = createProofs(
+            attestationPrivateData,
+            [userLogin],
+            userSalt,
+          );
+          console.log(JSON.stringify(proof));
+        }
       });
     }
-  }, [signer, userAddress, attestationPrivateData, userSalt]);
+  }, [signer, userAddress, attestationPrivateData, userSalt, chainId]);
 
   const handleFetchAttestationPrivateData = async () => {
     const { data } = await axios.get(
@@ -86,9 +106,12 @@ export function GenerateAttestationModal({
     }
   };
 
-  const handlePostAttestationCreated = async (attestationUuid: string) => {
+  const handlePostAttestationCreated = async (
+    attestationUuid: string,
+    chainId: number,
+  ) => {
     const { data } = await axios.post("/api/attestations", {
-      chain_id: "11155111",
+      chain_id: chainId.toString(),
       attestation_uuid: attestationUuid,
       team_id: props.teamId,
     });
@@ -130,7 +153,7 @@ export function GenerateAttestationModal({
               Your private attestation has been created 🥳
               <div className="pt-6">
                 <Link
-                  href={`https://sepolia.easscan.org/attestation/view/${registeredAttestationUuid}`}
+                  href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
                 >
                   <Button variant={"outline"} onClick={() => {}}>
                     Open in EAS

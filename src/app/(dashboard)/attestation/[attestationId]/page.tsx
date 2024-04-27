@@ -18,7 +18,6 @@ import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { createProofs } from "../utils/attestation-utils";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogClose,
@@ -30,7 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Play } from "next/font/google";
+import { chainsConfig } from "../utils/attestation-config";
 
 interface PageProps {
   params: { attestationId: string };
@@ -47,6 +46,7 @@ export default function AttestationDetailsPage({ params }: PageProps) {
   const [generatedProof, setGeneratedProof] = useState<string>("");
   const [copyClicked, setCopyClicked] = useState<boolean>(false);
   const [proofFields, setProofFields] = useState<string[]>([]);
+  const [easscanUrl, setEasscanUrl] = useState<string>("");
 
   const breadcrumbItems = [
     { title: "Attestations", link: "/attestations" },
@@ -70,6 +70,11 @@ export default function AttestationDetailsPage({ params }: PageProps) {
       setAttestationPrivateData(data.privateAttestationData);
       setUserSalt(data.userSalt);
     }
+  };
+
+  const handleFetchConfig = async () => {
+    const chainId = Number(attestationDetails?.chain_id);
+    setEasscanUrl(chainsConfig[chainId].easscanUrl);
   };
 
   const handleCreateProof = async () => {
@@ -100,6 +105,7 @@ export default function AttestationDetailsPage({ params }: PageProps) {
   useEffect(() => {
     if (attestationDetails) {
       handleFetchAttestationPrivateData();
+      handleFetchConfig();
     }
   }, [attestationDetails]);
 
@@ -338,7 +344,7 @@ export default function AttestationDetailsPage({ params }: PageProps) {
                   </DialogClose>
                   <a
                     target="_blank"
-                    href={`https://sepolia.easscan.org/attestation/view/${attestationId}`}
+                    href={`${easscanUrl}/attestation/view/${attestationId}`}
                     rel="noopener noreferrer"
                   >
                     <Button type="button" variant="secondary">

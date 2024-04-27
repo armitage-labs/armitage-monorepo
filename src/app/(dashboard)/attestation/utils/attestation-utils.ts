@@ -8,11 +8,13 @@ import {
   encodeMerkleValues,
   encodeValuesToMerkleTree,
 } from "./merkle-utils";
+import { ChainConfig, chainsConfig } from "./attestation-config";
 
 export type CreateAttestationBodyDto = {
   address: string;
   privateData: AttestationPrivateDataDto;
   signer: JsonRpcSigner;
+  chainId: number;
   salt: string;
 };
 
@@ -35,21 +37,34 @@ export type AttestationUuidDto = {
   attestationUuid: string;
 };
 
-export async function createAttestation({
+export async function createPrivateAttestation({
   address,
   privateData,
   signer,
+  chainId,
   salt,
-}: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
-  // Sepolia private data schema
-  // @TODO Implement a mapping to reference the correct private data schema for each network
-  const schemaUID =
-    "0x20351f973fdec1478924c89dfa533d8f872defa108d9c3c6512267d7e7e5dbc2";
+}: CreateAttestationBodyDto): Promise<AttestationUuidDto | null> {
+  const chainConfig = chainsConfig[chainId];
+  if (!chainConfig) {
+    console.error(`No config found for chain id: ${chainId}`);
+    return null;
+  }
+
+  const schemaUID = chainConfig.privateAttestationSchemaUUId;
+  if (!schemaUID) {
+    console.error(
+      `No private attestation Schema found for chain id: ${chainId}`,
+    );
+    return null;
+  }
 
   const merkleTree = createMerkleTree(privateData, salt);
   const merkleRoot = merkleTree.root;
 
-  const eas = await initializeEAS(signer);
+  const eas = await initializeEAS(signer, chainConfig);
+  if (eas == null) {
+    return null;
+  }
   const schemaEncoder = new SchemaEncoder("bytes32 privateData");
   const encodedData = schemaEncoder.encodeData([
     { name: "privateData", value: merkleRoot, type: "bytes32" },
@@ -125,9 +140,17 @@ function valueWithSalt(
   };
 }
 
-export async function initializeEAS(signer: JsonRpcSigner): Promise<EAS> {
-  // Sepolia v0.26 schema contract
-  const easContractAddress = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
+export async function initializeEAS(
+  signer: JsonRpcSigner,
+  chainConfig: ChainConfig,
+): Promise<EAS | null> {
+  const easContractAddress = chainConfig.easContractAddress;
+  if (!easContractAddress) {
+    console.error(
+      `No eas contract address found for chain id: ${chainConfig.chainId}`,
+    );
+    return null;
+  }
   const eas = new EAS(easContractAddress);
   eas.connect(signer);
   return eas;
