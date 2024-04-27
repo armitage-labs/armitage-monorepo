@@ -43,23 +43,28 @@ export async function createPrivateAttestation({
   signer,
   chainId,
   salt,
-}: CreateAttestationBodyDto): Promise<AttestationUuidDto> {
+}: CreateAttestationBodyDto): Promise<AttestationUuidDto | null> {
   const chainConfig = chainsConfig[chainId];
   if (!chainConfig) {
-    throw new Error(`No config found for chain id: ${chainId}`);
+    console.error(`No config found for chain id: ${chainId}`);
+    return null;
   }
 
   const schemaUID = chainConfig.privateAttestationSchemaUUId;
   if (!schemaUID) {
-    throw new Error(
+    console.error(
       `No private attestation Schema found for chain id: ${chainId}`,
     );
+    return null;
   }
 
   const merkleTree = createMerkleTree(privateData, salt);
   const merkleRoot = merkleTree.root;
 
   const eas = await initializeEAS(signer, chainConfig);
+  if (eas == null) {
+    return null;
+  }
   const schemaEncoder = new SchemaEncoder("bytes32 privateData");
   const encodedData = schemaEncoder.encodeData([
     { name: "privateData", value: merkleRoot, type: "bytes32" },
@@ -138,12 +143,13 @@ function valueWithSalt(
 export async function initializeEAS(
   signer: JsonRpcSigner,
   chainConfig: ChainConfig,
-): Promise<EAS> {
+): Promise<EAS | null> {
   const easContractAddress = chainConfig.easContractAddress;
   if (!easContractAddress) {
-    throw new Error(
+    console.error(
       `No eas contract address found for chain id: ${chainConfig.chainId}`,
     );
+    return null;
   }
   const eas = new EAS(easContractAddress);
   eas.connect(signer);

@@ -80,13 +80,18 @@ export function GenerateAttestationModal({
         chainId: chainId,
         salt: userSalt,
       }).then((attestationUuid) => {
-        handlePostAttestationCreated(attestationUuid.attestationUuid, chainId);
-        const proof = createProofs(
-          attestationPrivateData,
-          [userLogin],
-          userSalt,
-        );
-        console.log(JSON.stringify(proof));
+        if (attestationUuid != null) {
+          handlePostAttestationCreated(
+            attestationUuid.attestationUuid,
+            chainId,
+          );
+          const proof = createProofs(
+            attestationPrivateData,
+            [userLogin],
+            userSalt,
+          );
+          console.log(JSON.stringify(proof));
+        }
       });
     }
   }, [signer, userAddress, attestationPrivateData, userSalt, chainId]);
