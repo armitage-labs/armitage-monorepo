@@ -119,7 +119,7 @@ export async function fetchUserContributorsIntervalByTeam(
 
 // export async function mergeContributorDtoWithTeams():
 
-function transformUserScoresToContributors(
+export function transformUserScoresToContributors(
   userScoresArray: UserScoreDto[],
 ): ContributorDto[] {
   // Transforms userScore into contributorDto

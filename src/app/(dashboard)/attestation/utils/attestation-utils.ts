@@ -10,7 +10,7 @@ import {
 } from "./merkle-utils";
 import { ChainConfig, chainsConfig } from "./attestation-config";
 
-export type CreateAttestationBodyDto = {
+export type CreatePrivateAttestationBodyDto = {
   address: string;
   privateData: AttestationPrivateDataDto;
   signer: JsonRpcSigner;
@@ -18,8 +18,30 @@ export type CreateAttestationBodyDto = {
   salt: string;
 };
 
+export type CreatePublicAttestationBodyDto = {
+  address: string;
+  data: AttestationPublicDataDto;
+  signer: JsonRpcSigner;
+  chainId: number;
+};
+
 export type AttestationPrivateDataDto = {
   [key: string]: string;
+};
+
+export type AttestationPublicDataDto = {
+  githubUsername: string;
+  measuredAt: string;
+  repositoryName: string;
+  organizationName: string;
+  prNodeWeight: string;
+  prReviewNodeWeight: string;
+  issueNodeWeight: string;
+  commentNodeWeight: string;
+  commitNodeWeight: string;
+  userScoreRank: string;
+  userCredScore: string;
+  userCredScorePercentage: string;
 };
 
 export type ContributorDataDto = {
@@ -43,7 +65,7 @@ export async function createPrivateAttestation({
   signer,
   chainId,
   salt,
-}: CreateAttestationBodyDto): Promise<AttestationUuidDto | null> {
+}: CreatePrivateAttestationBodyDto): Promise<AttestationUuidDto | null> {
   const chainConfig = chainsConfig[chainId];
   if (!chainConfig) {
     console.error(`No config found for chain id: ${chainId}`);
@@ -70,6 +92,78 @@ export async function createPrivateAttestation({
     { name: "privateData", value: merkleRoot, type: "bytes32" },
   ]);
 
+  const tx = await eas.attest({
+    schema: schemaUID,
+    data: {
+      recipient: address,
+      expirationTime: undefined,
+      revocable: false,
+      data: encodedData,
+    },
+  });
+  const attestationUuid = await tx.wait();
+
+  return { attestationUuid: attestationUuid };
+}
+
+export async function createPublicAttestation({
+  address,
+  data,
+  signer,
+  chainId,
+}: CreatePublicAttestationBodyDto): Promise<AttestationUuidDto | null> {
+  const chainConfig = chainsConfig[chainId];
+  if (!chainConfig) {
+    console.error(`No config found for chain id: ${chainId}`);
+    return null;
+  }
+
+  const schemaUID = chainConfig.publicAttestationSchemaUUId;
+  if (!schemaUID) {
+    console.error(
+      `No public attestation Schema found for chain id: ${chainId}`,
+    );
+    return null;
+  }
+
+  const eas = await initializeEAS(signer, chainConfig);
+  if (eas == null) {
+    return null;
+  }
+
+  const schemaEncoder = new SchemaEncoder(
+    "string githubUsername,string measuredAt,string repositoryName,string organizationName,string prNodeWeight,string prReviewNodeWeight,string issueNodeWeight,string commentNodeWeight,string commitNodeWeight,string userScoreRank,string userCredScore,string userCredScorePercentage",
+  );
+  const encodedData = schemaEncoder.encodeData([
+    { name: "githubUsername", value: data.githubUsername, type: "string" },
+    { name: "measuredAt", value: data.measuredAt, type: "string" },
+    { name: "repositoryName", value: data.repositoryName, type: "string" },
+    { name: "organizationName", value: data.organizationName, type: "string" },
+    { name: "prNodeWeight", value: data.prNodeWeight, type: "string" },
+    {
+      name: "prReviewNodeWeight",
+      value: data.prReviewNodeWeight,
+      type: "string",
+    },
+    { name: "issueNodeWeight", value: data.issueNodeWeight, type: "string" },
+    {
+      name: "commentNodeWeight",
+      value: data.commentNodeWeight,
+      type: "string",
+    },
+    {
+      name: "commitNodeWeight",
+      value: data.commitNodeWeight,
+      type: "string",
+    },
+    { name: "userScoreRank", value: data.userScoreRank, type: "string" },
+    { name: "userCredScore", value: data.userCredScore, type: "string" },
+    {
+      name: "userCredScorePercentage",
+      value: data.userCredScorePercentage,
+      type: "string",
+    },
+  ]);
   const tx = await eas.attest({
     schema: schemaUID,
     data: {
