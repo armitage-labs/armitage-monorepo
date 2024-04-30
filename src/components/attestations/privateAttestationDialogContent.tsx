@@ -36,7 +36,7 @@ export function PrivateAttestationDialogContent({
               <Link
                 href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
               >
-                <Button variant={"outline"} onClick={() => { }}>
+                <Button variant={"outline"} onClick={() => {}}>
                   Open in EAS
                 </Button>
               </Link>
