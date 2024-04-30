@@ -41,9 +41,7 @@ export function GenerateAttestationModal({
   const chainId = useChainId();
   const [easscanUrl, setEasscanUrl] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
-  const [creatPrivateAttestation, setCreatPrivateAttestation] = useState<
-    boolean | null
-  >(null);
+  const [createTypeAttestation, setCreateTypeAttestation] = useState<string>("");
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [attestationPublicData, setAttestationPublicData] =
     useState<AttestationPublicDataDto>();
@@ -72,14 +70,14 @@ export function GenerateAttestationModal({
   }, [chainId]);
 
   useEffect(() => {
-    if (creatPrivateAttestation != null) {
-      if (creatPrivateAttestation) {
+    if (createTypeAttestation != null) {
+      if (createTypeAttestation) {
         handleFetchAttestationPrivateData();
       } else {
         handleFetchAttestationPublicData();
       }
     }
-  }, [creatPrivateAttestation]);
+  }, [createTypeAttestation]);
 
   useEffect(() => {
     if (
@@ -184,7 +182,7 @@ export function GenerateAttestationModal({
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        {creatPrivateAttestation == true ? (
+        {createTypeAttestation == "private" ? (
           <>
             <DialogHeader>
               <DialogTitle>
@@ -203,7 +201,7 @@ export function GenerateAttestationModal({
                     <Link
                       href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
                     >
-                      <Button variant={"outline"} onClick={() => {}}>
+                      <Button variant={"outline"} onClick={() => { }}>
                         Open in EAS
                       </Button>
                     </Link>
@@ -225,7 +223,7 @@ export function GenerateAttestationModal({
               )}
             </div>
           </>
-        ) : creatPrivateAttestation == false ? (
+        ) : createTypeAttestation == "public" ? (
           <>
             <DialogHeader>
               <DialogTitle>Creating your attestation on-chain</DialogTitle>
@@ -242,7 +240,7 @@ export function GenerateAttestationModal({
                     <Link
                       href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
                     >
-                      <Button variant={"outline"} onClick={() => {}}>
+                      <Button variant={"outline"} onClick={() => { }}>
                         Open in EAS
                       </Button>
                     </Link>
@@ -267,7 +265,7 @@ export function GenerateAttestationModal({
             <div className="flex items-center space-x-2 pt-6 justify-center">
               <Button
                 onClick={() => {
-                  setCreatPrivateAttestation(false);
+                  setCreateTypeAttestation("public");
                 }}
               >
                 Public Attestation
@@ -275,7 +273,7 @@ export function GenerateAttestationModal({
               <Button
                 variant={"outline"}
                 onClick={() => {
-                  setCreatPrivateAttestation(true);
+                  setCreateTypeAttestation("private");
                 }}
               >
                 Private Attestation
@@ -287,7 +285,7 @@ export function GenerateAttestationModal({
           <DialogClose
             asChild
             onClick={() => {
-              setCreatPrivateAttestation(null);
+              setCreateTypeAttestation("");
             }}
           ></DialogClose>
         </DialogFooter>
