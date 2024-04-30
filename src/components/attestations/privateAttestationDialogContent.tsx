@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface AttestationDialogContentProps {
   registeredAttestationUuid?: string;
@@ -36,7 +36,7 @@ export function PrivateAttestationDialogContent({
               <Link
                 href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
               >
-                <Button variant={"outline"} onClick={() => {}}>
+                <Button variant={"outline"} onClick={() => { }}>
                   Open in EAS
                 </Button>
               </Link>
