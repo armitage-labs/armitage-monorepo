@@ -1,14 +1,10 @@
 "use client";
-import { LoadingCircle } from "@/components/navigation/loading";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useEthersSigner } from "@/lib/ethersUtils";
@@ -17,13 +13,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import {
+  AttestationPublicDataDto,
   createPrivateAttestation,
   createProofs,
+  createPublicAttestation,
 } from "./utils/attestation-utils";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { chainsConfig } from "./utils/attestation-config";
+import { PrivateAttestationDialogContent } from "@/components/attestations/privateAttestationDialogContent";
+import { PublicAttestationDialogContent } from "@/components/attestations/publicAttestationDialogContent";
+import { ChooseTypeAttestationDialogContent } from "@/components/attestations/chooseTypeAttestationDialogContent";
 
 type GenerateAttestationModalProps = {
   teamId: string;
@@ -35,11 +34,14 @@ export function GenerateAttestationModal({
   const account = useAccount();
   const signer = useEthersSigner();
   const session = useSession();
-  const router = useRouter();
   const chainId = useChainId();
   const [easscanUrl, setEasscanUrl] = useState<string>("");
   const [userAddress, setUserAddress] = useState<string | undefined>(undefined);
+  const [createTypeAttestation, setCreateTypeAttestation] =
+    useState<string>("");
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
+  const [attestationPublicData, setAttestationPublicData] =
+    useState<AttestationPublicDataDto>();
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
     string | undefined
   >(undefined);
@@ -63,6 +65,14 @@ export function GenerateAttestationModal({
       setEasscanUrl(chainsConfig[chainId].easscanUrl);
     }
   }, [chainId]);
+
+  useEffect(() => {
+    if (createTypeAttestation == "private") {
+      handleFetchAttestationPrivateData();
+    } else if (createTypeAttestation == "public") {
+      handleFetchAttestationPublicData();
+    }
+  }, [createTypeAttestation]);
 
   useEffect(() => {
     if (
@@ -96,6 +106,30 @@ export function GenerateAttestationModal({
     }
   }, [signer, userAddress, attestationPrivateData, userSalt, chainId]);
 
+  useEffect(() => {
+    if (
+      signer &&
+      userAddress &&
+      attestationPublicData &&
+      userLogin &&
+      chainId
+    ) {
+      createPublicAttestation({
+        address: "0xB5E5559C6b85e8e867405bFFf3D15f59693eBE2f",
+        data: attestationPublicData,
+        signer: signer,
+        chainId: chainId,
+      }).then((attestationUuid) => {
+        if (attestationUuid != null) {
+          handlePostAttestationCreated(
+            attestationUuid.attestationUuid,
+            chainId,
+          );
+        }
+      });
+    }
+  }, [signer, userAddress, attestationPublicData, chainId]);
+
   const handleFetchAttestationPrivateData = async () => {
     const { data } = await axios.get(
       "/api/attestations?team_id=" + props.teamId,
@@ -103,6 +137,15 @@ export function GenerateAttestationModal({
     if (data.success) {
       setAttestationPrivateData(data.privateAttestationData);
       setUserSalt(data.userSalt);
+    }
+  };
+
+  const handleFetchAttestationPublicData = async () => {
+    const { data } = await axios.get(
+      "/api/attestations/user?team_id=" + props.teamId,
+    );
+    if (data.success) {
+      setAttestationPublicData(data.attestationData);
     }
   };
 
@@ -123,59 +166,39 @@ export function GenerateAttestationModal({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          className="mr-2"
-          disabled={!account.isConnected}
-          onClick={() => {
-            handleFetchAttestationPrivateData();
-          }}
-        >
+        <Button className="mr-2" disabled={!account.isConnected}>
           {account.isConnected ? (
-            <>Create Attestation</>
+            <>Attestations</>
           ) : account.isConnecting || account.isReconnecting ? (
             <>Connecting...</>
           ) : (
-            <>Connect wallet to create attestation</>
+            <>Connect wallet to create attestations</>
           )}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Creating your private attestation on-chain</DialogTitle>
-          <DialogDescription>
-            You will be prompted to sign a message and broadcast it to create
-            your attestation
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex flex-col items-center space-x-2 pt-6 pb-6">
-          {registeredAttestationUuid ? (
-            <div>
-              Your private attestation has been created 🥳
-              <div className="pt-6">
-                <Link
-                  href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
-                >
-                  <Button variant={"outline"} onClick={() => {}}>
-                    Open in EAS
-                  </Button>
-                </Link>
-                <div className="pt-6">
-                  <Button
-                    onClick={() => {
-                      router.push(`/attestation/${registeredAttestationUuid}`);
-                    }}
-                  >
-                    Generate Proofs
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <LoadingCircle></LoadingCircle>
-          )}
-        </div>
+        {createTypeAttestation == "private" ? (
+          <PrivateAttestationDialogContent
+            registeredAttestationUuid={registeredAttestationUuid}
+            easscanUrl={easscanUrl}
+          />
+        ) : createTypeAttestation == "public" ? (
+          <PublicAttestationDialogContent
+            registeredAttestationUuid={registeredAttestationUuid}
+            easscanUrl={easscanUrl}
+          />
+        ) : (
+          <ChooseTypeAttestationDialogContent
+            setCreateTypeAttestation={setCreateTypeAttestation}
+          />
+        )}
         <DialogFooter className="sm:justify-start">
-          <DialogClose asChild onClick={() => {}}></DialogClose>
+          <DialogClose
+            asChild
+            onClick={() => {
+              setCreateTypeAttestation("");
+            }}
+          ></DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

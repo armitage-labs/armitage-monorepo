@@ -1,11 +1,15 @@
 import { getTeamWeightConfigsForAttestation } from "../configuration/configurationService";
 import { fetchContributionCalculation } from "../contribution-calculation/fetchContributionCalculation";
-import { fetchUserContributorsByTeam } from "../contributors/fetchUserContributors";
+import {
+  ContributorDto,
+  fetchUserContributorsByTeam,
+} from "../contributors/fetchUserContributors";
 import { fetchRegisteredGitRepos } from "../github/repo/registered/fetchRegisteredRepos";
 import { WeightConfigAttestation } from "../configuration/weightConfig.dto";
 import { SaveAttestationRequestDto } from "./route";
 import prisma from "db";
 import { fetchTeam } from "../teams/fetchTeam";
+import { AttestationPublicDataDto } from "./user/route";
 
 export type AttestationPrivateDataDto = {
   organizationName: string;
@@ -78,17 +82,59 @@ export async function getTeamAttestationData(
   return {
     organizationName: repo.full_name.split("/")[0],
     repositoryName: repo.full_name.split("/")[1],
-    contributor: contributors
-      .sort((a, b) => b.contributionScore - a.contributionScore)
-      .map((contributor, index) => {
-        return {
-          githubUsername: contributor.userName,
-          rank: index + 1,
-          score: contributor.contributionScore,
-        };
-      }),
+    contributor: rankContributors(contributors),
     measuredAt: contributionCalculation.created_at.toDateString(),
     weightsConfig: weightsConfig,
+  };
+}
+
+export async function getUserTeamAttestationData(
+  githubLogin: string,
+  teamId: string,
+): Promise<AttestationPublicDataDto> {
+  const repoList = await fetchRegisteredGitRepos(teamId);
+  if (repoList.length != 1) {
+    throw new Error("Team has to have one repo");
+  }
+
+  const contributionCalculation = await fetchContributionCalculation(teamId);
+  if (contributionCalculation == null) {
+    throw new Error("Team does not have calculation");
+  }
+
+  const repo = repoList[0];
+  const contributors = await fetchUserContributorsByTeam(teamId);
+  const totalCred = sumContributorScore(contributors);
+  const contributorRank = rankContributors(contributors).find(
+    (contributor) => contributor.githubUsername == githubLogin,
+  );
+  const weightsConfig = await getTeamWeightConfigsForAttestation(teamId);
+  return {
+    githubUsername: githubLogin,
+    measuredAt: contributionCalculation.created_at.getTime().toString(),
+    repositoryName: repo.full_name.split("/")[1],
+    organizationName: repo.full_name.split("/")[0],
+    prNodeWeight: weightsConfig
+      .find((conf) => conf.type == "NODE_PULL")!
+      .value.toString(),
+    prReviewNodeWeight: weightsConfig
+      .find((conf) => conf.type == "NODE_REVIEW")!
+      .value.toString(),
+    issueNodeWeight: weightsConfig
+      .find((conf) => conf.type == "NODE_ISSUE")!
+      .value.toString(),
+    commentNodeWeight: weightsConfig
+      .find((conf) => conf.type == "NODE_COMMENT")!
+      .value.toString(),
+    commitNodeWeight: weightsConfig
+      .find((conf) => conf.type == "NODE_COMMIT")!
+      .value.toString(),
+    userScoreRank: contributorRank?.rank.toString() ?? "0",
+    userCredScore: contributorRank?.score.toString() ?? "0",
+    userCredScorePercentage: (
+      (contributorRank!.score / totalCred) *
+      100
+    ).toString(),
   };
 }
 
@@ -124,4 +170,26 @@ async function addTeamNameToAttestation(
     };
   }
   return attestations;
+}
+
+function rankContributors(
+  contributors: ContributorDto[],
+): ContributorDataDto[] {
+  return contributors
+    .sort((a, b) => b.contributionScore - a.contributionScore)
+    .map((contributor, index) => {
+      return {
+        githubUsername: contributor.userName,
+        rank: index + 1,
+        score: contributor.contributionScore,
+      };
+    });
+}
+
+function sumContributorScore(contributors: ContributorDto[]) {
+  const sum: number = contributors.reduce(
+    (acc, curr) => acc + curr.contributionScore,
+    0,
+  );
+  return sum;
 }
