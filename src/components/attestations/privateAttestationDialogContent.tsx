@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface AttestationDialogContentProps {
   registeredAttestationUuid?: string;
