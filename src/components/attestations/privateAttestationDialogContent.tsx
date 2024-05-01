@@ -11,11 +11,13 @@ import { useRouter } from "next/navigation";
 interface AttestationDialogContentProps {
   registeredAttestationUuid?: string;
   easscanUrl: string;
+  createAttestationError?: boolean;
 }
 
 export function PrivateAttestationDialogContent({
   registeredAttestationUuid,
   easscanUrl,
+  createAttestationError,
 }: AttestationDialogContentProps) {
   const router = useRouter();
 
@@ -52,7 +54,16 @@ export function PrivateAttestationDialogContent({
             </div>
           </div>
         ) : (
-          <LoadingCircle></LoadingCircle>
+          <div>
+            {createAttestationError ? (
+              <div>
+                {" "}
+                Creating the attestation has failed, please try again 🥺
+              </div>
+            ) : (
+              <LoadingCircle></LoadingCircle>
+            )}
+          </div>
         )}
       </div>
     </>

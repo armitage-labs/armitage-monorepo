@@ -42,6 +42,8 @@ export function GenerateAttestationModal({
   const [attestationPrivateData, setAttestationPrivateData] = useState<any>();
   const [attestationPublicData, setAttestationPublicData] =
     useState<AttestationPublicDataDto>();
+  const [attestationCreationError, setAttestationCreationError] =
+    useState<boolean>(false);
   const [registeredAttestationUuid, setRegisteredAttestationUuid] = useState<
     string | undefined
   >(undefined);
@@ -101,6 +103,8 @@ export function GenerateAttestationModal({
             userSalt,
           );
           console.log(JSON.stringify(proof));
+        } else if (attestationUuid === null) {
+          setAttestationCreationError(true);
         }
       });
     }
@@ -125,6 +129,8 @@ export function GenerateAttestationModal({
             attestationUuid.attestationUuid,
             chainId,
           );
+        } else if (attestationUuid === null) {
+          setAttestationCreationError(true);
         }
       });
     }
@@ -181,11 +187,13 @@ export function GenerateAttestationModal({
           <PrivateAttestationDialogContent
             registeredAttestationUuid={registeredAttestationUuid}
             easscanUrl={easscanUrl}
+            createAttestationError={attestationCreationError}
           />
         ) : createTypeAttestation == "public" ? (
           <PublicAttestationDialogContent
             registeredAttestationUuid={registeredAttestationUuid}
             easscanUrl={easscanUrl}
+            createAttestationError={attestationCreationError}
           />
         ) : (
           <ChooseTypeAttestationDialogContent

@@ -10,11 +10,13 @@ import {
 interface AttestationDialogContentProps {
   registeredAttestationUuid?: string;
   easscanUrl: string;
+  createAttestationError?: boolean;
 }
 
 export function PublicAttestationDialogContent({
   registeredAttestationUuid,
   easscanUrl,
+  createAttestationError,
 }: AttestationDialogContentProps) {
   return (
     <>
@@ -40,7 +42,13 @@ export function PublicAttestationDialogContent({
             </div>
           </div>
         ) : (
-          <LoadingCircle></LoadingCircle>
+          <div>
+            {createAttestationError ? (
+              <div> The attestation has failed, please try again 🥺</div>
+            ) : (
+              <LoadingCircle></LoadingCircle>
+            )}
+          </div>
         )}
       </div>
     </>

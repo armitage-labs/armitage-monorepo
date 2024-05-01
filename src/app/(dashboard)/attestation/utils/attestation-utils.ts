@@ -92,18 +92,23 @@ export async function createPrivateAttestation({
     { name: "privateData", value: merkleRoot, type: "bytes32" },
   ]);
 
-  const tx = await eas.attest({
-    schema: schemaUID,
-    data: {
-      recipient: address,
-      expirationTime: undefined,
-      revocable: false,
-      data: encodedData,
-    },
-  });
-  const attestationUuid = await tx.wait();
+  try {
+    const tx = await eas.attest({
+      schema: schemaUID,
+      data: {
+        recipient: address,
+        expirationTime: undefined,
+        revocable: false,
+        data: encodedData,
+      },
+    });
+    const attestationUuid = await tx.wait();
 
-  return { attestationUuid: attestationUuid };
+    return { attestationUuid: attestationUuid };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
 
 export async function createPublicAttestation({
@@ -164,18 +169,23 @@ export async function createPublicAttestation({
       type: "string",
     },
   ]);
-  const tx = await eas.attest({
-    schema: schemaUID,
-    data: {
-      recipient: address,
-      expirationTime: undefined,
-      revocable: false,
-      data: encodedData,
-    },
-  });
-  const attestationUuid = await tx.wait();
+  try {
+    const tx = await eas.attest({
+      schema: schemaUID,
+      data: {
+        recipient: address,
+        expirationTime: undefined,
+        revocable: false,
+        data: encodedData,
+      },
+    });
+    const attestationUuid = await tx.wait();
 
-  return { attestationUuid: attestationUuid };
+    return { attestationUuid: attestationUuid };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 }
 
 export function createMerkleTree(
