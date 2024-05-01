@@ -14,6 +14,7 @@ model User {
   created_at      DateTime         @default(now()) @db.Timestamp(6)
   Team            Team[]
   ProductTourView ProductTourView?
+  UserWallet      UserWallet?
   UserOnboarding  UserOnboarding[]
   Attestation     Attestation[]
 }
@@ -141,7 +142,9 @@ model AnonymousUsers {
 }
 
 model UserWallet {
-  id              String           @id @default(uuid())
-  address         String
+  id         String   @id @default(uuid())
+  user_id    String   @unique
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  address    String
   created_at DateTime @default(now()) @db.Timestamp(6)
 }

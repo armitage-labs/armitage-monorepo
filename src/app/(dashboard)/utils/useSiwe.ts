@@ -35,7 +35,7 @@ async function createSiweMessage(
 
 export async function useSiwe(signer: JsonRpcSigner, siweMessageText: string) {
   try {
-    const nonceData = await axios.get(`/api/auth/eth`);
+    const nonceData = await axios.get(`/api/wallet/siwe`);
     const nonce = nonceData.data.nonce;
     const message = await createSiweMessage(
       await signer.getAddress(),
@@ -44,11 +44,12 @@ export async function useSiwe(signer: JsonRpcSigner, siweMessageText: string) {
     );
     const signature = await signer.signMessage(message);
     const { data } = await axios.post(
-      `/api/auth/eth`,
+      `/api/wallet/siwe`,
       JSON.stringify({ message, signature, nonce }),
     );
-
-    return data;
+    if (data.success) {
+      return data.wallet;
+    }
   } catch (error) {
     console.error("Error while trying to sign in with Ethereum.");
     console.error(error);
