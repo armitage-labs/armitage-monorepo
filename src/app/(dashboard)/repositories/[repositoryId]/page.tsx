@@ -178,6 +178,15 @@ export default function TeamDetailsPage({ params }: PageProps) {
             description={`View the details of your repository`}
           />
           <div>
+            <Button
+              className="mr-2"
+              variant={"destructive"}
+              onClick={() => {
+                router.push(`/teams/${teamId}/configuration`);
+              }}
+            >
+              Payment Address
+            </Button>
             {hasContributionRequest ? (
               <div></div>
             ) : (
