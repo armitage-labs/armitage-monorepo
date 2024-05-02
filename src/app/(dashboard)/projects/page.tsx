@@ -12,9 +12,9 @@ import { Team } from "@prisma/client";
 import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import { ProjectCard } from "@/components/projects/projectCard";
 
-const breadcrumbItems = [{ title: "Projects", link: "/dashboard/projects" }];
-
 export default function TeamsPage() {
+  const breadcrumbItems = [{ title: "Projects", link: "/dashboard/projects" }];
+
   const [userProjects, setUserProjects] = useState<Team[]>([]);
   const [_isLoading, setIsLoading] = useState(true);
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function TeamsPage() {
           />
           <Button
             className="text-xs md:text-sm"
-            // TODO
+            // TODO:
             // onClick={() => router.push(`/repositories/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New

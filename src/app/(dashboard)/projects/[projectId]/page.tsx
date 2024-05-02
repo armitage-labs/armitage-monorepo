@@ -59,7 +59,6 @@ export default function TeamDetailsPage({ params }: PageProps) {
   const router = useRouter();
 
   useEffect(() => {
-    setIsLoading(true);
     if (session?.userId) {
       handleFetchTeams();
       handleFetchUserCreds();
@@ -129,9 +128,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
 
   useEffect(() => {
     if (userCredDtos.length > 0) {
-      let index = 0;
-      const userTooltipDtoArray = userCredDtos.map((userCredDto) => {
-        index++;
+      const userTooltipDtoArray = userCredDtos.map((userCredDto, index) => {
         return {
           id: index,
           userName: userCredDto.userName,
