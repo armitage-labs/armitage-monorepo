@@ -45,9 +45,9 @@ export default function SettingsPage() {
       <Separator />
 
       <div>
-        <h3 className="text-lg font-medium">Manage Premissions</h3>
+        <h3 className="text-lg font-medium">Manage Permissions</h3>
         <p className="text-sm text-muted-foreground">
-          Manage what access Aritage have on you profile.
+          Manage what access Armitage have on you profile.
         </p>
         <br></br>
         {isLoading ? (
