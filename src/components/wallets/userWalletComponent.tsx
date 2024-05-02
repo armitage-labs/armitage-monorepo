@@ -10,12 +10,14 @@ import axios from "axios";
 import { Icons } from "../icons";
 import { Input } from "../ui/input";
 import { Skeleton } from "../ui/skeleton";
+import { useChainId } from "wagmi";
 
 export function UserWalletComponent() {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [userWallet, setUserWallet] = useState<UserWallet | null>(null);
   const signer = useEthersSigner();
+  const chainId = useChainId();
   const account = useAccount();
 
   const handleAddWallet = async () => {
@@ -23,6 +25,7 @@ export function UserWalletComponent() {
       await useSiwe(
         signer,
         "Verify you own this address to add to the platform",
+        chainId,
       );
       handleFetchWallet();
     }
@@ -45,7 +48,8 @@ export function UserWalletComponent() {
       <div>
         <h3 className="text-lg font-medium">Manage Your Wallet</h3>
         <p className="text-sm text-muted-foreground">
-          This is your wallet profits and controbutions will be payedout too.
+          Register the wallet that you wish to use to receive payments and
+          rewards from your contributions.
         </p>
         <br></br>
 
@@ -60,15 +64,20 @@ export function UserWalletComponent() {
                   value={userWallet.address}
                   readOnly={true}
                 />
-                <Button
-                  type="button"
-                  className="secondary ml-5"
-                  onClick={() => {
-                    handleAddWallet();
-                  }}
-                >
-                  Update
-                </Button>
+
+                {account.isConnected ? (
+                  <Button
+                    type="button"
+                    className="secondary ml-5"
+                    onClick={() => {
+                      handleAddWallet();
+                    }}
+                  >
+                    Update
+                  </Button>
+                ) : (
+                  <ConnectButton />
+                )}
               </div>
             ) : (
               <>

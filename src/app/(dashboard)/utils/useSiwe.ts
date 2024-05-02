@@ -13,6 +13,7 @@ async function createSiweMessage(
   address: string,
   statement: string,
   nonce: string,
+  chainId: number,
 ) {
   if (!domain || !origin)
     throw new Error("Missing config to create a SIWE message");
@@ -26,14 +27,18 @@ async function createSiweMessage(
     statement,
     uri: origin,
     version: "1",
-    chainId: 1,
+    chainId: chainId,
     nonce: nonce,
     expirationTime,
   });
   return message.prepareMessage();
 }
 
-export async function useSiwe(signer: JsonRpcSigner, siweMessageText: string) {
+export async function useSiwe(
+  signer: JsonRpcSigner,
+  siweMessageText: string,
+  chainId: number,
+) {
   try {
     const nonceData = await axios.get(`/api/wallet/siwe`);
     const nonce = nonceData.data.nonce;
@@ -41,6 +46,7 @@ export async function useSiwe(signer: JsonRpcSigner, siweMessageText: string) {
       await signer.getAddress(),
       siweMessageText,
       nonce,
+      chainId,
     );
     const signature = await signer.signMessage(message);
     const { data } = await axios.post(

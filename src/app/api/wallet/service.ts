@@ -12,34 +12,19 @@ export async function saveUserWallet(
   address: string,
 ): Promise<UserWallet | null> {
   try {
-    // Check if user wallet exists for the given user ID
-    const existingWallet = await prisma.userWallet.findUnique({
+    const userWallet = await prisma.userWallet.upsert({
       where: {
         user_id: userId,
       },
+      update: {
+        address: address,
+      },
+      create: {
+        user_id: userId,
+        address: address,
+      },
     });
-
-    if (existingWallet) {
-      // User wallet exists, update it
-      const updatedWallet = await prisma.userWallet.update({
-        where: {
-          user_id: userId,
-        },
-        data: {
-          address: address,
-        },
-      });
-      return updatedWallet;
-    } else {
-      // User wallet doesn't exist, create it
-      const newWallet = await prisma.userWallet.create({
-        data: {
-          user_id: userId,
-          address: address,
-        },
-      });
-      return newWallet;
-    }
+    return userWallet;
   } catch (error) {
     console.error("Error saving user wallet:", error);
     return null;
