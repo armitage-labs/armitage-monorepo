@@ -9,5 +9,6 @@ export const config = {
     "/create-team",
     "/overview",
     "/contributor",
+    "/settings",
   ],
 };

@@ -8,7 +8,8 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { LoadingCircle } from "@/components/navigation/loading";
+import { UserWalletComponent } from "@/components/wallets/userWalletComponent";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Settings = {
   githubAppUrl: string;
@@ -42,17 +43,16 @@ export default function SettingsPage() {
         />
       </div>
       <Separator />
-      {isLoading ? (
-        <div className="pt-36 flex justify-center">
-          <LoadingCircle></LoadingCircle>
-        </div>
-      ) : (
-        <div>
-          <h3 className="text-lg font-medium">Manage Premissions</h3>
-          <p className="text-sm text-muted-foreground">
-            Manage what access Aritage have on you profile.
-          </p>
-          <br></br>
+
+      <div>
+        <h3 className="text-lg font-medium">Manage Permissions</h3>
+        <p className="text-sm text-muted-foreground">
+          Manage what access Armitage have on you profile.
+        </p>
+        <br></br>
+        {isLoading ? (
+          <Skeleton className="h-[45px] w-[500px] rounded-xl" />
+        ) : (
           <Button
             variant="outline"
             type="button"
@@ -63,8 +63,11 @@ export default function SettingsPage() {
             <Icons.gitHub className="mr-2 h-4 w-4" />
             Manage GitHub Access
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+
+      <br></br>
+      <UserWalletComponent />
     </div>
   );
 }
