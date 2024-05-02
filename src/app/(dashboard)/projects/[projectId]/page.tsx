@@ -26,7 +26,7 @@ import { TeamContributionTable } from "../../teams/[teamId]/teamContributionTabl
 import { GenerateAttestationModal } from "../../attestation/attestationModal";
 
 interface PageProps {
-  params: { repositoryId: string };
+  params: { projectId: string };
 }
 
 type UserTooltipDto = {
@@ -37,10 +37,10 @@ type UserTooltipDto = {
 };
 
 export default function TeamDetailsPage({ params }: PageProps) {
-  const teamId = params.repositoryId;
+  const teamId = params.projectId;
   const breadcrumbItems = [
-    { title: "Repositories", link: "/repositories" },
-    { title: "Repository details", link: `/repositories/${teamId}` },
+    { title: "Projects", link: "/projects" },
+    { title: "Project details", link: `/projects/${teamId}` },
   ];
   const { data: session } = useSession();
 
@@ -173,18 +173,32 @@ export default function TeamDetailsPage({ params }: PageProps) {
         <div className="flex items-start justify-between">
           <Heading
             title={team ? team.name : ""}
-            description={`View the details of your repository`}
+            description={`View the details of your project`}
           />
           <div>
-            {hasContributionRequest ? (
-              <div></div>
+            {!isLoading &&
+            team?.single_repository &&
+            !hasContributionRequest ? (
+              <>
+                <Button
+                  className="mr-2"
+                  variant={"destructive"}
+                  onClick={() => {
+                    router.push(`/projects/${teamId}/configuration`);
+                  }}
+                >
+                  Payment Address
+                </Button>
+
+                <GenerateAttestationModal teamId={teamId} />
+              </>
             ) : (
-              <GenerateAttestationModal teamId={teamId} />
+              <div></div>
             )}
             <Button
               className="mr-2"
               onClick={() => {
-                router.push(`/teams/${teamId}/configuration`);
+                router.push(`/projects/${teamId}/configuration`);
               }}
             >
               Config

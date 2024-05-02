@@ -37,6 +37,7 @@ import {
   GitBranch,
   User2Icon,
   UserX2Icon,
+  CalendarClock,
   GitCommit,
   GitGraph,
   GitMergeIcon,
@@ -48,6 +49,8 @@ import {
   BookUser,
   X,
   GitCompare,
+  FolderRoot,
+  FolderTree,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -61,6 +64,7 @@ export const Icons = {
   login: LogIn,
   close: X,
   thumbsUp: ThumbsUp,
+  calendarClock: CalendarClock,
   profile: User2Icon,
   folderGit2Icon: FolderGit2Icon,
   folderGit: FolderGit,
@@ -73,6 +77,8 @@ export const Icons = {
   gitPullRequest: GitPullRequest,
   gitPullRequestArrow: GitPullRequestArrow,
   gitFork: GitFork,
+  folderTree: FolderTree,
+  folderRoot: FolderRoot,
   gitCommit: GitCommit,
   heartHandshake: HeartHandshake,
   spinner: Loader2,
