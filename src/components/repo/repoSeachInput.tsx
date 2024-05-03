@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 
 interface RepoSearchInputProps {
-  onSelectRepo: (repo: GithubRepoDto) => void;
+  onSelectRepo: (repo: GithubRepoDto, selected?: boolean) => void;
 }
 
 export function RepoSearchInput({ onSelectRepo }: RepoSearchInputProps) {

@@ -29,7 +29,6 @@ export default function CreateNewProjectPage() {
 
   const handleOnRepoSelect = async (repo: GithubRepoDto, selected: boolean) => {
     if (selected) {
-      console.log();
       selectedGithubRepos.push(repo);
       setSelectedGithubRepos(selectedGithubRepos);
     } else {
@@ -37,7 +36,6 @@ export default function CreateNewProjectPage() {
         selectedGithubRepos.filter((repo) => repo.full_name !== repo.full_name),
       );
     }
-    console.log(selectedGithubRepos);
   };
 
   const handleQueryGithubRepos = async (page: number = 1) => {
@@ -67,71 +65,69 @@ export default function CreateNewProjectPage() {
   }, [selectedGithubRepos]);
 
   return (
-    <>
-      <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
-        <BreadCrumb items={breadcrumbItems} />
-        <div className="flex items-start justify-between">
-          <Heading title={`Add repositories`} description="" />
-          <div className="flex items-start justify-between w-4/12">
-            {/* <RepoSearchInput
+    <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
+      <BreadCrumb items={breadcrumbItems} />
+      <div className="flex items-start justify-between">
+        <Heading title={`Add repositories`} description="" />
+        <div className="flex items-start justify-between w-4/12">
+          {/* <RepoSearchInput
                             onSelectRepo={handleOpenRepoDialog}
                         ></RepoSearchInput> */}
+        </div>
+      </div>
+      <Separator />
+
+      {!isLoading ? (
+        <div>
+          <div className="grid gap-4 lg:grid-cols-2">
+            {githubRepos
+              .filter(
+                (repo) =>
+                  !registeredRepositoryNameArray.includes(repo.full_name),
+              )
+              .map((repo) => {
+                return (
+                  <GithubRepoCard
+                    githubRepoDto={repo}
+                    onSelectRepo={handleOnRepoSelect}
+                  ></GithubRepoCard>
+                );
+              })}
+          </div>
+          <div className="flex justify-between pt-16">
+            <div>
+              <Button
+                variant="default"
+                onClick={() => {
+                  setPage(page - 1);
+                }}
+                disabled={!canPrevious}
+              >
+                Previous Page
+              </Button>
+            </div>
+            <div className="pl-6">
+              <Button
+                variant="default"
+                onClick={() => {
+                  setPage(page + 1);
+                }}
+                disabled={!canNext}
+              >
+                Next Page
+              </Button>
+            </div>
           </div>
         </div>
-        <Separator />
-
-        {!isLoading ? (
-          <div>
-            <div className="grid gap-4 lg:grid-cols-2">
-              {githubRepos
-                .filter(
-                  (repo) =>
-                    !registeredRepositoryNameArray.includes(repo.full_name),
-                )
-                .map((repo) => {
-                  return (
-                    <GithubRepoCard
-                      githubRepoDto={repo}
-                      onSelectRepo={handleOnRepoSelect}
-                    ></GithubRepoCard>
-                  );
-                })}
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {[...Array(10)].map((_elementInArray, _index) => (
+            <div className="flex flex-col space-y-3">
+              <Skeleton className="h-[165px] w-full rounded-xl" />
             </div>
-            <div className="flex justify-between pt-16">
-              <div>
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    setPage(page - 1);
-                  }}
-                  disabled={!canPrevious}
-                >
-                  Previous Page
-                </Button>
-              </div>
-              <div className="pl-6">
-                <Button
-                  variant="default"
-                  onClick={() => {
-                    setPage(page + 1);
-                  }}
-                  disabled={!canNext}
-                >
-                  Next Page
-                </Button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {[...Array(10)].map((_elementInArray, _index) => (
-              <div className="flex flex-col space-y-3">
-                <Skeleton className="h-[165px] w-full rounded-xl" />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
