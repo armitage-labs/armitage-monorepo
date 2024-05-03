@@ -18,7 +18,7 @@ interface PageProps {
   params: { projectId: string };
 }
 
-export default function TeamConfigurationPage({ params }: PageProps) {
+export default function ProjectConfigurationPage({ params }: PageProps) {
   const [team, setTeam] = useState<Team>();
   const [weightConfig, setWeightConfig] = useState<WeightConfig>();
   const { data: session } = useSession();

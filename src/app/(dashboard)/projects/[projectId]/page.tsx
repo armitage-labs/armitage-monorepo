@@ -181,7 +181,7 @@ export default function TeamDetailsPage({ params }: PageProps) {
                   className="mr-2"
                   variant={"destructive"}
                   onClick={() => {
-                    router.push(`/projects/${teamId}/configuration`);
+                    router.push(`/projects/${teamId}/payments`);
                   }}
                 >
                   Payment Address
