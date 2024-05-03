@@ -107,6 +107,7 @@ export default function TeamContributorsColumns({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
+                  // TODO: Change to projects/contributor name when migration is done
                   router.push(
                     `/teams/${teamId}/contributors/${contributor.userName}`,
                   );
