@@ -32,13 +32,15 @@ export function PublicAttestationDialogContent({
           <div>
             Your public attestation has been created 🥳
             <div className="pt-6">
-              <Link
+              <a
+                target="_blank"
                 href={`${easscanUrl}/attestation/view/${registeredAttestationUuid}`}
+                rel="noopener noreferrer"
               >
                 <Button variant={"outline"} onClick={() => {}}>
                   Open in EAS
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         ) : (
