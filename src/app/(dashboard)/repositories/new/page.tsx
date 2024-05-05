@@ -62,7 +62,10 @@ export default function CreateTeamPage() {
     }
   };
 
-  const handleOpenRepoDialog = async (repo: GithubRepoDto) => {
+  const handleOpenRepoDialog = async (
+    repo: GithubRepoDto,
+    selected?: boolean,
+  ) => {
     setSelectedRepo(repo);
     setOpen(true);
   };

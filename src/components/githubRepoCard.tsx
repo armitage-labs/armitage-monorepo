@@ -9,17 +9,21 @@ import {
 import { Button } from "./ui/button";
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import { stringToColour } from "@/lib/utils";
-import { BookUpIcon } from "lucide-react";
+import { BookUpIcon, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
 
 interface GithubRepoCardProps {
   githubRepoDto: GithubRepoDto;
-  onSelectRepo: (repo: GithubRepoDto) => void;
+  onSelectRepo: (repo: GithubRepoDto, selected: boolean) => void;
+  selected?: boolean;
 }
 
 export function GithubRepoCard({
   githubRepoDto,
   onSelectRepo,
+  selected = false,
 }: GithubRepoCardProps) {
+  const [isSelected, setIsSelected] = useState<boolean>(selected);
   return (
     <>
       <Card>
@@ -33,13 +37,23 @@ export function GithubRepoCard({
           <div className="flex items-center rounded-md bg-secondary text-secondary-foreground">
             <Button
               onClick={() => {
-                onSelectRepo(githubRepoDto);
+                setIsSelected(!isSelected);
+                onSelectRepo(githubRepoDto, !isSelected);
               }}
               variant="secondary"
               className="shadow-none"
             >
-              <BookUpIcon className="mr-2 h-4 w-4" />
-              Select
+              {!isSelected ? (
+                <>
+                  <BookUpIcon className="mr-2 h-4 w-4" />
+                  Select
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
+                  Selected
+                </>
+              )}
             </Button>
           </div>
         </CardHeader>
