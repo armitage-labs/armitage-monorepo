@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 
-interface RepoSearchInputProps {
+interface ProjectRepoSearchInputProps {
   onSelectRepo: (repo: GithubRepoDto, selected?: boolean) => void;
 }
 
-export function RepoSearchInput({ onSelectRepo }: RepoSearchInputProps) {
+export function ProjectRepoSearchInput({
+  onSelectRepo,
+}: ProjectRepoSearchInputProps) {
   const [search, setSearch] = useState<string>("");
   const [foundAddRepo, setFoundAddRepo] = useState<GithubRepoDto>();
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -45,6 +47,7 @@ export function RepoSearchInput({ onSelectRepo }: RepoSearchInputProps) {
         onClick={() => {
           if (foundAddRepo) {
             onSelectRepo(foundAddRepo, true);
+            setSearch("");
           }
         }}
         disabled={foundAddRepo == null || searchLoading}

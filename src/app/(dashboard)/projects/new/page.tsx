@@ -3,6 +3,9 @@
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import BreadCrumb from "@/components/breadcrumbs";
 import { GithubRepoCard } from "@/components/githubRepoCard";
+import ProjectGithubRepositoriesBadge from "@/components/repo/projectGithubRepositoriesBadge";
+import { ProjectRepoSearchInput } from "@/components/repo/projectRepoSeachInput";
+import TeamGithubRepositoriesBadge from "@/components/teams/teamGithubRepositoriesBadge";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,15 +30,27 @@ export default function CreateNewProjectPage() {
   const [registeredRepositoryNameArray, setRegisteredRepositoryNameArray] =
     useState<string[]>([]);
 
-  const handleOnRepoSelect = async (repo: GithubRepoDto, selected: boolean) => {
+  const handleOnRepoSelect = async (
+    repo: GithubRepoDto,
+    selected?: boolean,
+  ) => {
     if (selected) {
-      selectedGithubRepos.push(repo);
-      setSelectedGithubRepos(selectedGithubRepos);
-    } else {
-      setSelectedGithubRepos(
-        selectedGithubRepos.filter((repo) => repo.full_name !== repo.full_name),
+      const foundObject = selectedGithubRepos.find(
+        (item) => item.id === repo.id,
       );
+      if (foundObject == null) {
+        setSelectedGithubRepos([...selectedGithubRepos, repo]);
+      }
+    } else {
+      setSelectedGithubRepos(removeRepoById(selectedGithubRepos, repo.id));
     }
+  };
+
+  const removeRepoById = (
+    repos: GithubRepoDto[],
+    repoIdToRemove: string,
+  ): GithubRepoDto[] => {
+    return repos.filter((repo) => repo.id !== repoIdToRemove);
   };
 
   const handleQueryGithubRepos = async (page: number = 1) => {
@@ -70,10 +85,18 @@ export default function CreateNewProjectPage() {
       <div className="flex items-start justify-between">
         <Heading title={`Add repositories`} description="" />
         <div className="flex items-start justify-between w-4/12">
-          {/* <RepoSearchInput
-                            onSelectRepo={handleOpenRepoDialog}
-                        ></RepoSearchInput> */}
+          <ProjectRepoSearchInput
+            onSelectRepo={handleOnRepoSelect}
+          ></ProjectRepoSearchInput>
         </div>
+      </div>
+      <div className="flex items-center py-2 mb-2">
+        {selectedGithubRepos.map((registeredGitRepo) => (
+          <ProjectGithubRepositoriesBadge
+            githubRepoDto={registeredGitRepo}
+            handleUnregisterRepo={handleOnRepoSelect}
+          ></ProjectGithubRepositoriesBadge>
+        ))}
       </div>
       <Separator />
 
@@ -90,6 +113,7 @@ export default function CreateNewProjectPage() {
                   <GithubRepoCard
                     githubRepoDto={repo}
                     onSelectRepo={handleOnRepoSelect}
+                    selected={selectedGithubRepos.includes(repo)}
                   ></GithubRepoCard>
                 );
               })}
@@ -121,11 +145,18 @@ export default function CreateNewProjectPage() {
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
-          {[...Array(10)].map((_elementInArray, _index) => (
-            <div className="flex flex-col space-y-3">
-              <Skeleton className="h-[165px] w-full rounded-xl" />
-            </div>
-          ))}
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[165px] w-full rounded-xl" />
+          </div>
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[165px] w-full rounded-xl" />
+          </div>
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[165px] w-full rounded-xl" />
+          </div>
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="h-[165px] w-full rounded-xl" />
+          </div>
         </div>
       )}
     </div>
