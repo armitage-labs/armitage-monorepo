@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     if (session?.userId && registerRepoDto) {
       await registerProjectRepos(
         registerRepoDto.projectId,
-        registerRepoDto.repos
+        registerRepoDto.repos,
       );
       return NextResponse.json({ success: true, created: true });
     }

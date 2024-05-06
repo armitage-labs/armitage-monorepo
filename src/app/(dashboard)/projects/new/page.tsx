@@ -61,9 +61,9 @@ export default function CreateNewProjectPage() {
   const handleRegisterRepos = async (projectId: string) => {
     await axios.post(`/api/projects/repo`, {
       projectId: projectId,
-      repos: selectedGithubRepos.map((obj) => ({
-        name: obj.name,
-        full_name: obj.full_name,
+      repos: selectedGithubRepos.map((repo) => ({
+        name: repo.name,
+        full_name: repo.full_name,
       })),
     });
   };
