@@ -21,9 +21,7 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
   >();
 
   const handleFetchProjectPaymentAddress = async () => {
-    const { data } = await axios.get(
-      "/api/payments?team_id=" + projectId,
-    );
+    const { data } = await axios.get("/api/payments?team_id=" + projectId);
     if (data.success && data.paymentAddress) {
       setProjectPaymentAddress(data.paymentAddress);
     }
