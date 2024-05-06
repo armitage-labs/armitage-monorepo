@@ -60,6 +60,7 @@ export default function ProjectRepoSelect({
               <ProjectGithubRepositoriesBadge
                 githubRepoDto={registeredGitRepo}
                 handleUnregisterRepo={onSelectRepo}
+                closeable={false}
               ></ProjectGithubRepositoriesBadge>
             ))}
           </div>

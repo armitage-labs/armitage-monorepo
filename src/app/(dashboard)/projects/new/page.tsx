@@ -54,7 +54,7 @@ export default function CreateNewProjectPage() {
       await handleRegisterRepos(data.createdTeam.id);
       handleGenerateReport(data.createdTeam.id);
     } else {
-      privouseStep();
+      previousStep();
     }
   };
 
@@ -76,7 +76,7 @@ export default function CreateNewProjectPage() {
       toast("Failed to start calculation", {
         description: "Please select at least one repository to continue",
       });
-      privouseStep();
+      previousStep();
     } else {
       const { data } = await axios.get(`/api/credmanager?team_id=${projectId}`);
     }
@@ -86,7 +86,7 @@ export default function CreateNewProjectPage() {
     setCurrentStep(currentStep + 1);
   };
 
-  const privouseStep = () => {
+  const previousStep = () => {
     setCurrentStep(currentStep - 1);
   };
 
@@ -107,8 +107,8 @@ export default function CreateNewProjectPage() {
         )}
         <div className="flex items-start">
           {currentStep == 1 ? (
-            <Button className="items-center ml-4" onClick={privouseStep}>
-              Privouse step
+            <Button className="items-center ml-4" onClick={previousStep}>
+              Previous step
             </Button>
           ) : currentStep === 0 ? (
             <Button

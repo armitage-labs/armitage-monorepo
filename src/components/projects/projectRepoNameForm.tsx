@@ -36,6 +36,7 @@ export default function ProjectTeamNameForm({
               <ProjectGithubRepositoriesBadge
                 githubRepoDto={registeredGitRepo}
                 handleUnregisterRepo={onSelectRepo}
+                closeable={false}
               ></ProjectGithubRepositoriesBadge>
             </div>
           ))}
