@@ -11,5 +11,6 @@ export const config = {
     "/contributor",
     "/settings",
     "/projects/new",
+    "/projects/:projectId*",
   ],
 };

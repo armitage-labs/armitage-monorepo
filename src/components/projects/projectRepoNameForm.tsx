@@ -45,7 +45,7 @@ export default function ProjectTeamNameForm({
         <div className="pt-2 flex justify-center">
           <Card className="w-[400px]">
             <CardHeader>
-              <CardTitle>Create new team</CardTitle>
+              <CardTitle>Create new project</CardTitle>
               <CardDescription>
                 Analyze contributions with one click.
               </CardDescription>
@@ -60,7 +60,7 @@ export default function ProjectTeamNameForm({
                       setCreateTeamName(event.target.value);
                     }}
                     id="name"
-                    placeholder="Name of your team"
+                    placeholder="Name of your project"
                   />
                 </div>
                 <div className="flex flex-col space-y-1.5"></div>

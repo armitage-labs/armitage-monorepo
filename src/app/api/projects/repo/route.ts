@@ -17,16 +17,15 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(options);
     const registerRepoDto = (await req.json()) as GitReposRegisterRequest;
-    if (session?.userId) {
+    if (session?.userId && registerRepoDto) {
       await registerProjectRepos(
         registerRepoDto.projectId,
-        registerRepoDto.repos,
+        registerRepoDto.repos
       );
       return NextResponse.json({ success: true, created: true });
     }
     return NextResponse.json({ success: false, created: false });
   } catch (error) {
-    console.log(error);
     return NextResponse.json({ success: false, created: false });
   }
 }
