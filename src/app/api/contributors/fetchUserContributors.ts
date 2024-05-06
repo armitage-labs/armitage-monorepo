@@ -24,7 +24,7 @@ export type UserScoreDto = {
 };
 
 export async function fetchUserContributorsByUser(
-  userId: string,
+  userId: string
 ): Promise<ContributorDto[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -48,7 +48,7 @@ export async function fetchUserContributorsByUser(
 }
 
 export async function fetchUserContributorsByTeam(
-  teamId: string,
+  teamId: string
 ): Promise<ContributorDto[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -71,8 +71,33 @@ export async function fetchUserContributorsByTeam(
   }
 }
 
+export async function fetchUserPaymentContributorsByTeam(
+  teamId: string
+): Promise<ContributorDto[]> {
+  try {
+    // fetch userScores where calculation is part of a team
+    // which the owner is the userId
+    const foundUserScores = await prisma.userScore.findMany({
+      where: {
+        user_type: "USER",
+        contribution_calculation: {
+          Team: {
+            id: teamId,
+          },
+        },
+      },
+    });
+    const userContributors =
+      transformUserScoresToPaymentContributors(foundUserScores);
+    return userContributors;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
 export async function fetchUserContributorsInterval(
-  userId: string,
+  userId: string
 ): Promise<any[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -95,7 +120,7 @@ export async function fetchUserContributorsInterval(
 }
 
 export async function fetchUserContributorsIntervalByTeam(
-  teamId: string,
+  teamId: string
 ): Promise<any[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -120,7 +145,7 @@ export async function fetchUserContributorsIntervalByTeam(
 // export async function mergeContributorDtoWithTeams():
 
 export function transformUserScoresToContributors(
-  userScoresArray: UserScoreDto[],
+  userScoresArray: UserScoreDto[]
 ): ContributorDto[] {
   // Transforms userScore into contributorDto
   // Sums up all contributions and divide the sum of a unique user name
@@ -133,7 +158,7 @@ export function transformUserScoresToContributors(
       contributionScoreSumMap[userScore.username] = parseFloat(userScore.score);
     } else {
       contributionScoreSumMap[userScore.username] += parseFloat(
-        userScore.score,
+        userScore.score
       );
     }
     allContributionsSum += parseFloat(userScore.score);
@@ -145,5 +170,40 @@ export function transformUserScoresToContributors(
       contributionScorePercentage: (value / allContributionsSum) * 100,
     });
   }
+  return contributorsArray;
+}
+
+export function transformUserScoresToPaymentContributors(
+  userScoresArray: UserScoreDto[]
+): ContributorDto[] {
+  // Transforms userScore into contributorDto
+  // Sums up all contributions and divide the sum of a unique user name
+  // to reach average per unique user
+  const contributionScoreSumMap: Record<string, number> = {};
+  let allContributionsSum: number = 0;
+  const contributorsArray: ContributorDto[] = [];
+  userScoresArray.forEach((userScore) => {
+    if (!contributionScoreSumMap[userScore.username]) {
+      contributionScoreSumMap[userScore.username] = parseFloat(userScore.score);
+    } else {
+      contributionScoreSumMap[userScore.username] += parseFloat(
+        userScore.score
+      );
+    }
+    allContributionsSum += parseFloat(userScore.score);
+  });
+
+  for (const [key, value] of Object.entries(contributionScoreSumMap)) {
+    contributorsArray.push({
+      userName: key,
+      contributionScore: value,
+      contributionScorePercentage: (value / allContributionsSum) * 100,
+    });
+  }
+  contributorsArray.push({
+    userName: "armitage-labs",
+    contributionScore: 0,
+    contributionScorePercentage: 3,
+  });
   return contributorsArray;
 }

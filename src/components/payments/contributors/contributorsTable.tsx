@@ -18,7 +18,7 @@ export default function ContributorsTable({
   const [isLoading, setIsLoading] = useState(true);
 
   const handleFetchUserContributors = async () => {
-    const { data } = await axios.get(`/api/contributors?team_id=${projectId}`);
+    const { data } = await axios.get(`/api/contributors/payments?team_id=${projectId}`);
     if (data.success) {
       setContributors(data.contributors);
       setIsLoading(false);
