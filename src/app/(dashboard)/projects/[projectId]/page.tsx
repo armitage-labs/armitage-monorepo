@@ -177,21 +177,20 @@ export default function TeamDetailsPage({ params }: PageProps) {
             team?.single_repository &&
             !hasContributionRequest ? (
               <>
-                <Button
-                  className="mr-2"
-                  variant={"destructive"}
-                  onClick={() => {
-                    router.push(`/projects/${teamId}/payments`);
-                  }}
-                >
-                  Payment Address
-                </Button>
-
                 <GenerateAttestationModal teamId={teamId} />
               </>
             ) : (
               <div></div>
             )}
+            <Button
+              className="mr-2"
+              variant={"destructive"}
+              onClick={() => {
+                router.push(`/projects/${teamId}/payments`);
+              }}
+            >
+              Payment Address
+            </Button>
             <Button
               className="mr-2"
               onClick={() => {

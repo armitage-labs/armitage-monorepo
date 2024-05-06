@@ -41,6 +41,7 @@ model Team {
   ContributionRequest     ContributionRequest[]
   single_repository       Boolean                   @default(false)
   Attestation             Attestation[]
+  PaymentAddress          PaymentAddress?
 }
 
 model ContributionCalculation {
@@ -147,4 +148,22 @@ model UserWallet {
   user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   address    String
   created_at DateTime @default(now()) @db.Timestamp(6)
+}
+
+model PaymentAddress {
+  id               String             @id @default(uuid())
+  chain_id         String             @db.VarChar(255)
+  team_id          String             @unique
+  Team             Team               @relation(fields: [team_id], references: [id], onDelete: Cascade)
+  wallet_address   String             @db.VarChar(255)
+  created_at       DateTime           @default(now()) @db.Timestamp(6)
+  PaymentRecipient PaymentRecipient[]
+}
+
+model PaymentRecipient {
+  id                 String         @id @default(uuid())
+  wallet_address     String         @db.VarChar(255)
+  payment_percentage Float
+  payment_address_id String
+  PaymentAddress     PaymentAddress @relation(fields: [payment_address_id], references: [id], onDelete: Cascade)
 }
