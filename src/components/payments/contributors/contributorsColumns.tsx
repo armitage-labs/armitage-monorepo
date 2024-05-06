@@ -60,13 +60,6 @@ export const ProjectContributorsColumns: ColumnDef<ContributorDto>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex ">
-          {/* <Slider
-            defaultValue={[5]}
-            max={10}
-            min={1}
-            step={1}
-            onValueChange={(value) => console.log(value)}
-          /> */}
           <PaymentSlider
             onChange={() => console.log("I change")}
           ></PaymentSlider>

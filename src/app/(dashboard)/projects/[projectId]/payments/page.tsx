@@ -1,6 +1,6 @@
 "use client";
 
-import { PaymentAddressDto } from "@/app/api/payment-address/service/paymentAddress";
+import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddress";
 import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useState } from "react";
@@ -22,7 +22,7 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
 
   const handleFetchProjectPaymentAddress = async () => {
     const { data } = await axios.get(
-      "/api/payment-address?team_id=" + projectId,
+      "/api/payments?team_id=" + projectId,
     );
     if (data.success && data.paymentAddress) {
       setProjectPaymentAddress(data.paymentAddress);
