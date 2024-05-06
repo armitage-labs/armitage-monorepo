@@ -40,7 +40,7 @@ export function ProjectRepoSearchInput({
         placeholder="Search with owner/name ... "
         onChange={(event) => setSearch(event.target.value)}
         value={search}
-        className="w-full"
+        style={{ width: "300px" }}
       />
       <Button
         className="items-center ml-4"
