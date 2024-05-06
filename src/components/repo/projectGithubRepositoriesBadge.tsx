@@ -8,21 +8,27 @@ interface ProjectGithubRepositoriesBadgeProps {
     githubRepoDto: GithubRepoDto,
     selected: boolean,
   ) => void;
+  closeable?: boolean;
 }
 
 export default function ProjectGithubRepositoriesBadge({
   githubRepoDto,
   handleUnregisterRepo,
+  closeable = true,
 }: ProjectGithubRepositoriesBadgeProps) {
   return (
     <>
-      <Badge className="mr-2 p-2" variant={"outline"}>
+      <Badge className="mr-2 p-2 whitespace-no-wrap" variant={"outline"}>
         <Icons.gitHub className="mr-2 ml-2 h-4 w-4" />
-        <span>{githubRepoDto.full_name}</span>
-        <Icons.close
-          className="mr-2 ml-2 h-4 w-4 cursor-pointer"
-          onClick={() => handleUnregisterRepo(githubRepoDto, false)}
-        />
+        <span className="whitespace-no-wrap">{githubRepoDto.full_name}</span>
+        {closeable ? (
+          <Icons.close
+            className="mr-2 ml-2 h-4 w-4 cursor-pointer"
+            onClick={() => handleUnregisterRepo(githubRepoDto, false)}
+          />
+        ) : (
+          <></>
+        )}
       </Badge>
     </>
   );

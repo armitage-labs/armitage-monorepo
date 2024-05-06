@@ -10,5 +10,7 @@ export const config = {
     "/overview",
     "/contributor",
     "/settings",
+    "/projects/new",
+    "/projects/:projectId*",
   ],
 };

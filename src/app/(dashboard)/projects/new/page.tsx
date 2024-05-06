@@ -2,15 +2,15 @@
 
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import BreadCrumb from "@/components/breadcrumbs";
-import { GithubRepoCard } from "@/components/githubRepoCard";
-import ProjectGithubRepositoriesBadge from "@/components/repo/projectGithubRepositoriesBadge";
-import { ProjectRepoSearchInput } from "@/components/repo/projectRepoSearchInput";
+import ProjectTeamNameForm from "@/components/projects/projectRepoNameForm";
+import ProjectRepoSelect from "@/components/projects/projectRepoSelect";
+import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@radix-ui/react-separator";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const breadcrumbItems = [
   { title: "Projects", link: "/projects" },
@@ -18,16 +18,11 @@ const breadcrumbItems = [
 ];
 
 export default function CreateNewProjectPage() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [githubRepos, setGithubRepos] = useState<GithubRepoDto[]>([]);
+  const [createTeamName, setCreateTeamName] = useState<string>("");
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<
     GithubRepoDto[]
   >([]);
-  const [page, setPage] = useState<number>(1);
-  const [canPrevious, setCanPrevious] = useState<boolean>(false);
-  const [canNext, setCanNext] = useState<boolean>(false);
-  const [registeredRepositoryNameArray, setRegisteredRepositoryNameArray] =
-    useState<string[]>([]);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleOnRepoSelect = async (
     repo: GithubRepoDto,
@@ -52,27 +47,48 @@ export default function CreateNewProjectPage() {
     return repos.filter((repo) => repo.id !== repoIdToRemove);
   };
 
-  const handleQueryGithubRepos = async (page: number = 1) => {
-    setIsLoading(true);
-    const { data } = await axios.get(`/api/github/repo?page=${page}`);
-    if (data.success && data.gitRepos.length > 0) {
-      setGithubRepos(data.gitRepos);
+  const handleCreateTeam = async () => {
+    nextStep();
+    const { data } = await axios.post("/api/teams", { name: createTeamName });
+    if (data.success) {
+      await handleRegisterRepos(data.createdTeam.id);
+      handleGenerateReport(data.createdTeam.id);
+    } else {
+      previousStep();
     }
-    setIsLoading(false);
   };
 
-  useEffect(() => {
-    setCanNext(githubRepos.length === 10);
-    setCanPrevious(page > 1);
-  }, [githubRepos, page]);
+  const handleRegisterRepos = async (projectId: string) => {
+    await axios.post(`/api/projects/repo`, {
+      projectId: projectId,
+      repos: selectedGithubRepos.map((repo) => ({
+        name: repo.name,
+        full_name: repo.full_name,
+      })),
+    });
+  };
 
-  useEffect(() => {
-    handleQueryGithubRepos();
-  }, []);
+  const handleGenerateReport = async (projectId: string) => {
+    const { data } = await axios.get(
+      `/api/github/repo/registered?team_id=${projectId}`,
+    );
+    if (data.success && data.registeredRepos.length == 0) {
+      toast("Failed to start calculation", {
+        description: "Please select at least one repository to continue",
+      });
+      previousStep();
+    } else {
+      const { data } = await axios.get(`/api/credmanager?team_id=${projectId}`);
+    }
+  };
 
-  useEffect(() => {
-    handleQueryGithubRepos(page);
-  }, [page]);
+  const nextStep = () => {
+    setCurrentStep(currentStep + 1);
+  };
+
+  const previousStep = () => {
+    setCurrentStep(currentStep - 1);
+  };
 
   useEffect(() => {
     console.log(selectedGithubRepos);
@@ -82,81 +98,48 @@ export default function CreateNewProjectPage() {
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <BreadCrumb items={breadcrumbItems} />
       <div className="flex items-start justify-between">
-        <Heading title={`Add repositories`} description="" />
-        <div className="flex items-start justify-between w-4/12">
-          <ProjectRepoSearchInput
-            onSelectRepo={handleOnRepoSelect}
-          ></ProjectRepoSearchInput>
+        {currentStep === 0 ? (
+          <Heading title={`Add repositories`} description="" />
+        ) : currentStep === 1 ? (
+          <Heading title={`Enter project name`} description="" />
+        ) : (
+          <Heading title={`Calculating`} description="" />
+        )}
+        <div className="flex items-start">
+          {currentStep == 1 ? (
+            <Button className="items-center ml-4" onClick={previousStep}>
+              Previous step
+            </Button>
+          ) : currentStep === 0 ? (
+            <Button
+              className="items-center ml-4"
+              onClick={nextStep}
+              disabled={selectedGithubRepos.length == 0}
+            >
+              Next Step
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
-      </div>
-      <div className="flex items-center py-2 mb-2">
-        {selectedGithubRepos.map((registeredGitRepo) => (
-          <ProjectGithubRepositoriesBadge
-            githubRepoDto={registeredGitRepo}
-            handleUnregisterRepo={handleOnRepoSelect}
-          ></ProjectGithubRepositoriesBadge>
-        ))}
       </div>
       <Separator />
 
-      {!isLoading ? (
-        <div>
-          <div className="grid gap-4 lg:grid-cols-2">
-            {githubRepos
-              .filter(
-                (repo) =>
-                  !registeredRepositoryNameArray.includes(repo.full_name),
-              )
-              .map((repo) => {
-                return (
-                  <GithubRepoCard
-                    githubRepoDto={repo}
-                    onSelectRepo={handleOnRepoSelect}
-                    selected={selectedGithubRepos.includes(repo)}
-                  ></GithubRepoCard>
-                );
-              })}
-          </div>
-          <div className="flex justify-between pt-16">
-            <div>
-              <Button
-                variant="default"
-                onClick={() => {
-                  setPage(page - 1);
-                }}
-                disabled={!canPrevious}
-              >
-                Previous Page
-              </Button>
-            </div>
-            <div className="pl-6">
-              <Button
-                variant="default"
-                onClick={() => {
-                  setPage(page + 1);
-                }}
-                disabled={!canNext}
-              >
-                Next Page
-              </Button>
-            </div>
-          </div>
-        </div>
+      {currentStep === 0 ? (
+        <ProjectRepoSelect
+          onSelectRepo={handleOnRepoSelect}
+          selectedGithubRepos={selectedGithubRepos}
+        ></ProjectRepoSelect>
+      ) : currentStep === 1 ? (
+        <ProjectTeamNameForm
+          createTeamName={createTeamName}
+          handleCreateTeam={handleCreateTeam}
+          setCreateTeamName={setCreateTeamName}
+          selectedGithubRepos={selectedGithubRepos}
+          onSelectRepo={handleOnRepoSelect}
+        ></ProjectTeamNameForm>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[165px] w-full rounded-xl" />
-          </div>
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[165px] w-full rounded-xl" />
-          </div>
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[165px] w-full rounded-xl" />
-          </div>
-          <div className="flex flex-col space-y-3">
-            <Skeleton className="h-[165px] w-full rounded-xl" />
-          </div>
-        </div>
+        <TeamCalculationCreated></TeamCalculationCreated>
       )}
     </div>
   );
