@@ -195,6 +195,14 @@ export default function TeamDetailsPage({ params }: PageProps) {
             <Button
               className="mr-2"
               onClick={() => {
+                router.push(`/projects/${teamId}/payments`);
+              }}
+            >
+              Payment Address
+            </Button>
+            <Button
+              className="mr-2"
+              onClick={() => {
                 router.push(`/projects/${teamId}/configuration`);
               }}
             >

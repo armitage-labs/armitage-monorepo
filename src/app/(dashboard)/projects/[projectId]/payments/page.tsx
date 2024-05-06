@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { PaymentAddressDto } from "@/app/api/payment-address/service/paymentAddress";
-import PaymentsOnboarding from "@/components/onboarding/onboardingTutorial";
+import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useState } from "react";
 
@@ -10,24 +10,32 @@ interface PageProps {
 }
 
 export default function ProjectPaymentsPage({ params }: PageProps) {
-  const teamId = params.projectId;
+  const projectId = params.projectId;
   const breadcrumbItems = [
     { title: "Projects", link: "/projects" },
-    { title: "Project details", link: `/projects/${teamId}` },
-    { title: "Project Payments", link: `/projects/${teamId}/payments` },
+    { title: "Project details", link: `/projects/${projectId}` },
+    { title: "Project Payments", link: `/projects/${projectId}/payments` },
   ];
-  const [projectPaymentAddress, setProjectPaymentAddress] = useState<PaymentAddressDto | undefined>();
+  const [projectPaymentAddress, setProjectPaymentAddress] = useState<
+    PaymentAddressDto | undefined
+  >();
 
   const handleFetchProjectPaymentAddress = async () => {
-    const { data } = await axios.get("/api/payment-address?team_id=" + teamId);
+    const { data } = await axios.get(
+      "/api/payment-address?team_id=" + projectId,
+    );
     if (data.success && data.paymentAddress) {
       setProjectPaymentAddress(data.paymentAddress);
     }
-  }
+  };
 
   return (
     <>
-      <PaymentsOnboarding></PaymentsOnboarding>
+      {projectPaymentAddress != null ? (
+        <>WIP: Payment coming soon</>
+      ) : (
+        <PaymentsOnboarding projectId={projectId}></PaymentsOnboarding>
+      )}
     </>
   );
 }

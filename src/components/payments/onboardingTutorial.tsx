@@ -5,7 +5,13 @@ import React, { useEffect, useState } from "react";
 import { Icons } from "../icons";
 import { useTheme } from "next-themes";
 
-function PaymentsOnboarding() {
+interface OnboardingTutorialProps {
+  onTutorialCompleted: (completed: boolean) => void;
+}
+
+export default function OnboardingTutorial({
+  onTutorialCompleted,
+}: OnboardingTutorialProps) {
   const { resolvedTheme } = useTheme();
 
   const [selectedTheme, setSelectedTheme] = useState<string>();
@@ -47,6 +53,12 @@ function PaymentsOnboarding() {
     }
   }, [resolvedTheme]);
 
+  useEffect(() => {
+    if (step == 4) {
+      onTutorialCompleted(true);
+    }
+  }, [step]);
+
   return (
     <div className="container max-w-none flex h-full w-full flex-col items-center justify-center gap-12 bg-default-background pt-12 pb-12">
       {!selectedTheme ? (
@@ -81,7 +93,6 @@ function PaymentsOnboarding() {
           Back
         </Button>
         <Button
-          disabled={step == 3}
           variant={"outline"}
           onClick={() => {
             setStep(step + 1);
@@ -127,5 +138,3 @@ function PaymentsOnboarding() {
     </div>
   );
 }
-
-export default PaymentsOnboarding;

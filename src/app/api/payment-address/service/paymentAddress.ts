@@ -13,14 +13,16 @@ export type PaymentRecipientDto = {
   id: string;
   wallet_address: string;
   payment_percentage: number;
-}
+};
 
-export async function fetchTeamPaymentAddresses(teamId: string): Promise<PaymentAddressDto | undefined> {
+export async function fetchTeamPaymentAddresses(
+  teamId: string,
+): Promise<PaymentAddressDto | undefined> {
   try {
     const foundPaymentAddresses = await prisma.paymentAddress.findUnique({
       where: {
         team_id: teamId,
-      }
+      },
     });
     if (!foundPaymentAddresses) {
       return;
@@ -28,7 +30,7 @@ export async function fetchTeamPaymentAddresses(teamId: string): Promise<Payment
       const paymentRecipients = await prisma.paymentRecipient.findMany({
         where: {
           payment_address_id: foundPaymentAddresses.id,
-        }
+        },
       });
       return {
         ...foundPaymentAddresses,
