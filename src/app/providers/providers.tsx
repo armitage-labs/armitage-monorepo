@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 
 import { WagmiProvider } from "wagmi";
 import {
   darkTheme,
-  lightTheme,
   getDefaultConfig,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
 import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 
 const queryClient = new QueryClient();
 const config = getDefaultConfig({
@@ -21,46 +21,28 @@ const config = getDefaultConfig({
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const { resolvedTheme } = useTheme();
   return (
     <>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          {resolvedTheme === "dark" ? (
-            <RainbowKitProvider
-              theme={darkTheme({
-                accentColor: "#84cc16",
-                accentColorForeground: "black",
-                borderRadius: "medium",
-                fontStack: "system",
-              })}
+          <RainbowKitProvider
+            theme={darkTheme({
+              accentColor: "#84cc16",
+              accentColorForeground: "black",
+              borderRadius: "medium",
+              fontStack: "system",
+            })}
+          >
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
             >
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
+              <SplitsProvider>
                 {children}
-              </ThemeProvider>
-            </RainbowKitProvider>
-          ) : (
-            <RainbowKitProvider
-              theme={lightTheme({
-                accentColor: "#84cc16",
-                accentColorForeground: "black",
-                borderRadius: "medium",
-                fontStack: "system",
-              })}
-            >
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
-                {children}
-              </ThemeProvider>
-            </RainbowKitProvider>
-          )}
+              </SplitsProvider>
+            </ThemeProvider>
+          </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
     </>

@@ -110,7 +110,7 @@ export async function removeNoWalletContributors(
     contributionScore: armitageScore,
     contributionScorePercentage: 3,
     paymentSplit: 3,
-    walletAddress: "mywalletaddress",
+    walletAddress: "0xb5685343ed45d8b896633f9c128c55f758feb0aa",
   });
   return userScoresArray;
 }

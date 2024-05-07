@@ -11,6 +11,7 @@ import {
 } from "wagmi";
 import { mainnet, sepolia } from "wagmi/chains";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
+import { createPublicClient } from "viem";
 
 export default async function DashboardLayout({
   children,
@@ -24,30 +25,30 @@ export default async function DashboardLayout({
   //   chain: mainnet,
   //   transport: http(),
   // });
-
-  // const splitsConfig = {
-  //   chainId: 11155111,
-  //   // walletClient: walletClient,
-  //   publicClient,
-  // };
-
-  const wagmiConfig = createConfig({
-    chains: [sepolia],
-    transports: {
-      [sepolia.id]: http(),
-    },
-  });
+  //
+  const splitsConfig = {
+    chainId: 1,
+    // walletClient: walletClient,
+    // publicClient,
+  };
+  //
+  // const wagmiConfig = createConfig({
+  //   chains: [sepolia],
+  //   transports: {
+  //     [sepolia.id]: http(),
+  //   },
+  // });
 
   return (
     <div>
       <Header />
       <div className="flex h-screen">
-        <SplitsProvider config={wagmiConfig}>
-          <SessionRefreshProvider>
-            <Sidebar />
-            <main className="w-full pt-16">{children}</main>
-          </SessionRefreshProvider>
-        </SplitsProvider>
+        {/* <SplitsProvider config={splitsConfig}> */}
+        <SessionRefreshProvider>
+          <Sidebar />
+          <main className="w-full pt-16">{children}</main>
+        </SessionRefreshProvider>
+        {/* </SplitsProvider> */}
       </div>
     </div>
   );

@@ -1,8 +1,13 @@
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useCreateSplit } from "@0xsplits/splits-sdk-react";
-import { useAccount } from "wagmi";
+import { useEthersSigner } from "@/lib/ethersUtils";
+import { useCreateSplit, useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { AlchemyProvider } from "ethers";
+import { type Config, useConnectorClient, useAccount, useWalletClient } from "wagmi";
+
+
+
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
@@ -13,28 +18,47 @@ export function CreatePaymentAddressModal({
   projectId,
   paymentSplits,
 }: CreatePaymentAddressModalProps) {
+
   const { createSplit, status, txHash, error } = useCreateSplit();
   const account = useAccount();
 
+  const splitsClient = useSplitsClient({ chainId: 11155111, publicClient: window.ethereum! })
+
+
+
+
+
+
+
   const handleCreateSplit = async () => {
+
     const recipients = paymentSplits
       .filter((split) => {
         // Define your condition here, for example:
-        return split.paymentSplit != 0 || split.walletAddress == null; // Filter out objects where name is "repo2"
+        return split.paymentSplit != 0 || split.walletAddress == undefined; // Filter out objects where name is "repo2"
       })
       .map((split) => ({
         address: split.walletAddress!,
-        percentAllocation: split.paymentSplit!,
+        percentAllocation: Number.parseFloat(split.paymentSplit!.toPrecision(2)),
       }));
     const createSplitReq = {
-      recipients: recipients,
+      recipients: recipients.filter((recipient) => recipient.address != undefined),
       distributorFeePercent: 0,
       controller: account.address,
     };
     console.log("creating");
     console.log(createSplitReq);
-    const response = await createSplit(createSplitReq);
-    console.log(response);
+    try {
+      // const response = await createSplit(createSplitReq);
+      console.log("inside the try");
+      console.log(splitsClient.getUserEarnings({ userAddress: "0x771B0A0aD2671A0b269DE4870b2AeF93d0D1961F" }))
+      const response = await splitsClient.getUserEarnings({ userAddress: "0x771B0A0aD2671A0b269DE4870b2AeF93d0D1961F" })
+      console.log(response);
+      console.log(window.ethereum);
+    } catch (error) {
+      console.log("inside the error")
+      console.log(error);
+    }
   };
 
   function missingContributionWallets(): number {
