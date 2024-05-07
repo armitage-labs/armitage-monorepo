@@ -17,13 +17,13 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RowSkeleton } from "@/components/skeleton/rowSkeleton";
+import { CreatePaymentAddressModal } from "@/app/(dashboard)/projects/[projectId]/payments/paymentCreateModal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,7 +31,7 @@ interface DataTableProps<TData, TValue> {
   isLoading: boolean;
 }
 
-export function ProjectContributorsDataTable<TData, TValue>({
+export function PaymentSplitsDataTable<TData, TValue>({
   columns,
   data,
   isLoading,
@@ -56,7 +56,7 @@ export function ProjectContributorsDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-start justify-between py-4">
         <Input
           placeholder="Filter name..."
           value={
@@ -67,7 +67,10 @@ export function ProjectContributorsDataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+
+        <CreatePaymentAddressModal projectId={"1"}></CreatePaymentAddressModal>
       </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>

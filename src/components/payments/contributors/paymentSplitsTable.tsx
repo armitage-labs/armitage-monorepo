@@ -2,15 +2,17 @@ import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { ProjectContributorsDataTable } from "./contributorsDataTable";
-import { ProjectContributorsColumns } from "./contributorsColumns";
+import { PaymentSplitsDataTable } from "./paymentSplitsDataTable";
+import { PaymentSplitsColumns } from "./paymentSplitsColumns";
 import { Heading } from "@/components/ui/heading";
+import { Button } from "@/components/ui/button";
+import { CreatePaymentAddressModal } from "@/app/(dashboard)/projects/[projectId]/payments/paymentCreateModal";
 
 interface ProjectContributionTableProps {
   projectId: string;
 }
 
-export default function ContributorsTable({
+export default function PaymentSplitsTable({
   projectId,
 }: ProjectContributionTableProps) {
   const { data: session } = useSession();
@@ -19,7 +21,7 @@ export default function ContributorsTable({
 
   const handleFetchUserContributors = async () => {
     const { data } = await axios.get(
-      `/api/contributors/payments?team_id=${projectId}`,
+      `/api/payments/splits?team_id=${projectId}`,
     );
     if (data.success) {
       setContributors(data.contributors);
@@ -42,11 +44,11 @@ export default function ContributorsTable({
         />
       </div>
 
-      <ProjectContributorsDataTable
-        columns={ProjectContributorsColumns}
+      <PaymentSplitsDataTable
+        columns={PaymentSplitsColumns}
         data={contributors}
         isLoading={isLoading}
-      ></ProjectContributorsDataTable>
+      ></PaymentSplitsDataTable>
     </div>
   );
 }

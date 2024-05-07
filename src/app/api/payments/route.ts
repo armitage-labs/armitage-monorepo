@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { options } from "../auth/[...nextauth]/options";
-import { fetchTeamPaymentAddresses } from "./service/paymentAddress";
+import { fetchTeamPaymentAddresses } from "./service/paymentAddressService";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);

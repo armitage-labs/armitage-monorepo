@@ -1,6 +1,6 @@
 "use client";
 
-import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddress";
+import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddressService";
 import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useState } from "react";

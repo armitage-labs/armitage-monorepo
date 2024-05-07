@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { options } from "../../auth/[...nextauth]/options";
-import { fetchUserPaymentContributorsByTeam } from "../fetchUserContributors";
+import { fetchUserPaymentContributorsByTeam } from "../service/paymentSplitsService";
 
 export async function GET(req: NextRequest) {
   const teamId = req.nextUrl.searchParams.get("team_id");

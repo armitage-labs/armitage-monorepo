@@ -1,6 +1,6 @@
 import { useState } from "react";
 import OnboardingTutorial from "./onboardingTutorial";
-import ContributorsTable from "./contributors/contributorsTable";
+import PaymentSplitsTable from "./contributors/paymentSplitsTable";
 
 interface PaymentsOnboardingProps {
   projectId: string;
@@ -19,7 +19,7 @@ export default function PaymentsOnboarding({
           onTutorialCompleted={setOnboardingTutorialCompleted}
         ></OnboardingTutorial>
       ) : (
-        <ContributorsTable projectId={projectId}></ContributorsTable>
+        <PaymentSplitsTable projectId={projectId}></PaymentSplitsTable>
       )}
     </>
   );
