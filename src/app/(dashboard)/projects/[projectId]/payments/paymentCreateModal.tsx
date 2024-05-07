@@ -25,7 +25,10 @@ export function CreatePaymentAddressModal({
           <div>
             {missingContributionWallets() != 0 ? (
               <>
-                Please note that you have {missingContributionWallets()}{" "} contributor that HAVE not configured THEIR wallet address IN Armitage. If you continue, their scores will be equally distributed between all configured contributors.
+                Please note that you have {missingContributionWallets()}{" "}
+                contributor that HAVE not configured THEIR wallet address IN
+                Armitage. If you continue, their scores will be equally
+                distributed between all configured contributors.
               </>
             ) : (
               <>You are about to create a payment address</>
