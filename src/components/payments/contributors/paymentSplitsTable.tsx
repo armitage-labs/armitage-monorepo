@@ -5,8 +5,6 @@ import { useEffect, useState } from "react";
 import { PaymentSplitsDataTable } from "./paymentSplitsDataTable";
 import { PaymentSplitsColumns } from "./paymentSplitsColumns";
 import { Heading } from "@/components/ui/heading";
-import { Button } from "@/components/ui/button";
-import { CreatePaymentAddressModal } from "@/app/(dashboard)/projects/[projectId]/payments/paymentCreateModal";
 
 interface ProjectContributionTableProps {
   projectId: string;
