@@ -14,7 +14,7 @@ export type PaymentSplitDto = {
 };
 
 export async function fetchUserPaymentContributorsByTeam(
-  teamId: string
+  teamId: string,
 ): Promise<ContributorDto[]> {
   try {
     // fetch userScores where calculation is part of a team
@@ -51,7 +51,7 @@ export async function fetchUserWalletByUsername(username: string) {
 }
 
 export async function transformUserScoresToPaymentContributors(
-  userScoresArray: UserScoreDto[]
+  userScoresArray: UserScoreDto[],
 ): Promise<PaymentSplitDto[]> {
   // Transforms userScore into contributorDto
   // Sums up all contributions and divide the sum of a unique user name
@@ -62,11 +62,11 @@ export async function transformUserScoresToPaymentContributors(
   userScoresArray.forEach((userScore) => {
     if (!contributionScoreSumMap[userScore.username]) {
       contributionScoreSumMap[userScore.username] = parseFloat(
-        (parseFloat(userScore.score) ?? 0).toFixed(2)
+        (parseFloat(userScore.score) ?? 0).toFixed(2),
       );
     } else {
       contributionScoreSumMap[userScore.username] += parseFloat(
-        (parseFloat(userScore.score) ?? 0).toFixed(2)
+        (parseFloat(userScore.score) ?? 0).toFixed(2),
       );
     }
     allContributionsSum += parseFloat(userScore.score);
@@ -86,7 +86,7 @@ export async function transformUserScoresToPaymentContributors(
 }
 
 export async function removeNoWalletContributors(
-  userScoresArray: PaymentSplitDto[]
+  userScoresArray: PaymentSplitDto[],
 ): Promise<PaymentSplitDto[]> {
   let payableContributionsSum: number = 0;
   userScoresArray.forEach((userScore) => {

@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { RowSkeleton } from "@/components/skeleton/rowSkeleton";
 import { CreatePaymentAddressModal } from "@/app/(dashboard)/projects/[projectId]/payments/paymentCreateModal";
+import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -68,7 +69,10 @@ export function PaymentSplitsDataTable<TData, TValue>({
           className="max-w-sm"
         />
 
-        <CreatePaymentAddressModal projectId={"1"}></CreatePaymentAddressModal>
+        <CreatePaymentAddressModal
+          projectId={"1"}
+          paymentSplits={data as PaymentSplitDto[]}
+        ></CreatePaymentAddressModal>
       </div>
 
       <div className="rounded-md border">
