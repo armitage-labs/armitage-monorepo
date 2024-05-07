@@ -74,7 +74,7 @@ export const PaymentSplitsColumns: ColumnDef<PaymentSplitDto>[] = [
       );
     },
   },
-  // { comming soon
+  // { TODO comming soon
   //   id: "actions",
   //   cell: ({ row }) => {
   //     return (
