@@ -1,6 +1,8 @@
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { useAccount } from "wagmi";
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
@@ -11,6 +13,43 @@ export function CreatePaymentAddressModal({
   projectId,
   paymentSplits,
 }: CreatePaymentAddressModalProps) {
+  const account = useAccount();
+
+  const splitsClient = useSplitsClient({
+    // TODO: Use connected chainId
+    chainId: 8453,
+    publicClient: window.ethereum!,
+  });
+
+  const handleCreateSplit = async () => {
+    const recipients = paymentSplits
+      .filter((split) => {
+        return split.paymentSplit != 0 || split.walletAddress == undefined;
+      })
+      .map((split) => ({
+        address: split.walletAddress!,
+        percentAllocation: Number.parseFloat(
+          split.paymentSplit!.toPrecision(2),
+        ),
+      }));
+    const createSplitReq = {
+      recipients: recipients.filter(
+        (recipient) => recipient.address != undefined,
+      ),
+      distributorFeePercent: 0,
+      controller: account.address,
+    };
+    try {
+      const args = {
+        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
+      };
+      const response = await splitsClient.getSplitMetadata(args);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
   }
@@ -18,7 +57,15 @@ export function CreatePaymentAddressModal({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="mr-2">Create Payment Address</Button>
+        <Button className="mr-2" disabled={!account.isConnected}>
+          {account.isConnected ? (
+            <>Create Payment Address</>
+          ) : account.isConnecting || account.isReconnecting ? (
+            <>Connecting...</>
+          ) : (
+            <>Connect wallet</>
+          )}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <div className="flex flex-col items-center space-x-2 pt-6 pb-6">
@@ -46,11 +93,12 @@ export function CreatePaymentAddressModal({
 
                 <Button
                   className="w-1/2  ml-2"
+                  disabled={!account.isConnected}
                   onClick={() => {
-                    console.log("Hi");
+                    handleCreateSplit();
                   }}
                 >
-                  Continue
+                  <>Continue</>
                 </Button>
               </div>
             </div>

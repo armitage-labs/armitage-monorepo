@@ -11,11 +11,6 @@ interface PageProps {
 
 export default function ProjectPaymentsPage({ params }: PageProps) {
   const projectId = params.projectId;
-  const breadcrumbItems = [
-    { title: "Projects", link: "/projects" },
-    { title: "Project details", link: `/projects/${projectId}` },
-    { title: "Project Payments", link: `/projects/${projectId}/payments` },
-  ];
   const [projectPaymentAddress, setProjectPaymentAddress] = useState<
     PaymentAddressDto | undefined
   >();
