@@ -2,7 +2,6 @@
 
 import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddressService";
 import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
-import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 import axios from "axios";
 import { useState } from "react";
 

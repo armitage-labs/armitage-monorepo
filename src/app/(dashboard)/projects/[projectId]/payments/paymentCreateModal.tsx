@@ -16,6 +16,7 @@ export function CreatePaymentAddressModal({
   const account = useAccount();
 
   const splitsClient = useSplitsClient({
+    // TODO: Use connected chainId
     chainId: 8453,
     publicClient: window.ethereum!,
   });
@@ -23,8 +24,7 @@ export function CreatePaymentAddressModal({
   const handleCreateSplit = async () => {
     const recipients = paymentSplits
       .filter((split) => {
-        // Define your condition here, for example:
-        return split.paymentSplit != 0 || split.walletAddress == undefined; // Filter out objects where name is "repo2"
+        return split.paymentSplit != 0 || split.walletAddress == undefined;
       })
       .map((split) => ({
         address: split.walletAddress!,
@@ -39,17 +39,13 @@ export function CreatePaymentAddressModal({
       distributorFeePercent: 0,
       controller: account.address,
     };
-    console.log("creating");
-    console.log(createSplitReq);
     try {
-      console.log("inside the try");
       const args = {
         splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
       };
       const response = await splitsClient.getSplitMetadata(args);
       console.log(response);
     } catch (error) {
-      console.log("inside the error");
       console.log(error);
     }
   };
