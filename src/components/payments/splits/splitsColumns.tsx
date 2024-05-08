@@ -2,29 +2,37 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
+import { Recipients } from "../paymentView";
 
-export const SplitsColumns: ColumnDef<PaymentSplitDto>[] = [
+export const SplitsColumns: ColumnDef<Recipients>[] = [
   {
     id: "avatar",
     cell: ({ row }) => {
-      const contributor = row.original;
+      const data = row.original;
       return (
         <div>
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={`https://github.com/${contributor.userName}.png?size=100`}
-              alt={contributor.userName}
+              src={`https://avatars.jakerunzer.com/${data.recipient.address}`}
+              alt={data.recipient.address}
             />
-            <AvatarFallback>{contributor.userName[0]}</AvatarFallback>
+            <AvatarFallback>{data.recipient.address}</AvatarFallback>
           </Avatar>
         </div>
       );
     },
   },
   {
-    accessorKey: "userName",
+    accessorKey: "wallet",
     header: () => <></>,
+    cell: ({ row }) => {
+      const data = row.original;
+      return (
+        <div className="">
+          {data.recipient.address}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "paymentSplits",
@@ -35,7 +43,7 @@ export const SplitsColumns: ColumnDef<PaymentSplitDto>[] = [
       const data = row.original;
       return (
         <div className="text-xl font-bold text-left pl-4">
-          {(data.paymentSplit ?? 0).toFixed(2) + "%"}
+          {(data.percentAllocation ?? 0).toFixed(2) + "%"}
         </div>
       );
     },
