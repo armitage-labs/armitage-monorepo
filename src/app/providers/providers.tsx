@@ -33,14 +33,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               fontStack: "system",
             })}
           >
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-            >
-              <SplitsProvider>
-                {children}
-              </SplitsProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <SplitsProvider>{children}</SplitsProvider>
             </ThemeProvider>
           </RainbowKitProvider>
         </QueryClientProvider>

@@ -4,9 +4,6 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useSplitsClient } from "@0xsplits/splits-sdk-react";
 import { useAccount } from "wagmi";
 
-
-
-
 type CreatePaymentAddressModalProps = {
   projectId: string;
   paymentSplits: PaymentSplitDto[];
@@ -16,19 +13,14 @@ export function CreatePaymentAddressModal({
   projectId,
   paymentSplits,
 }: CreatePaymentAddressModalProps) {
-
   const account = useAccount();
 
-  const splitsClient = useSplitsClient({ chainId: 8453, publicClient: window.ethereum! })
-
-
-
-
-
-
+  const splitsClient = useSplitsClient({
+    chainId: 8453,
+    publicClient: window.ethereum!,
+  });
 
   const handleCreateSplit = async () => {
-
     const recipients = paymentSplits
       .filter((split) => {
         // Define your condition here, for example:
@@ -36,10 +28,14 @@ export function CreatePaymentAddressModal({
       })
       .map((split) => ({
         address: split.walletAddress!,
-        percentAllocation: Number.parseFloat(split.paymentSplit!.toPrecision(2)),
+        percentAllocation: Number.parseFloat(
+          split.paymentSplit!.toPrecision(2),
+        ),
       }));
     const createSplitReq = {
-      recipients: recipients.filter((recipient) => recipient.address != undefined),
+      recipients: recipients.filter(
+        (recipient) => recipient.address != undefined,
+      ),
       distributorFeePercent: 0,
       controller: account.address,
     };
@@ -53,7 +49,7 @@ export function CreatePaymentAddressModal({
       const response = await splitsClient.getSplitMetadata(args);
       console.log(response);
     } catch (error) {
-      console.log("inside the error")
+      console.log("inside the error");
       console.log(error);
     }
   };
