@@ -1,10 +1,8 @@
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useEthersSigner } from "@/lib/ethersUtils";
-import { useCreateSplit, useSplitsClient } from "@0xsplits/splits-sdk-react";
-import { AlchemyProvider } from "ethers";
-import { type Config, useConnectorClient, useAccount, useWalletClient } from "wagmi";
+import { useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { useAccount } from "wagmi";
 
 
 
@@ -19,10 +17,9 @@ export function CreatePaymentAddressModal({
   paymentSplits,
 }: CreatePaymentAddressModalProps) {
 
-  const { createSplit, status, txHash, error } = useCreateSplit();
   const account = useAccount();
 
-  const splitsClient = useSplitsClient({ chainId: 11155111, publicClient: window.ethereum! })
+  const splitsClient = useSplitsClient({ chainId: 8453, publicClient: window.ethereum! })
 
 
 
@@ -49,12 +46,12 @@ export function CreatePaymentAddressModal({
     console.log("creating");
     console.log(createSplitReq);
     try {
-      // const response = await createSplit(createSplitReq);
       console.log("inside the try");
-      console.log(splitsClient.getUserEarnings({ userAddress: "0x771B0A0aD2671A0b269DE4870b2AeF93d0D1961F" }))
-      const response = await splitsClient.getUserEarnings({ userAddress: "0x771B0A0aD2671A0b269DE4870b2AeF93d0D1961F" })
+      const args = {
+        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
+      };
+      const response = await splitsClient.getSplitMetadata(args);
       console.log(response);
-      console.log(window.ethereum);
     } catch (error) {
       console.log("inside the error")
       console.log(error);
