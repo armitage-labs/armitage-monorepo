@@ -5,9 +5,6 @@ import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PaymentsView from "@/components/payments/paymentView";
-import { useSplitsClient } from "@0xsplits/splits-sdk-react";
-import { createPublicClient, http } from "viem";
-import { base } from "viem/chains";
 
 interface PageProps {
   params: { projectId: string };

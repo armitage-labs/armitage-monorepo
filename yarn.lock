@@ -7,17 +7,17 @@
   resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.0.7.tgz#c7a762c887b3482a79ffa68f63de5e96059a62e4"
   integrity sha512-E3Qku4mTzdrlwVWGPxklDnME5ANrEGetvYw4i2GCRlppWXXE4QD66j7pwb8HelZwS6LnqEChhrSOGCXpbiu6MQ==
 
-"@0xsplits/splits-sdk-react@2.0.1":
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk-react/-/splits-sdk-react-2.0.1.tgz#70d967c55c74706d0ae6ec6e2fb0099e39c22b5b"
-  integrity sha512-Y2MnwLiNNnjBfCRDdCdyEMtrcmMdloouwLNcQoV5FONumeE++VdZpYBq6YQZfv+qS0M5jAUX5bhrBP7ltCcJgw==
+"@0xsplits/splits-sdk-react@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk-react/-/splits-sdk-react-2.0.2.tgz#96250ac1391a5d55ae46e1c1ae1b495f65abfa09"
+  integrity sha512-1zLOUydIAFZ72fR7iaL48mdLsZGq7CpsNY9k1YVo6m8U3qdKVJ/2gyGugqsNqJJia6f+Vk0jN3sTuREcOltPog==
   dependencies:
-    "@0xsplits/splits-sdk" "^4.0.1"
+    "@0xsplits/splits-sdk" "^4.0.2"
 
-"@0xsplits/splits-sdk@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-4.0.1.tgz#a6a7ef0182a09aef5c5dd29429194e2eb8676641"
-  integrity sha512-9H/dwC08CGRs7fwea39fByv2ZjwumdXzDSk64osG4Er4wDrEjAv4/ZXH5z6DBs0AAio+dih5gf7q2FtZbHOn/Q==
+"@0xsplits/splits-sdk@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-4.0.2.tgz#013a8b392c4707a066cf053b2b97716f32134bfa"
+  integrity sha512-KIk4wO32nwsGEC2VLvFBWUGKSF5Ws1SFmQH7P78Mz5GCsYBlOhb7sNtgXNrvPu/FYwQJJDcDTSWG2i4iav0cvg==
   dependencies:
     "@urql/core" "^4.3.0"
     base-64 "^1.0.0"

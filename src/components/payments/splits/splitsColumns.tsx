@@ -2,9 +2,9 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Recipients } from "../paymentView";
+import { SplitRecipient } from "@0xsplits/splits-sdk-react";
 
-export const SplitsColumns: ColumnDef<Recipients>[] = [
+export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
   {
     id: "avatar",
     cell: ({ row }) => {
@@ -13,10 +13,10 @@ export const SplitsColumns: ColumnDef<Recipients>[] = [
         <div>
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={`https://avatars.jakerunzer.com/${data.recipient.address}`}
-              alt={data.recipient.address}
+              src={`https://avatars.jakerunzer.com/${data.address}`}
+              alt={data.address}
             />
-            <AvatarFallback>{data.recipient.address}</AvatarFallback>
+            <AvatarFallback>{data.address}</AvatarFallback>
           </Avatar>
         </div>
       );
@@ -27,11 +27,7 @@ export const SplitsColumns: ColumnDef<Recipients>[] = [
     header: () => <></>,
     cell: ({ row }) => {
       const data = row.original;
-      return (
-        <div className="">
-          {data.recipient.address}
-        </div>
-      );
+      return <div className="">{data.address}</div>;
     },
   },
   {
