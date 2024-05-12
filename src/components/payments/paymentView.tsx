@@ -13,8 +13,11 @@ import {
 import { useEffect, useState } from "react";
 import { ContributorDto } from "@/app/api/contributors/fetchUserContributors";
 import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddressService";
-import axios from "axios";
-import { useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { SplitV2Client } from "@0xsplits/splits-sdk";
+import { base, mainnet } from "viem/chains";
+import { createPublicClient, http } from "viem";
+import { getWalletClient } from "@wagmi/core";
+import { useAccount } from "wagmi";
 
 interface PaymentsViewProps {
     projectId: string;
@@ -45,38 +48,72 @@ export default function PaymentsView({
     const [isLoading, setIsLoading] = useState(true);
     const [split, setSplit] = useState<Split>({ recipients: [] });
 
-    const splitsClient = useSplitsClient({
-        chainId: parseInt(paymentAddress.chain_id),
-        publicClient: window.ethereum!,
+    const publicClient = createPublicClient({
+        chain: base,
+        transport: http(),
+    });
+    // const client = getWalletClient({ chains: base })
+
+    const splitsClient = new SplitV2Client({
+        chainId: 8453,
+        publicClient: window.ethereum,
+        apiConfig: {
+            apiKey: "2ce1a8e6a7dc9f946e4d4f9e",
+        },
     });
 
+    //   const publicClient = createPublicClient({
+    //     chain: base,
+    //     transport: http(),
+    //   });≥
+
+    //   const splitsClient = useSplitsClient({
+    //     chainId: 8453,
+    //     publicClient: publicClient,
+    //     apiConfig: {
+    //       apiKey: "2ce1a8e6a7dc9f946e4d4f9e",
+    //     },
+    //   });
+
+    //   API 2ce1a8e6a7dc9f946e4d4f9e
+    // const {
+    //     splitMetadata,
+    //     isLoading: splitMetadataloading,
+    //     status,
+    //     error,
+    // } = useSplitMetadata(8453, "0x881985d5B0690598b84bcD7348c4A8c842e79419");
+
     const handleFetchSplitsMetadata = async () => {
-        const metadata = await splitsClient.getSplitMetadata({
-            splitAddress: paymentAddress.wallet_address,
-        });
-        setSplit(metadata as Split);
-        setIsLoading(false);
+        // const metadata = await splitsClient.splitV2({
+        //   splitAddress: paymentAddress.wallet_address,
+        // });
+        // setSplit(metadata as Split);
+        // setIsLoading(false);
     };
 
     const handleFetchSplitsEarnings = async () => {
-        const response = await splitsClient.getSplitEarnings({
-            splitAddress: paymentAddress.wallet_address,
-            erc20TokenList: [],
-        });
-        console.log(response);
+        // const response = await splitsClient.getSplitEarnings({
+        //   splitAddress: paymentAddress.wallet_address,
+        //   erc20TokenList: [],
+        // });
+        // console.log(response);
     };
 
-    useEffect(() => {
-        if (splitsClient._publicClient != null) {
-            handleFetchSplitsMetadata();
-        }
-    }, [splitsClient._publicClient]);
+    // useEffect(() => {
+    //     if (splitsClient._publicClient != null) {
+    //         // handleFetchSplitsEarnings();
+    //     }
+    // }, [split]);
 
     useEffect(() => {
-        if (splitsClient._publicClient != null) {
-            handleFetchSplitsEarnings();
-        }
-    }, [split]);
+        const args = {
+            splitAddress: "0x2ed6c4B5dA6378c7897AC67Ba9e43102Feb694EE",
+            tokenAddress: "0x64d91f12ece7362f91a6f8e7940cd55f05060b92",
+        };
+
+        const response = splitsClient.getSplitBalance(args);
+
+    }, []);
 
     return (
         <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">

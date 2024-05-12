@@ -11,6 +11,7 @@ import {
 import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
+import { createPublicClient, http } from "viem";
 
 const queryClient = new QueryClient();
 const config = getDefaultConfig({
@@ -19,6 +20,15 @@ const config = getDefaultConfig({
   chains: [sepolia, base],
   ssr: true,
 });
+
+const publicClient = createPublicClient({
+  chain: base,
+  transport: http(),
+});
+const splitsConfig = {
+  chainId: 1,
+  publicClient,
+};
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -34,7 +44,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             })}
           >
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <SplitsProvider>{children}</SplitsProvider>
+              <SplitsProvider config={splitsConfig}>{children}</SplitsProvider>
             </ThemeProvider>
           </RainbowKitProvider>
         </QueryClientProvider>

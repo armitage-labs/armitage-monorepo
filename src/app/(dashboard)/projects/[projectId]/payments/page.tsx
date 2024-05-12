@@ -5,7 +5,9 @@ import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PaymentsView from "@/components/payments/paymentView";
-
+import { useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { createPublicClient, http } from "viem";
+import { base } from "viem/chains";
 
 interface PageProps {
   params: { projectId: string };
@@ -16,6 +18,7 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
   const [projectPaymentAddress, setProjectPaymentAddress] = useState<
     PaymentAddressDto | undefined
   >();
+
   const handleFetchProjectPaymentAddress = async () => {
     const { data } = await axios.get("/api/payments?team_id=" + projectId);
     if (data.success && data.paymentAddress) {
