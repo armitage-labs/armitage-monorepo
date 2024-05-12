@@ -1,10 +1,10 @@
 "use client";
 
-import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddressService";
 import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PaymentsView from "@/components/payments/paymentView";
+import { PaymentAddressDto } from "@/app/api/payments/route";
 
 interface PageProps {
   params: { projectId: string };
@@ -35,7 +35,10 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
           paymentAddress={projectPaymentAddress}
         ></PaymentsView>
       ) : (
-        <PaymentsOnboarding projectId={projectId}></PaymentsOnboarding>
+        <PaymentsOnboarding
+          projectId={projectId}
+          onCreate={setProjectPaymentAddress}
+        ></PaymentsOnboarding>
       )}
     </>
   );

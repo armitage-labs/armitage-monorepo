@@ -3,7 +3,7 @@
 import { signOut, useSession } from "next-auth/react";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 import { useEffect } from "react";
-import { useChainId, useWalletClient } from "wagmi";
+import { useChainId, usePublicClient, useWalletClient } from "wagmi";
 
 type Props = {
   children?: React.ReactNode;
@@ -12,10 +12,13 @@ type Props = {
 export const SessionRefreshProvider = ({ children }: Props) => {
   const { data: session } = useSession();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const chainId = useChainId();
+
   const splitsConfig = {
     chainId: chainId,
     walletClient: walletClient,
+    publicClient: publicClient,
     apiConfig: { apiKey: "a6431f24145432df1796251c" }, // todo move to config api
   };
 

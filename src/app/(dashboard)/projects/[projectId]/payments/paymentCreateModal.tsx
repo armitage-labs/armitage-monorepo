@@ -1,25 +1,29 @@
+import {
+  PaymentAddressDto,
+  PaymentRecipientDto,
+} from "@/app/api/payments/route";
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useSplitsClient } from "@0xsplits/splits-sdk-react";
-import { useAccount } from "wagmi";
+import { useCreateSplit, useSplitsClient } from "@0xsplits/splits-sdk-react";
+import axios from "axios";
+import { useAccount, useChainId } from "wagmi";
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
   paymentSplits: PaymentSplitDto[];
+  onCreate: (param: PaymentAddressDto) => void;
 };
 
 export function CreatePaymentAddressModal({
   projectId,
   paymentSplits,
+  onCreate,
 }: CreatePaymentAddressModalProps) {
   const account = useAccount();
+  const chainId = useChainId();
 
-  const splitsClient = useSplitsClient({
-    // TODO: Use connected chainId
-    chainId: 8453,
-    publicClient: window.ethereum!,
-  });
+  const { createSplit, status, txHash, error } = useCreateSplit();
 
   const handleCreateSplit = async () => {
     const recipients = paymentSplits
@@ -40,11 +44,31 @@ export function CreatePaymentAddressModal({
       controller: account.address,
     };
     try {
-      const args = {
-        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
+      const paymentAddress: PaymentAddressDto = {
+        chain_id: chainId.toString(),
+        team_id: projectId,
+        wallet_address: "0x206c4D42b509482e45fD01bdEF8879184d6b6067", // This is for demo purposes
+        payment_receipents: recipients
+          .map((paymentReceipent) => ({
+            wallet_address: paymentReceipent.address,
+            payment_percentage: paymentReceipent.percentAllocation,
+          }))
+          .filter((recipient) => {
+            return !(
+              recipient.payment_percentage == 0 || recipient.wallet_address == undefined
+            );
+          }),
       };
-      const response = await splitsClient.getSplitMetadata(args);
-      console.log(response);
+
+      console.log(paymentAddress);
+      const { data } = await axios.post(
+        `/api/payments?team_id=${projectId}`,
+        paymentAddress,
+      );
+      console.log(data);
+      if (data.success) {
+        onCreate(data.paymentAddress);
+      }
     } catch (error) {
       console.log(error);
     }

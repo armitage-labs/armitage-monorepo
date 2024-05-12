@@ -5,13 +5,16 @@ import { useEffect, useState } from "react";
 import { PaymentSplitsDataTable } from "./paymentSplitsDataTable";
 import { PaymentSplitsColumns } from "./paymentSplitsColumns";
 import { Heading } from "@/components/ui/heading";
+import { PaymentAddressDto } from "@/app/api/payments/route";
 
 interface ProjectContributionTableProps {
   projectId: string;
+  onCreate: (param: PaymentAddressDto) => void;
 }
 
 export default function PaymentSplitsTable({
   projectId,
+  onCreate,
 }: ProjectContributionTableProps) {
   const { data: session } = useSession();
   const [contributors, setContributors] = useState<ContributorDto[]>([]);
@@ -46,6 +49,8 @@ export default function PaymentSplitsTable({
         columns={PaymentSplitsColumns}
         data={contributors}
         isLoading={isLoading}
+        onCreate={onCreate}
+        projectId={projectId}
       ></PaymentSplitsDataTable>
     </div>
   );
