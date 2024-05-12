@@ -1,7 +1,9 @@
 "use client";
 
+import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect } from "react";
+import { useWalletClient } from "wagmi";
 
 type Props = {
   children?: React.ReactNode;
@@ -19,5 +21,18 @@ export const SessionRefreshProvider = ({ children }: Props) => {
     }
   }, [session]);
 
-  return <>{children}</>;
+  const { data: walletClient } = useWalletClient();
+  const splitsConfig = {
+    // TODO: Use connected chainId
+    chainId: 8453,
+    walletClient: walletClient,
+    apiConfig: { apiKey: "1cd77c5c438d1508b1ad3072" }
+  }
+
+
+  return <>
+    <SplitsProvider config={splitsConfig}>
+      {children}
+    </SplitsProvider>
+  </>;
 };

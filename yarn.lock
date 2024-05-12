@@ -2,23 +2,27 @@
 # yarn lockfile v1
 
 
-"@0xsplits/splits-sdk-react@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk-react/-/splits-sdk-react-1.3.3.tgz#3333f74a983675277ac68f30773e50c9a439fe0e"
-  integrity sha512-+Td94vDgspRcxAaeXYqWZqfE3Jt3OOzmp8uz0W2j5j6z1ciR4inWGov36k+RO22u5L7Sw5fEwG0xn2y/UBq6Ug==
-  dependencies:
-    "@0xsplits/splits-sdk" "^3.3.3"
-    viem "^1.16.6"
+"@0no-co/graphql.web@^1.0.1":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@0no-co/graphql.web/-/graphql.web-1.0.7.tgz#c7a762c887b3482a79ffa68f63de5e96059a62e4"
+  integrity sha512-E3Qku4mTzdrlwVWGPxklDnME5ANrEGetvYw4i2GCRlppWXXE4QD66j7pwb8HelZwS6LnqEChhrSOGCXpbiu6MQ==
 
-"@0xsplits/splits-sdk@^3.3.3":
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-3.3.3.tgz#37dfef0a17727adac6291ce7e25ea128a2540a67"
-  integrity sha512-OYIjubnI9a9yhvcJAStBIleomiJX0I1FZ8Uai1llOiNpu/ettU8F0cPoZYmG3sgxhkSmb7Vov0j2EMM35v19uw==
+"@0xsplits/splits-sdk-react@2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk-react/-/splits-sdk-react-2.0.2.tgz#96250ac1391a5d55ae46e1c1ae1b495f65abfa09"
+  integrity sha512-1zLOUydIAFZ72fR7iaL48mdLsZGq7CpsNY9k1YVo6m8U3qdKVJ/2gyGugqsNqJJia6f+Vk0jN3sTuREcOltPog==
   dependencies:
+    "@0xsplits/splits-sdk" "^4.0.2"
+
+"@0xsplits/splits-sdk@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@0xsplits/splits-sdk/-/splits-sdk-4.0.2.tgz#013a8b392c4707a066cf053b2b97716f32134bfa"
+  integrity sha512-KIk4wO32nwsGEC2VLvFBWUGKSF5Ws1SFmQH7P78Mz5GCsYBlOhb7sNtgXNrvPu/FYwQJJDcDTSWG2i4iav0cvg==
+  dependencies:
+    "@urql/core" "^4.3.0"
     base-64 "^1.0.0"
     graphql "^16.8.1"
-    graphql-request "^6.1.0"
-    viem "^1.16.6"
+    lodash "^4.17.21"
 
 "@aashutoshrathi/word-wrap@^1.2.3":
   version "1.2.6"
@@ -589,11 +593,6 @@
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
-
-"@graphql-typed-document-node/core@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.2.0.tgz#5f3d96ec6b2354ad6d8a28bf216a1d97b5426861"
-  integrity sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==
 
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
@@ -2974,6 +2973,14 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
+"@urql/core@^4.3.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@urql/core/-/core-4.3.0.tgz#5e150412ed08d167861b05ceed417abbd048553f"
+  integrity sha512-wT+FeL8DG4x5o6RfHEnONNFVDM3616ouzATMYUClB6CB+iIu2mwfBKd7xSUxYOZmwtxna5/hDRQdMl3nbQZlnw==
+  dependencies:
+    "@0no-co/graphql.web" "^1.0.1"
+    wonka "^6.3.2"
+
 "@vanilla-extract/css@1.14.0":
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/@vanilla-extract/css/-/css-1.14.0.tgz#45fab9c04d893e3e363cf2cde7559d21233b7f63"
@@ -4385,7 +4392,7 @@ create-hmac@^1.1.4, create-hmac@^1.1.7:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-cross-fetch@^3.1.4, cross-fetch@^3.1.5:
+cross-fetch@^3.1.4:
   version "3.1.8"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.8.tgz#0327eba65fd68a7d119f8fb2bf9334a1a7956f82"
   integrity sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==
@@ -5972,14 +5979,6 @@ graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
-
-graphql-request@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/graphql-request/-/graphql-request-6.1.0.tgz#f4eb2107967af3c7a5907eb3131c671eac89be4f"
-  integrity sha512-p+XPfS4q7aIpKVcgmnZKhMNqhltk20hfXtkaIkTfjjmiKMJ5xrt5c743cL03y/K7y1rg3WrIC49xGiEQ4mxdNw==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    cross-fetch "^3.1.5"
 
 graphql@^16.8.1:
   version "16.8.1"
@@ -10291,7 +10290,7 @@ viem@2.x:
     isows "1.0.3"
     ws "8.13.0"
 
-viem@^1.0.0, viem@^1.1.4, viem@^1.16.6:
+viem@^1.0.0, viem@^1.1.4:
   version "1.21.4"
   resolved "https://registry.yarnpkg.com/viem/-/viem-1.21.4.tgz#883760e9222540a5a7e0339809202b45fe6a842d"
   integrity sha512-BNVYdSaUjeS2zKQgPs+49e5JKocfo60Ib2yiXOWBT6LuVxY1I/6fFX3waEtpXvL1Xn4qu+BVitVtMh9lyThyhQ==
@@ -10490,6 +10489,11 @@ wildcard@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/wildcard/-/wildcard-2.0.1.tgz#5ab10d02487198954836b6349f74fff961e10f67"
   integrity sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==
+
+wonka@^6.3.2:
+  version "6.3.4"
+  resolved "https://registry.yarnpkg.com/wonka/-/wonka-6.3.4.tgz#76eb9316e3d67d7febf4945202b5bdb2db534594"
+  integrity sha512-CjpbqNtBGNAeyNS/9W6q3kSkKE52+FjIj7AkFlLr11s/VWGUu6a2CdYSdGxocIhIVjaW/zchesBQUKPVU69Cqg==
 
 workerpool@6.2.1:
   version "6.2.1"

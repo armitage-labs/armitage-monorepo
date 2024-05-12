@@ -19,6 +19,7 @@ export default function TeamsPage() {
   const [_isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+
   const handleQueryUserProjects = async () => {
     setIsLoading(true);
     const { data } = await axios.get(`/api/projects`);
@@ -44,8 +45,8 @@ export default function TeamsPage() {
           />
           <Button
             className="text-xs md:text-sm"
-            // TODO:
-            // onClick={() => router.push(`/repositories/new`)}
+          // TODO:
+          // onClick={() => router.push(`/repositories/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>

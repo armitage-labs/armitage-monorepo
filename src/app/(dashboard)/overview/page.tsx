@@ -20,6 +20,8 @@ import { TeamIntervalsOverview } from "@/components/overview/teamIntervalsOvervi
 import { TeamIntervalsOverviewDto } from "@/app/api/teams/overview/intervals/types";
 import { LoadingCircle } from "@/components/navigation/loading";
 import { redirect } from "next/navigation";
+import { useWalletClient } from "wagmi";
+import { useSplitsClient } from "@0xsplits/splits-sdk-react";
 
 export default function OverviewPage() {
   const { data: session } = useSession();

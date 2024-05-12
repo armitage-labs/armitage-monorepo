@@ -20,6 +20,7 @@ const config = getDefaultConfig({
   ssr: true,
 });
 
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
@@ -34,7 +35,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             })}
           >
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              <SplitsProvider>{children}</SplitsProvider>
+              {children}
             </ThemeProvider>
           </RainbowKitProvider>
         </QueryClientProvider>

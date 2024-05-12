@@ -8,6 +8,7 @@ export default async function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <div>
       <Header />

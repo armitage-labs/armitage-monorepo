@@ -1,8 +1,8 @@
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useSplitsClient } from "@0xsplits/splits-sdk-react";
-import { useAccount } from "wagmi";
+import { useCreateSplit, useCreateSplitV2, useSplitMetadata, useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { useAccount, usePublicClient } from "wagmi";
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
@@ -15,11 +15,9 @@ export function CreatePaymentAddressModal({
 }: CreatePaymentAddressModalProps) {
   const account = useAccount();
 
-  const splitsClient = useSplitsClient({
-    // TODO: Use connected chainId
-    chainId: 8453,
-    publicClient: window.ethereum!,
-  });
+
+  const { splitMetadata } = useSplitMetadata(8453, "0x881985d5B0690598b84bcD7348c4A8c842e79419");
+  const { createSplit, status, txHash, error } = useCreateSplit()
 
   const handleCreateSplit = async () => {
     const recipients = paymentSplits
@@ -41,10 +39,23 @@ export function CreatePaymentAddressModal({
     };
     try {
       const args = {
-        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
-      };
-      const response = await splitsClient.getSplitMetadata(args);
+        recipients: [
+          {
+            address: "0x442C01498ED8205bFD9aaB6B8cc5C810Ed070C8f",
+            percentAllocation: 50.0000,
+          },
+          {
+            address: "0xc3313847E2c4A506893999f9d53d07cDa961a675",
+            percentAllocation: 50.0000,
+          }
+        ],
+        distributorFeePercent: 1.0000,
+      }
+      const response = await createSplit(args);
+      console.log(status);
+      console.log(txHash);
       console.log(response);
+      console.log(error);
     } catch (error) {
       console.log(error);
     }
