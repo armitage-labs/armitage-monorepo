@@ -2,7 +2,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useChainId, usePublicClient, useWalletClient } from "wagmi";
 
 type Props = {
@@ -10,12 +10,13 @@ type Props = {
 };
 
 export const SessionRefreshProvider = ({ children }: Props) => {
+  const [loaded, setLoaded] = useState<boolean>(false);
   const { data: session } = useSession();
-  const { data: walletClient } = useWalletClient();
+  const { data: walletClient, status } = useWalletClient();
   const publicClient = usePublicClient();
   const chainId = useChainId();
 
-  const splitsConfig = {
+  let splitsConfig = {
     chainId: chainId,
     walletClient: walletClient,
     publicClient: publicClient,
@@ -31,9 +32,25 @@ export const SessionRefreshProvider = ({ children }: Props) => {
     }
   }, [session]);
 
+  useEffect(() => {
+    if (status == "success") {
+      splitsConfig = {
+        chainId: chainId,
+        walletClient: walletClient,
+        publicClient: publicClient,
+        apiConfig: { apiKey: "a6431f24145432df1796251c" }, // todo move to config api
+      };
+      setLoaded(true);
+    }
+  }, [status]);
+
   return (
     <>
-      <SplitsProvider config={splitsConfig}>{children}</SplitsProvider>
+      {loaded ? (
+        <SplitsProvider config={splitsConfig}>{children}</SplitsProvider>
+      ) : (
+        <>Loading</>
+      )}
     </>
   );
 };

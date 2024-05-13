@@ -5,8 +5,10 @@ import {
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useCreateSplit, useSplitsClient } from "@0xsplits/splits-sdk-react";
+import { useCreateSplit } from "@0xsplits/splits-sdk-react";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Log } from "viem";
 import { useAccount, useChainId } from "wagmi";
 
 type CreatePaymentAddressModalProps = {
@@ -22,8 +24,11 @@ export function CreatePaymentAddressModal({
 }: CreatePaymentAddressModalProps) {
   const account = useAccount();
   const chainId = useChainId();
-
+  const [paymentAddressRecipients, setPaymentAddressRecipients] = useState<
+    PaymentRecipientDto[]
+  >([]);
   const { createSplit, status, txHash, error } = useCreateSplit();
+  let response: Promise<Log[] | undefined> | undefined = undefined;
 
   const handleCreateSplit = async () => {
     const recipients = paymentSplits
@@ -36,6 +41,7 @@ export function CreatePaymentAddressModal({
           split.paymentSplit!.toPrecision(2),
         ),
       }));
+
     const createSplitReq = {
       recipients: recipients.filter(
         (recipient) => recipient.address != undefined,
@@ -43,41 +49,77 @@ export function CreatePaymentAddressModal({
       distributorFeePercent: 0,
       controller: account.address,
     };
-    try {
-      const paymentAddress: PaymentAddressDto = {
-        chain_id: chainId.toString(),
-        team_id: projectId,
-        wallet_address: "0x206c4D42b509482e45fD01bdEF8879184d6b6067", // This is for demo purposes
-        payment_receipents: recipients
-          .map((paymentReceipent) => ({
-            wallet_address: paymentReceipent.address,
-            payment_percentage: paymentReceipent.percentAllocation,
-          }))
-          .filter((recipient) => {
-            return !(
-              recipient.payment_percentage == 0 ||
-              recipient.wallet_address == undefined
-            );
-          }),
-      };
 
-      console.log(paymentAddress);
-      const { data } = await axios.post(
-        `/api/payments?team_id=${projectId}`,
-        paymentAddress,
-      );
-      console.log(data);
-      if (data.success) {
-        onCreate(data.paymentAddress);
-      }
+    setPaymentAddressRecipients(
+      recipients
+        .map((paymentReceipent) => ({
+          wallet_address: paymentReceipent.address,
+          payment_percentage: paymentReceipent.percentAllocation,
+        }))
+        .filter((recipient) => {
+          return !(
+            recipient.payment_percentage == 0 ||
+            recipient.wallet_address == undefined
+          );
+        }),
+    );
+
+    try {
+      response = createSplit(createSplitReq);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleSplitComplete = async () => {
+    const paymentAddress: PaymentAddressDto = {
+      chain_id: chainId.toString(),
+      team_id: projectId,
+      wallet_address: "0x206c4D42b509482e45fD01bdEF8879184d6b6067", // need to get this from the txid
+      payment_receipents: paymentAddressRecipients,
+    };
+
+    const { data } = await axios.post(
+      `/api/payments?team_id=${projectId}`,
+      paymentAddress,
+    );
+    if (data.success) {
+      onCreate(data.paymentAddress);
+    }
+  };
+
+  const handleSplitTxInProgress = async () => { };
+  const handleSplitPendingApproval = async () => { };
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
   }
+
+  useEffect(() => {
+    console.log("=====Start Create Split Hook=====");
+    console.log("status:" + status);
+    console.log("txHash:" + txHash);
+    console.log("error:" + error);
+    console.log("response:" + response);
+    response?.then((logs: Log[] | undefined) => {
+      if (logs !== undefined) {
+        // Logs is defined, you can use it here
+        console.log("response logs:" + logs);
+      } else {
+        // Logs is undefined
+        console.log("Logs is undefined");
+      }
+    });
+    console.log("=====End Create Split Hook=====");
+    if (status == "pendingApproval") {
+      handleSplitPendingApproval();
+    }
+    if (status == "txInProgress") {
+      handleSplitTxInProgress();
+    }
+    if (status == "complete") {
+      // handleSplitComplete();
+    }
+  }, [status, response]);
 
   return (
     <Dialog>
@@ -109,6 +151,7 @@ export function CreatePaymentAddressModal({
               <div className="flex justify-between">
                 <Button
                   className="w-1/2 mr-2"
+                  disabled={!(status == null || status != "error")}
                   onClick={() => {
                     console.log("Hi");
                   }}
@@ -118,12 +161,21 @@ export function CreatePaymentAddressModal({
 
                 <Button
                   className="w-1/2  ml-2"
-                  disabled={!account.isConnected}
+                  disabled={
+                    !account.isConnected &&
+                    (status != null || status == "error")
+                  }
                   onClick={() => {
                     handleCreateSplit();
                   }}
                 >
-                  <>Continue</>
+                  {status == "pendingApproval" ? (
+                    <>Waiting for approval</>
+                  ) : status == "txInProgress" ? (
+                    <>In progress</>
+                  ) : (
+                    <>Continue</>
+                  )}
                 </Button>
               </div>
             </div>

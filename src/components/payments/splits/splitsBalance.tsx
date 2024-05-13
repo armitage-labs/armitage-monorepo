@@ -51,11 +51,6 @@ export function SplitsBalance({
         <div className="flex justify-center">
           <div className="text-6xl font-bold">ETH {balance}</div>
         </div>
-        <div className="border-t border-gray-300 mt-3 mb-3"></div>
-        <div className="flex justify-center">
-          <p className="text-xl text-muted-foreground">No ETH or ERC-20</p>
-        </div>
-        <div className="border-t border-gray-300 mt-3 mb-3"></div>
       </CardContent>
       <CardFooter>
         <Button
