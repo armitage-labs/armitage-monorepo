@@ -23,14 +23,13 @@ export default function SplitsRecipients({
   chainId,
 }: SplitsRecipientsProps) {
   const [recipient, setRecipient] = useState<SplitRecipient[]>([]);
-  const { splitMetadata, isLoading, status, error } = useSplitMetadata(
+  const { splitMetadata, isLoading, status } = useSplitMetadata(
     chainId,
     paymentAddress,
   );
 
   const handleSplitMetadata = async (splitRecipient: SplitRecipient[]) => {
     const { data } = await axios.post(`/api/wallet/search`, splitRecipient);
-    console.log(data);
     if (data.success) {
       setRecipient(data.data);
     }
@@ -38,11 +37,11 @@ export default function SplitsRecipients({
 
   useEffect(() => {
     if (splitMetadata != null) {
-      const mapedRecipient = splitMetadata.recipients.map((recipient) => ({
+      const mappedRecipient = splitMetadata.recipients.map((recipient) => ({
         percentAllocation: recipient.percentAllocation,
         address: recipient.recipient.address,
       }));
-      handleSplitMetadata(mapedRecipient);
+      handleSplitMetadata(mappedRecipient);
     }
   }, [status]);
 

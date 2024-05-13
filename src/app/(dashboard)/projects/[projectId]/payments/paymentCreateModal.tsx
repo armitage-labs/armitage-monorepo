@@ -5,7 +5,7 @@ import {
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useCreateSplit } from "@0xsplits/splits-sdk-react";
+import { SplitRecipient, useCreateSplit } from "@0xsplits/splits-sdk-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Log } from "viem";
@@ -28,10 +28,9 @@ export function CreatePaymentAddressModal({
     PaymentRecipientDto[]
   >([]);
   const { createSplit, status, txHash, error } = useCreateSplit();
-  let response: Promise<Log[] | undefined> | undefined = undefined;
 
-  const handleCreateSplit = async () => {
-    const recipients = paymentSplits
+  function filterAndMapSplitRecipient() {
+    return paymentSplits
       .filter((split) => {
         return split.paymentSplit != 0 || split.walletAddress == undefined;
       })
@@ -41,7 +40,24 @@ export function CreatePaymentAddressModal({
           split.paymentSplit!.toPrecision(2),
         ),
       }));
+  }
 
+  function filterAndMapArmitageRecipient(splitRecipient: SplitRecipient[]) {
+    return splitRecipient
+      .map((paymentRecipient) => ({
+        wallet_address: paymentRecipient.address,
+        payment_percentage: paymentRecipient.percentAllocation,
+      }))
+      .filter((recipient) => {
+        return !(
+          recipient.payment_percentage == 0 ||
+          recipient.wallet_address == undefined
+        );
+      });
+  }
+
+  const handleCreateSplit = async () => {
+    const recipients = filterAndMapSplitRecipient();
     const createSplitReq = {
       recipients: recipients.filter(
         (recipient) => recipient.address != undefined,
@@ -49,26 +65,8 @@ export function CreatePaymentAddressModal({
       distributorFeePercent: 0,
       controller: account.address,
     };
-
-    setPaymentAddressRecipients(
-      recipients
-        .map((paymentReceipent) => ({
-          wallet_address: paymentReceipent.address,
-          payment_percentage: paymentReceipent.percentAllocation,
-        }))
-        .filter((recipient) => {
-          return !(
-            recipient.payment_percentage == 0 ||
-            recipient.wallet_address == undefined
-          );
-        }),
-    );
-
-    try {
-      response = createSplit(createSplitReq);
-    } catch (error) {
-      console.log(error);
-    }
+    setPaymentAddressRecipients(filterAndMapArmitageRecipient(recipients));
+    createSplit(createSplitReq);
   };
 
   const handleSplitComplete = async () => {
@@ -78,7 +76,6 @@ export function CreatePaymentAddressModal({
       wallet_address: "0x206c4D42b509482e45fD01bdEF8879184d6b6067", // need to get this from the txid
       payment_receipents: paymentAddressRecipients,
     };
-
     const { data } = await axios.post(
       `/api/payments?team_id=${projectId}`,
       paymentAddress,
@@ -88,28 +85,18 @@ export function CreatePaymentAddressModal({
     }
   };
 
-  const handleSplitTxInProgress = async () => { };
-  const handleSplitPendingApproval = async () => { };
+  const handleSplitTxInProgress = async () => {};
+  const handleSplitPendingApproval = async () => {};
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
   }
 
   useEffect(() => {
+    // TODO coming soon
     console.log("=====Start Create Split Hook=====");
     console.log("status:" + status);
     console.log("txHash:" + txHash);
     console.log("error:" + error);
-    console.log("response:" + response);
-    response?.then((logs: Log[] | undefined) => {
-      if (logs !== undefined) {
-        // Logs is defined, you can use it here
-        console.log("response logs:" + logs);
-      } else {
-        // Logs is undefined
-        console.log("Logs is undefined");
-      }
-    });
-    console.log("=====End Create Split Hook=====");
     if (status == "pendingApproval") {
       handleSplitPendingApproval();
     }
@@ -119,7 +106,7 @@ export function CreatePaymentAddressModal({
     if (status == "complete") {
       // handleSplitComplete();
     }
-  }, [status, response]);
+  }, [status]);
 
   return (
     <Dialog>

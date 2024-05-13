@@ -9,24 +9,29 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
   {
     id: "avatar",
     cell: ({ row }) => {
-      const data = row.original;
+      const reciepted = row.original;
+      const isArmitage =
+        reciepted.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
+      if (isArmitage) {
+        reciepted.username = "armitage-lab";
+      }
       return (
         <div>
-          {data.username ? (
+          {reciepted.username ? (
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={`https://github.com/${data.username}.png?size=100`}
-                alt={data.address}
+                src={`https://github.com/${reciepted.username}.png?size=100`}
+                alt={reciepted.address}
               />
-              <AvatarFallback>{data.address}</AvatarFallback>
+              <AvatarFallback>{reciepted.address}</AvatarFallback>
             </Avatar>
           ) : (
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={`https://avatars.jakerunzer.com/${data.address}`}
-                alt={data.address}
+                src={`https://avatars.jakerunzer.com/${reciepted.address}`}
+                alt={reciepted.address}
               />
-              <AvatarFallback>{data.address}</AvatarFallback>
+              <AvatarFallback>{reciepted.address}</AvatarFallback>
             </Avatar>
           )}
         </div>
@@ -38,12 +43,20 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
     header: () => <></>,
     cell: ({ row }) => {
       const reciepted = row.original;
+      const isArmitage =
+        reciepted.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
       return (
         <div className="">
-          {reciepted.username ? (
-            <> {reciepted.username}</>
+          {isArmitage ? (
+            <>Armitage Labs</>
           ) : (
-            <>{truncateString(reciepted.address, 6)}</>
+            <>
+              {reciepted.username ? (
+                <> {reciepted.username}</>
+              ) : (
+                <>{truncateString(reciepted.address, 6)}</>
+              )}
+            </>
           )}
         </div>
       );
