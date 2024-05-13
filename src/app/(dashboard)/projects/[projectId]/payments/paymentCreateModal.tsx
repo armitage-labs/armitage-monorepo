@@ -151,7 +151,7 @@ export function CreatePaymentAddressModal({
               <div className="flex justify-between">
                 <Button
                   className="w-1/2 mr-2"
-                  disabled={!(status == null || status != "error")}
+                  disabled={!(status == null || status == "error")}
                   onClick={() => {
                     console.log("Hi");
                   }}
@@ -162,8 +162,10 @@ export function CreatePaymentAddressModal({
                 <Button
                   className="w-1/2  ml-2"
                   disabled={
-                    !account.isConnected &&
-                    (status != null || status == "error")
+                    !(
+                      account.isConnected &&
+                      (status == null || status == "error")
+                    )
                   }
                   onClick={() => {
                     handleCreateSplit();
