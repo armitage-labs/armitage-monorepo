@@ -55,7 +55,8 @@ export function CreatePaymentAddressModal({
           }))
           .filter((recipient) => {
             return !(
-              recipient.payment_percentage == 0 || recipient.wallet_address == undefined
+              recipient.payment_percentage == 0 ||
+              recipient.wallet_address == undefined
             );
           }),
       };

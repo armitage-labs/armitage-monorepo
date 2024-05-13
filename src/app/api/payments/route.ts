@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const paymentAddress = await createPaymentAddress(
       session?.userId,
       teamId,
-      paymentAddressRequest
+      paymentAddressRequest,
     );
     if (paymentAddress) {
       return NextResponse.json({

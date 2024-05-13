@@ -4,7 +4,7 @@ import { PaymentAddressDto } from "../route";
 export async function createPaymentAddress(
   userId: string,
   teamId: string,
-  paymentAddress: PaymentAddressDto
+  paymentAddress: PaymentAddressDto,
 ): Promise<PaymentAddressDto | undefined> {
   try {
     const foundTeam = await prisma.team.findFirst({
@@ -15,7 +15,7 @@ export async function createPaymentAddress(
     });
     if (foundTeam == null) {
       console.error(
-        `Team was not found for user userId:[${userId}] teanId:[${teamId}]`
+        `Team was not found for user userId:[${userId}] teanId:[${teamId}]`,
       );
       return;
     }
@@ -54,7 +54,7 @@ export async function createPaymentAddress(
 }
 
 export async function fetchTeamPaymentAddresses(
-  teamId: string
+  teamId: string,
 ): Promise<PaymentAddressDto | undefined> {
   try {
     const foundPaymentAddresses = await prisma.paymentAddress.findUnique({

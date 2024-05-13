@@ -2,7 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SplitRecipient } from "@0xsplits/splits-sdk-react";
+import { truncateString } from "@/app/(dashboard)/utils/stringUtils";
+import { SplitRecipient } from "./splitsRecipients";
 
 export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
   {
@@ -11,13 +12,23 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
       const data = row.original;
       return (
         <div>
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={`https://avatars.jakerunzer.com/${data.address}`}
-              alt={data.address}
-            />
-            <AvatarFallback>{data.address}</AvatarFallback>
-          </Avatar>
+          {data.username ? (
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={`https://github.com/${data.username}.png?size=100`}
+                alt={data.address}
+              />
+              <AvatarFallback>{data.address}</AvatarFallback>
+            </Avatar>
+          ) : (
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={`https://avatars.jakerunzer.com/${data.address}`}
+                alt={data.address}
+              />
+              <AvatarFallback>{data.address}</AvatarFallback>
+            </Avatar>
+          )}
         </div>
       );
     },
@@ -26,8 +37,16 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
     accessorKey: "wallet",
     header: () => <></>,
     cell: ({ row }) => {
-      const data = row.original;
-      return <div className="">{data.address}</div>;
+      const reciepted = row.original;
+      return (
+        <div className="">
+          {reciepted.username ? (
+            <> {reciepted.username}</>
+          ) : (
+            <>{truncateString(reciepted.address, 6)}</>
+          )}
+        </div>
+      );
     },
   },
   {
