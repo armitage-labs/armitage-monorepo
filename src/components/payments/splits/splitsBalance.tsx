@@ -24,7 +24,7 @@ export function SplitsBalance({
     parseInt(paymentAddress.chain_id),
     paymentAddress.wallet_address,
     true,
-    [paymentAddress.wallet_address],
+    // ["0x4200000000000000000000000000000000000006"],
   );
   const [balance, setBalance] = useState<string>("0.00");
   useEffect(() => {
@@ -37,7 +37,7 @@ export function SplitsBalance({
         setBalance(formattedAmount);
       }
     }
-  }, [status]);
+  }, [splitEarnings, status, error, isLoading]);
 
   return (
     <Card>
