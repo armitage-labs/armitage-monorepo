@@ -4,12 +4,16 @@ import {
 } from "@/app/api/payments/route";
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { SplitRecipient, useCreateSplit } from "@0xsplits/splits-sdk-react";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { Log } from "viem";
 import { useAccount, useChainId } from "wagmi";
+import axios from "axios";
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
@@ -123,15 +127,14 @@ export function CreatePaymentAddressModal({
             )}
             <div className="pt-6">
               <div className="flex justify-between">
-                <Button
-                  className="w-1/2 mr-2"
-                  disabled={!(status == null || status == "error")}
-                  onClick={() => {
-                    console.log("Hi");
-                  }}
-                >
-                  Cancel
-                </Button>
+                <DialogClose asChild>
+                  <Button
+                    className="w-1/2 mr-2"
+                    disabled={!(status == null || status == "error")}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
 
                 <Button
                   className="w-1/2  ml-2"

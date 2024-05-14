@@ -1,4 +1,4 @@
-import { Split } from "lucide-react";
+import { Copy, Split } from "lucide-react";
 import { Heading } from "@/components/ui/heading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SplitsRecipients from "./splits/splitsRecipients";
@@ -6,6 +6,8 @@ import { PaymentAddressDto } from "@/app/api/payments/route";
 import { chainsConfig } from "@/app/(dashboard)/attestation/utils/attestation-config";
 import { truncateString } from "@/app/(dashboard)/utils/stringUtils";
 import { SplitsBalance } from "./splits/splitsBalance";
+import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 interface PaymentsViewProps {
   projectId: string;
@@ -46,10 +48,20 @@ export default function PaymentsView({
           </div>
 
           <div className="text-left pl-10">
-            <p className="text-xl text-muted-foreground">Address</p>
-            <h4 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-              {truncateString(paymentAddress.wallet_address, 8)}
-            </h4>
+            <p className="text-xl text-muted-foreground pl-4">Address</p>
+            <Button
+              variant="ghost"
+              className="font-semibold tracking-tight text-xl"
+              onClick={() => {
+                navigator.clipboard.writeText(paymentAddress.wallet_address);
+                toast("Copied to clipboard");
+              }}
+            >
+              <span className="pr-2">
+                {truncateString(paymentAddress.wallet_address, 8)}{" "}
+              </span>
+              <Copy className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
