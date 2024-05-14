@@ -17,11 +17,6 @@ const config = getDefaultConfig({
   projectId: "a9f78ae7bcb14f2dfcdcdb88bfca121c",
   chains: [sepolia, base],
   ssr: true,
-  transports: {
-    [base.id]: webSocket(
-      `wss://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
-    ),
-  },
 });
 
 export default function Providers({ children }: { children: React.ReactNode }) {

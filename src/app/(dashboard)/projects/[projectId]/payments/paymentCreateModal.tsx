@@ -27,7 +27,7 @@ export function CreatePaymentAddressModal({
   const [paymentAddressRecipients, setPaymentAddressRecipients] = useState<
     PaymentRecipientDto[]
   >([]);
-  const { createSplit, status, txHash, error } = useCreateSplit();
+  const { createSplit, status, splitAddress } = useCreateSplit();
 
   function filterAndMapSplitRecipient() {
     return paymentSplits
@@ -73,7 +73,7 @@ export function CreatePaymentAddressModal({
     const paymentAddress: PaymentAddressDto = {
       chain_id: chainId.toString(),
       team_id: projectId,
-      wallet_address: "0x206c4D42b509482e45fD01bdEF8879184d6b6067", // need to get this from the txid
+      wallet_address: splitAddress!,
       payment_receipents: paymentAddressRecipients,
     };
     const { data } = await axios.post(
@@ -85,26 +85,13 @@ export function CreatePaymentAddressModal({
     }
   };
 
-  const handleSplitTxInProgress = async () => {};
-  const handleSplitPendingApproval = async () => {};
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
   }
 
   useEffect(() => {
-    // TODO coming soon
-    console.log("=====Start Create Split Hook=====");
-    console.log("status:" + status);
-    console.log("txHash:" + txHash);
-    console.log("error:" + error);
-    if (status == "pendingApproval") {
-      handleSplitPendingApproval();
-    }
-    if (status == "txInProgress") {
-      handleSplitTxInProgress();
-    }
     if (status == "complete") {
-      // handleSplitComplete();
+      handleSplitComplete();
     }
   }, [status]);
 
