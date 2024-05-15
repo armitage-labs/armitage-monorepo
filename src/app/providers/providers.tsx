@@ -12,6 +12,7 @@ import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SplitsClientProvider } from "./splitsClientProvider";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
+import { PaymentSplitsProvider } from "./splitsProvider";
 
 const queryClient = new QueryClient();
 const config = getDefaultConfig({
