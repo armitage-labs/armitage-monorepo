@@ -77,7 +77,7 @@ export default function PaymentsView({
             <CardHeader>
               <div className="flex items-center">
                 <CardTitle className="inline-block ml-2">
-                  Distribute Splits
+                  Distribute Balance
                 </CardTitle>
               </div>
             </CardHeader>

@@ -31,33 +31,33 @@ export function CreatePaymentAddressModal({
   const [paymentAddressRecipients, setPaymentAddressRecipients] = useState<
     PaymentRecipientDto[]
   >([]);
-  const { createSplit, status, splitAddress } = useCreateSplit();
+  const { createSplit, status, error, splitAddress } = useCreateSplit();
 
   function filterAndMapSplitRecipient() {
-    return paymentSplits
-      .filter((split) => {
-        return split.paymentSplit != 0 || split.walletAddress == undefined;
-      })
-      .map((split) => ({
-        address: split.walletAddress!,
-        percentAllocation: Number.parseFloat(
-          split.paymentSplit!.toPrecision(2),
-        ),
-      }));
+    return paymentSplits.map((split) => {
+      if (split.paymentSplit != 0 || split.walletAddress == undefined) {
+        return {
+          address: split.walletAddress!,
+          percentAllocation: Number.parseFloat(
+            split.paymentSplit!.toPrecision(2),
+          ),
+        };
+      }
+    });
   }
 
   function filterAndMapArmitageRecipient(splitRecipient: SplitRecipient[]) {
-    return splitRecipient
-      .map((paymentRecipient) => ({
-        wallet_address: paymentRecipient.address,
-        payment_percentage: paymentRecipient.percentAllocation,
-      }))
-      .filter((recipient) => {
-        return !(
-          recipient.payment_percentage == 0 ||
-          recipient.wallet_address == undefined
-        );
-      });
+    return splitRecipient.map((paymentRecipient) => {
+      if (
+        paymentRecipient.percentAllocation == 0 ||
+        paymentRecipient.address == undefined
+      ) {
+        return {
+          wallet_address: paymentRecipient.address,
+          payment_percentage: paymentRecipient.percentAllocation,
+        };
+      }
+    });
   }
 
   const handleCreateSplit = async () => {
@@ -94,6 +94,7 @@ export function CreatePaymentAddressModal({
   }
 
   useEffect(() => {
+    console.log(`PayAddressUpdate: status[${status}] error[${error}]`);
     if (status == "complete") {
       handleSplitComplete();
     }

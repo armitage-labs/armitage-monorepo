@@ -2,7 +2,7 @@
 import React from "react";
 import { ThemeProvider } from "next-themes";
 
-import { WagmiProvider, webSocket } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import {
   darkTheme,
   getDefaultConfig,

@@ -40,7 +40,9 @@ export function SplitsBalance({
 
   const [balance, setBalance] = useState<string>("0.00");
   useEffect(() => {
+    console.log(`BalanceUpdate: status[${status}] error[${error}]`);
     if (splitEarnings != null) {
+      console.log(splitEarnings);
       const formattedAmount =
         splitEarnings.activeBalances?.[
           "0x0000000000000000000000000000000000000000"

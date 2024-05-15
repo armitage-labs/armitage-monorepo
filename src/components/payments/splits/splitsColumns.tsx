@@ -9,29 +9,29 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
   {
     id: "avatar",
     cell: ({ row }) => {
-      const reciepted = row.original;
+      const recipient = row.original;
       const isArmitage =
-        reciepted.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
+        recipient.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
       if (isArmitage) {
-        reciepted.username = "armitage-lab";
+        recipient.username = "armitage-labs";
       }
       return (
         <div>
-          {reciepted.username ? (
+          {recipient.username ? (
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={`https://github.com/${reciepted.username}.png?size=100`}
-                alt={reciepted.address}
+                src={`https://github.com/${recipient.username}.png?size=100`}
+                alt={recipient.address}
               />
-              <AvatarFallback>{reciepted.address}</AvatarFallback>
+              <AvatarFallback>{recipient.address}</AvatarFallback>
             </Avatar>
           ) : (
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={`https://avatars.jakerunzer.com/${reciepted.address}`}
-                alt={reciepted.address}
+                src={`https://avatars.jakerunzer.com/${recipient.address}`}
+                alt={recipient.address}
               />
-              <AvatarFallback>{reciepted.address}</AvatarFallback>
+              <AvatarFallback>{recipient.address}</AvatarFallback>
             </Avatar>
           )}
         </div>
@@ -42,19 +42,19 @@ export const SplitsColumns: ColumnDef<SplitRecipient>[] = [
     accessorKey: "wallet",
     header: () => <></>,
     cell: ({ row }) => {
-      const reciepted = row.original;
+      const recipient = row.original;
       const isArmitage =
-        reciepted.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
+        recipient.address == "0xB5685343eD45D8b896633F9c128C55F758feb0aA";
       return (
         <div className="">
           {isArmitage ? (
             <>Armitage Labs</>
           ) : (
             <>
-              {reciepted.username ? (
-                <> {reciepted.username}</>
+              {recipient.username ? (
+                <> {recipient.username}</>
               ) : (
-                <>{truncateString(reciepted.address, 6)}</>
+                <>{truncateString(recipient.address, 6)}</>
               )}
             </>
           )}
