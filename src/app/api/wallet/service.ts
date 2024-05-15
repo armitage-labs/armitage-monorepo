@@ -46,3 +46,24 @@ export async function findUserWallet(
     return null;
   }
 }
+
+export async function seachUsernameByWalletAddress(
+  address: string,
+): Promise<string | null> {
+  try {
+    const userWithUsername = await prisma.user.findFirst({
+      where: {
+        UserWallet: {
+          address: address,
+        },
+      },
+      select: {
+        username: true,
+      },
+    });
+    return userWithUsername?.username ?? null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}

@@ -1,28 +1,40 @@
+import {
+  PaymentAddressDto,
+  PaymentRecipientDto,
+} from "@/app/api/payments/route";
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useSplitsClient } from "@0xsplits/splits-sdk-react";
-import { useAccount } from "wagmi";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { SplitRecipient, useCreateSplit } from "@0xsplits/splits-sdk-react";
+import { useEffect, useState } from "react";
+import { useAccount, useChainId } from "wagmi";
+import axios from "axios";
 
 type CreatePaymentAddressModalProps = {
   projectId: string;
   paymentSplits: PaymentSplitDto[];
+  onCreate: (param: PaymentAddressDto) => void;
 };
 
 export function CreatePaymentAddressModal({
   projectId,
   paymentSplits,
+  onCreate,
 }: CreatePaymentAddressModalProps) {
   const account = useAccount();
+  const chainId = useChainId();
+  const [paymentAddressRecipients, setPaymentAddressRecipients] = useState<
+    PaymentRecipientDto[]
+  >([]);
+  const { createSplit, status, error, splitAddress } = useCreateSplit();
 
-  const splitsClient = useSplitsClient({
-    // TODO: Use connected chainId
-    chainId: 8453,
-    publicClient: window.ethereum!,
-  });
-
-  const handleCreateSplit = async () => {
-    const recipients = paymentSplits
+  function filterAndMapSplitRecipient() {
+    return paymentSplits
       .filter((split) => {
         return split.paymentSplit != 0 || split.walletAddress == undefined;
       })
@@ -32,6 +44,24 @@ export function CreatePaymentAddressModal({
           split.paymentSplit!.toPrecision(2),
         ),
       }));
+  }
+
+  function filterAndMapArmitageRecipient(splitRecipient: SplitRecipient[]) {
+    return splitRecipient
+      .map((paymentRecipient) => ({
+        wallet_address: paymentRecipient.address,
+        payment_percentage: paymentRecipient.percentAllocation,
+      }))
+      .filter((recipient) => {
+        return !(
+          recipient.payment_percentage == 0 ||
+          recipient.wallet_address == undefined
+        );
+      });
+  }
+
+  const handleCreateSplit = async () => {
+    const recipients = filterAndMapSplitRecipient();
     const createSplitReq = {
       recipients: recipients.filter(
         (recipient) => recipient.address != undefined,
@@ -39,20 +69,36 @@ export function CreatePaymentAddressModal({
       distributorFeePercent: 0,
       controller: account.address,
     };
-    try {
-      const args = {
-        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
-      };
-      const response = await splitsClient.getSplitMetadata(args);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
+    setPaymentAddressRecipients(filterAndMapArmitageRecipient(recipients));
+    createSplit(createSplitReq);
+  };
+
+  const handleSplitComplete = async () => {
+    const paymentAddress: PaymentAddressDto = {
+      chain_id: chainId.toString(),
+      team_id: projectId,
+      wallet_address: splitAddress!,
+      payment_receipents: paymentAddressRecipients,
+    };
+    const { data } = await axios.post(
+      `/api/payments?team_id=${projectId}`,
+      paymentAddress,
+    );
+    if (data.success) {
+      onCreate(data.paymentAddress);
     }
   };
 
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
   }
+
+  useEffect(() => {
+    console.log(`PayAddressUpdate: status[${status}] error[${error}]`);
+    if (status == "complete") {
+      handleSplitComplete();
+    }
+  }, [status]);
 
   return (
     <Dialog>
@@ -82,23 +128,34 @@ export function CreatePaymentAddressModal({
             )}
             <div className="pt-6">
               <div className="flex justify-between">
-                <Button
-                  className="w-1/2 mr-2"
-                  onClick={() => {
-                    console.log("Hi");
-                  }}
-                >
-                  Cancel
-                </Button>
+                <DialogClose asChild>
+                  <Button
+                    className="w-1/2 mr-2"
+                    disabled={!(status == null || status == "error")}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
 
                 <Button
                   className="w-1/2  ml-2"
-                  disabled={!account.isConnected}
+                  disabled={
+                    !(
+                      account.isConnected &&
+                      (status == null || status == "error")
+                    )
+                  }
                   onClick={() => {
                     handleCreateSplit();
                   }}
                 >
-                  <>Continue</>
+                  {status == "pendingApproval" ? (
+                    <>Waiting for approval</>
+                  ) : status == "txInProgress" ? (
+                    <>In progress</>
+                  ) : (
+                    <>Continue</>
+                  )}
                 </Button>
               </div>
             </div>
