@@ -17,7 +17,7 @@ export const PaymentSplitsProvider = ({ children }: Props) => {
   const chainId = useChainId();
 
   useEffect(() => {
-    if (status == "success") {
+    if (status == "success" && chainId) {
       setSplitsConfig({
         chainId: chainId,
         walletClient: walletClient,
