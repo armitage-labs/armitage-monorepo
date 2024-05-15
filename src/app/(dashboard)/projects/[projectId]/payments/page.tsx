@@ -1,10 +1,9 @@
 "use client";
 
+import { PaymentAddressDto } from "@/app/api/payments/service/paymentAddressService";
 import PaymentsOnboarding from "@/components/payments/paymentsOnboarding";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import PaymentsView from "@/components/payments/paymentView";
-import { PaymentAddressDto } from "@/app/api/payments/route";
+import { useState } from "react";
 
 interface PageProps {
   params: { projectId: string };
@@ -23,22 +22,12 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
     }
   };
 
-  useEffect(() => {
-    handleFetchProjectPaymentAddress();
-  }, []);
-
   return (
     <>
       {projectPaymentAddress != null ? (
-        <PaymentsView
-          projectId={projectId}
-          paymentAddress={projectPaymentAddress}
-        ></PaymentsView>
+        <>WIP: Payment coming soon</>
       ) : (
-        <PaymentsOnboarding
-          projectId={projectId}
-          onCreate={setProjectPaymentAddress}
-        ></PaymentsOnboarding>
+        <PaymentsOnboarding projectId={projectId}></PaymentsOnboarding>
       )}
     </>
   );
