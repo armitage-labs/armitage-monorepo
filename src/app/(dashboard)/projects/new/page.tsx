@@ -7,10 +7,12 @@ import ProjectRepoSelect from "@/components/projects/projectRepoSelect";
 import { TeamCalculationCreated } from "@/components/teams/teamCalculationCreated";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
+import { Team } from "@prisma/client";
 import { Separator } from "@radix-ui/react-separator";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 import { toast } from "sonner";
+import axios from "axios";
 
 const breadcrumbItems = [
   { title: "Projects", link: "/projects" },
@@ -22,6 +24,8 @@ export default function CreateNewProjectPage() {
   const [selectedGithubRepos, setSelectedGithubRepos] = useState<
     GithubRepoDto[]
   >([]);
+  const [project, setProject] = useState<Team>();
+  const [reportGenerated, setReportGenerated] = useState<boolean>();
   const [currentStep, setCurrentStep] = useState(0);
 
   const handleOnRepoSelect = async (
@@ -51,6 +55,7 @@ export default function CreateNewProjectPage() {
     nextStep();
     const { data } = await axios.post("/api/teams", { name: createTeamName });
     if (data.success) {
+      setProject(data.createdTeam);
       await handleRegisterRepos(data.createdTeam.id);
       handleGenerateReport(data.createdTeam.id);
     } else {
@@ -78,7 +83,8 @@ export default function CreateNewProjectPage() {
       });
       previousStep();
     } else {
-      const { data } = await axios.get(`/api/credmanager?team_id=${projectId}`);
+      await axios.get(`/api/credmanager?team_id=${projectId}`);
+      setReportGenerated(true);
     }
   };
 
@@ -93,6 +99,12 @@ export default function CreateNewProjectPage() {
   useEffect(() => {
     console.log(selectedGithubRepos);
   }, [selectedGithubRepos]);
+
+  useEffect(() => {
+    if (reportGenerated) {
+      redirect(`/projects/${project?.id}`);
+    }
+  }, [reportGenerated]);
 
   return (
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">

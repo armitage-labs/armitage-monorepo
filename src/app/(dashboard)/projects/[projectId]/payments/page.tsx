@@ -5,6 +5,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import PaymentsView from "@/components/payments/paymentView";
 import { PaymentAddressDto } from "@/app/api/payments/route";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingCircle } from "@/components/navigation/loading";
 
 interface PageProps {
   params: { projectId: string };
@@ -12,6 +14,7 @@ interface PageProps {
 
 export default function ProjectPaymentsPage({ params }: PageProps) {
   const projectId = params.projectId;
+  const [isLoading, setIsLoading] = useState(true);
   const [projectPaymentAddress, setProjectPaymentAddress] = useState<
     PaymentAddressDto | undefined
   >();
@@ -20,6 +23,7 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
     const { data } = await axios.get("/api/payments?team_id=" + projectId);
     if (data.success && data.paymentAddress) {
       setProjectPaymentAddress(data.paymentAddress);
+      setIsLoading(false);
     }
   };
 
@@ -29,16 +33,26 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
 
   return (
     <>
-      {projectPaymentAddress != null ? (
-        <PaymentsView
-          projectId={projectId}
-          paymentAddress={projectPaymentAddress}
-        ></PaymentsView>
+      {isLoading ? (
+        <>
+          <div className="pt-36 flex justify-center">
+            <LoadingCircle></LoadingCircle>
+          </div>
+        </>
       ) : (
-        <PaymentsOnboarding
-          projectId={projectId}
-          onCreate={setProjectPaymentAddress}
-        ></PaymentsOnboarding>
+        <>
+          {projectPaymentAddress != null ? (
+            <PaymentsView
+              projectId={projectId}
+              paymentAddress={projectPaymentAddress}
+            ></PaymentsView>
+          ) : (
+            <PaymentsOnboarding
+              projectId={projectId}
+              onCreate={setProjectPaymentAddress}
+            ></PaymentsOnboarding>
+          )}
+        </>
       )}
     </>
   );
