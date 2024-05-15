@@ -25,22 +25,17 @@ import { useState } from "react";
 import { RowSkeleton } from "@/components/skeleton/rowSkeleton";
 import { CreatePaymentAddressModal } from "@/app/(dashboard)/projects/[projectId]/payments/paymentCreateModal";
 import { PaymentSplitDto } from "@/app/api/payments/service/paymentSplitsService";
-import { PaymentAddressDto } from "@/app/api/payments/route";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading: boolean;
-  onCreate: (param: PaymentAddressDto) => void;
-  projectId: string;
 }
 
 export function PaymentSplitsDataTable<TData, TValue>({
   columns,
   data,
   isLoading,
-  onCreate,
-  projectId,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -75,9 +70,8 @@ export function PaymentSplitsDataTable<TData, TValue>({
         />
 
         <CreatePaymentAddressModal
-          projectId={projectId}
+          projectId={"1"}
           paymentSplits={data as PaymentSplitDto[]}
-          onCreate={onCreate}
         ></CreatePaymentAddressModal>
       </div>
 

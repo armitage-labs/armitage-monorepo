@@ -10,6 +10,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 
 const queryClient = new QueryClient();
 const config = getDefaultConfig({
@@ -33,7 +34,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             })}
           >
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
+              <SplitsProvider>{children}</SplitsProvider>
             </ThemeProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
