@@ -10,6 +10,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { base, sepolia } from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SplitsClientProvider } from "./splitsClientProvider";
 import { SplitsProvider } from "@0xsplits/splits-sdk-react";
 import { PaymentSplitsProvider } from "./splitsProvider";
 
@@ -34,15 +35,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               fontStack: "system",
             })}
           >
-            <PaymentSplitsProvider>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-              >
-                {children}
-              </ThemeProvider>
-            </PaymentSplitsProvider>
+            <SplitsProvider>
+              <SplitsClientProvider>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                >
+                  {children}
+                </ThemeProvider>
+              </SplitsClientProvider>
+            </SplitsProvider>
           </RainbowKitProvider>
         </QueryClientProvider>
       </WagmiProvider>
