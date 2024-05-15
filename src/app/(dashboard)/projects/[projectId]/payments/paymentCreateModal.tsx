@@ -21,34 +21,7 @@ export function CreatePaymentAddressModal({
     publicClient: window.ethereum!,
   });
 
-  const handleCreateSplit = async () => {
-    const recipients = paymentSplits
-      .filter((split) => {
-        return split.paymentSplit != 0 || split.walletAddress == undefined;
-      })
-      .map((split) => ({
-        address: split.walletAddress!,
-        percentAllocation: Number.parseFloat(
-          split.paymentSplit!.toPrecision(2),
-        ),
-      }));
-    const createSplitReq = {
-      recipients: recipients.filter(
-        (recipient) => recipient.address != undefined,
-      ),
-      distributorFeePercent: 0,
-      controller: account.address,
-    };
-    try {
-      const args = {
-        splitAddress: "0x881985d5B0690598b84bcD7348c4A8c842e79419",
-      };
-      const response = await splitsClient.getSplitMetadata(args);
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const handleCreateSplit = async () => {};
 
   function missingContributionWallets(): number {
     return paymentSplits.filter((split) => split.walletAddress == null).length;
