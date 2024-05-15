@@ -34,30 +34,30 @@ export function CreatePaymentAddressModal({
   const { createSplit, status, error, splitAddress } = useCreateSplit();
 
   function filterAndMapSplitRecipient() {
-    return paymentSplits.map((split) => {
-      if (split.paymentSplit != 0 || split.walletAddress == undefined) {
-        return {
-          address: split.walletAddress!,
-          percentAllocation: Number.parseFloat(
-            split.paymentSplit!.toPrecision(2),
-          ),
-        };
-      }
-    });
+    return paymentSplits
+      .filter((split) => {
+        return split.paymentSplit != 0 || split.walletAddress == undefined;
+      })
+      .map((split) => ({
+        address: split.walletAddress!,
+        percentAllocation: Number.parseFloat(
+          split.paymentSplit!.toPrecision(2),
+        ),
+      }));
   }
 
   function filterAndMapArmitageRecipient(splitRecipient: SplitRecipient[]) {
-    return splitRecipient.map((paymentRecipient) => {
-      if (
-        paymentRecipient.percentAllocation == 0 ||
-        paymentRecipient.address == undefined
-      ) {
-        return {
-          wallet_address: paymentRecipient.address,
-          payment_percentage: paymentRecipient.percentAllocation,
-        };
-      }
-    });
+    return splitRecipient
+      .map((paymentRecipient) => ({
+        wallet_address: paymentRecipient.address,
+        payment_percentage: paymentRecipient.percentAllocation,
+      }))
+      .filter((recipient) => {
+        return !(
+          recipient.payment_percentage == 0 ||
+          recipient.wallet_address == undefined
+        );
+      });
   }
 
   const handleCreateSplit = async () => {
