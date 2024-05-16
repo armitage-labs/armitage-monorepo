@@ -5,7 +5,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import PaymentsView from "@/components/payments/paymentView";
 import { PaymentAddressDto } from "@/app/api/payments/route";
-import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingCircle } from "@/components/navigation/loading";
 
 interface PageProps {
@@ -23,8 +22,8 @@ export default function ProjectPaymentsPage({ params }: PageProps) {
     const { data } = await axios.get("/api/payments?team_id=" + projectId);
     if (data.success && data.paymentAddress) {
       setProjectPaymentAddress(data.paymentAddress);
-      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
