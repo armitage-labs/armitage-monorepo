@@ -174,8 +174,8 @@ export default function TeamDetailsPage({ params }: PageProps) {
           />
           <div>
             {!isLoading &&
-              team?.single_repository &&
-              !hasContributionRequest ? (
+            team?.single_repository &&
+            !hasContributionRequest ? (
               <>
                 <GenerateAttestationModal teamId={teamId} />
                 <Button
