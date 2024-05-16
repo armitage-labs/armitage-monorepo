@@ -44,8 +44,7 @@ export default function TeamsPage() {
           />
           <Button
             className="text-xs md:text-sm"
-            // TODO:
-            // onClick={() => router.push(`/repositories/new`)}
+            onClick={() => router.push(`/projects/new`)}
           >
             <Plus className="mr-2 h-4 w-4" /> Add New
           </Button>

@@ -178,19 +178,19 @@ export default function TeamDetailsPage({ params }: PageProps) {
             !hasContributionRequest ? (
               <>
                 <GenerateAttestationModal teamId={teamId} />
+                <Button
+                  className="mr-2"
+                  variant={"destructive"}
+                  onClick={() => {
+                    router.push(`/projects/${teamId}/payments`);
+                  }}
+                >
+                  Payment Address
+                </Button>
               </>
             ) : (
               <div></div>
             )}
-            <Button
-              className="mr-2"
-              variant={"destructive"}
-              onClick={() => {
-                router.push(`/projects/${teamId}/payments`);
-              }}
-            >
-              Payment Address
-            </Button>
             <Button
               className="mr-2"
               onClick={() => {
