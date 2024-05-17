@@ -11,6 +11,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { GithubRepoDto } from "@/app/api/github/repo/types/githubRepo.dto";
 import ProjectGithubRepositoriesBadge from "../repo/projectGithubRepositoriesBadge";
+import { useEffect } from "react";
 
 interface ProjectTeamNameFormProps {
   createTeamName: string;
@@ -27,6 +28,11 @@ export default function ProjectTeamNameForm({
   selectedGithubRepos,
   onSelectRepo,
 }: ProjectTeamNameFormProps) {
+  useEffect(() => {
+    if (selectedGithubRepos.length == 1) {
+      setCreateTeamName(selectedGithubRepos[0].full_name);
+    }
+  }, []);
   return (
     <>
       <div className="pt-36">
