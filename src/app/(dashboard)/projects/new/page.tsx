@@ -125,10 +125,11 @@ export default function CreateNewProjectPage() {
           ) : currentStep === 0 ? (
             <Button
               className="items-center ml-4"
+              variant={"constructive"}
               onClick={nextStep}
               disabled={selectedGithubRepos.length == 0}
             >
-              Next Step
+              Continue
             </Button>
           ) : (
             <></>
