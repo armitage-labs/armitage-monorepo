@@ -1,4 +1,5 @@
 import { RegisterGitRepoDto } from "./repo/route";
+import prisma from "db";
 
 export async function registerProjectRepos(
   projectId: string,
