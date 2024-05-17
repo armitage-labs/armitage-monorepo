@@ -82,7 +82,7 @@ export class WeightConfigDto {
     public id: string,
     public type: string,
     public value: number,
-    public teamId: string
+    public teamId: string,
   ) {}
 
   toJSON(): WeightConfigJson {
