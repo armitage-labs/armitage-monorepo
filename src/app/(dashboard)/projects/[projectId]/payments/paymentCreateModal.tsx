@@ -119,7 +119,7 @@ export function CreatePaymentAddressModal({
             {missingContributionWallets() != 0 ? (
               <>
                 Please note that you have {missingContributionWallets()}{" "}
-                contributor that have not configured their wallet address in
+                contributor(s) that have not configured their wallet address in
                 Armitage. If you continue, their scores will be equally
                 distributed between all configured contributors.
               </>

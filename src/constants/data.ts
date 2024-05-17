@@ -8,16 +8,10 @@ export const signedInNavItems: NavItem[] = [
     label: "dashboard",
   },
   {
-    title: "Repositories",
-    href: "/repositories",
+    title: "Projects",
+    href: "/projects",
     icon: "folderGit2",
-    label: "repositories",
-  },
-  {
-    title: "Teams",
-    href: "/teams",
-    icon: "users",
-    label: "teams",
+    label: "projects",
   },
   {
     title: "Contributors",
