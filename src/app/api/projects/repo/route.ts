@@ -24,8 +24,17 @@ export async function POST(req: NextRequest) {
       );
       return NextResponse.json({ success: true, created: true });
     }
-    return NextResponse.json({ success: false, created: false });
+    return NextResponse.json({
+      success: false,
+      created: false,
+      error: "User session is null or request body is invalid",
+    });
   } catch (error) {
-    return NextResponse.json({ success: false, created: false });
+    console.error(error);
+    return NextResponse.json({
+      success: false,
+      created: false,
+      error: "Unexpected Error",
+    });
   }
 }
