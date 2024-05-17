@@ -74,8 +74,9 @@ export default function PaymentsView({
           <Alert className="flex items-center bg-blue-500">
             <Icons.warning className="mr-2 h-4 w-4" />
             <AlertTitle>
-              You payment address is not visible on chain yet or we have not
-              indexed it yet, wait a couple of min and refresh this page
+              You payment address has not been indexed yet, wait for a moment
+              until we are able to fetch it from onchain data and refresh this
+              page.
             </AlertTitle>
           </Alert>
         </div>
