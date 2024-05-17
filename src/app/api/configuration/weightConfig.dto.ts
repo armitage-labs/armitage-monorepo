@@ -34,7 +34,7 @@ export const defaultConfigResponse: WeightConfig = {
     title: "Commit Weight",
     description:
       "This slider adjusts the relevance and weight you would like to assign for commits that were successfully merged.",
-    value: 0, // default value
+    value: 1, // default value
     min: 0,
     max: 10,
     step: 1,

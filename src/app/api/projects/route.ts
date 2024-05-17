@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { options } from "../auth/[...nextauth]/options";
 import { fetchUserTeam } from "../teams/fetchTeam";
 import { fetchUserTeams } from "../teams/fetchUserTeams";
+import { ProjectRegisterDto } from "./types/project.dto";
+import { registerUserTeam } from "../teams/registerUserTeam";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(options);
@@ -21,5 +23,27 @@ export async function GET(req: NextRequest) {
         userTeams: userTeam,
       });
     }
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const session = await getServerSession(options);
+    const registerProjectDto = (await req.json()) as ProjectRegisterDto;
+    if (session?.userId) {
+      const createdProject = await registerUserTeam(
+        session.userId,
+        registerProjectDto.name,
+        registerProjectDto.repoCount == 1,
+      );
+      return NextResponse.json({
+        success: true,
+        createdProject: createdProject,
+      });
+    }
+    return NextResponse.json({ success: true, createdProject: null });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false, createdProject: null });
   }
 }

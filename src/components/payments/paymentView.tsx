@@ -8,6 +8,9 @@ import { truncateString } from "@/app/(dashboard)/utils/stringUtils";
 import { SplitsBalance } from "./splits/splitsBalance";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { Alert, AlertTitle } from "../ui/alert";
+import { Icons } from "../icons";
+import { useState } from "react";
 
 interface PaymentsViewProps {
   projectId: string;
@@ -35,6 +38,7 @@ export default function PaymentsView({
   projectId,
   paymentAddress,
 }: PaymentsViewProps) {
+  const [loadedSuccessfully, setLoadedSuccessfully] = useState(true);
   return (
     <div className="flex-1 space-y-4  p-4 md:p-8 pt-6">
       <div className="flex items-start">
@@ -65,11 +69,26 @@ export default function PaymentsView({
           </div>
         </div>
       </div>
+      {!loadedSuccessfully ? (
+        <div>
+          <Alert className="flex items-center bg-blue-500">
+            <Icons.warning className="mr-2 h-4 w-4" />
+            <AlertTitle>
+              You payment address has not been indexed yet, wait for a moment
+              until we are able to fetch it from onchain data and refresh this
+              page.
+            </AlertTitle>
+          </Alert>
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <SplitsBalance
             projectId={projectId}
             paymentAddress={paymentAddress}
+            setLoadedSuccessfully={setLoadedSuccessfully}
           ></SplitsBalance>
         </div>
         <div>
@@ -85,6 +104,7 @@ export default function PaymentsView({
               <SplitsRecipients
                 paymentAddress={paymentAddress.wallet_address}
                 chainId={parseInt(paymentAddress.chain_id)}
+                setLoadedSuccessfully={setLoadedSuccessfully}
               ></SplitsRecipients>
             </CardContent>
           </Card>

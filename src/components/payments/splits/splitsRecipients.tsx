@@ -9,6 +9,7 @@ import axios from "axios";
 interface SplitsRecipientsProps {
   paymentAddress: string;
   chainId: number;
+  setLoadedSuccessfully: (isSuccessfully: boolean) => void;
 }
 
 export interface SplitRecipient {
@@ -21,10 +22,14 @@ export interface SplitRecipient {
 export default function SplitsRecipients({
   paymentAddress,
   chainId,
+  setLoadedSuccessfully,
 }: SplitsRecipientsProps) {
   const [recipient, setRecipient] = useState<SplitRecipient[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { splitMetadata, status } = useSplitMetadata(chainId, paymentAddress);
+  const { splitMetadata, status, error } = useSplitMetadata(
+    chainId,
+    paymentAddress,
+  );
 
   const handleSplitMetadata = async (splitRecipient: SplitRecipient[]) => {
     const { data } = await axios.post(`/api/wallet/search`, splitRecipient);
@@ -42,7 +47,10 @@ export default function SplitsRecipients({
       }));
       handleSplitMetadata(mappedRecipient);
     }
-  }, [status]);
+    if (error) {
+      setLoadedSuccessfully(false);
+    }
+  }, [status, error]);
 
   return (
     <SplitsDataTable

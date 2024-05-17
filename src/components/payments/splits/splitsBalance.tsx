@@ -12,21 +12,26 @@ import {
   useDistributeToken,
   useSplitEarnings,
 } from "@0xsplits/splits-sdk-react";
-import { Split, Wallet2 } from "lucide-react";
+import { Split, SwitchCamera, Wallet2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useChainId } from "wagmi";
+import { useSwitchChain } from "wagmi";
 
 interface SplitsBalanceProps {
   projectId: string;
   paymentAddress: PaymentAddressDto;
+  setLoadedSuccessfully: (isSuccessfully: boolean) => void;
 }
 
 export function SplitsBalance({
   projectId,
   paymentAddress,
+  setLoadedSuccessfully,
 }: SplitsBalanceProps) {
   const account = useAccount();
+  const chainId = useChainId();
   const [isLoading, setIsLoading] = useState(true);
+  const { switchChain } = useSwitchChain();
   const { splitEarnings, status, error } = useSplitEarnings(
     parseInt(paymentAddress.chain_id),
     paymentAddress.wallet_address,
@@ -52,6 +57,9 @@ export function SplitsBalance({
         setBalance(formattedAmount);
       }
       setIsLoading(false);
+    }
+    if (error) {
+      setLoadedSuccessfully(false);
     }
   }, [splitEarnings, status, error, isLoading]);
 
@@ -79,32 +87,45 @@ export function SplitsBalance({
             </div>
           </CardContent>
           <CardFooter>
-            <Button
-              className="w-full text-md flex justify-between items-center"
-              disabled={
-                !(
-                  account.isConnected &&
-                  (distributeStatus == null ||
-                    distributeStatus == "error" ||
-                    distributeStatus == "complete")
-                )
-              }
-              onClick={() =>
-                distributeToken({
-                  splitAddress: paymentAddress.wallet_address,
-                  token: "0x0000000000000000000000000000000000000000",
-                })
-              }
-            >
-              {distributeStatus == "pendingApproval" ? (
-                <>Waiting for approval</>
-              ) : distributeStatus == "txInProgress" ? (
-                <>In progress</>
-              ) : (
-                <>Distribute Balances</>
-              )}
-              <Split className="mr-2 h-5 w-5 transform rotate-90" />
-            </Button>
+            {account.isConnected &&
+            chainId != parseInt(paymentAddress.chain_id) ? (
+              <Button
+                className="w-full text-md flex justify-between items-center"
+                onClick={() =>
+                  switchChain({ chainId: parseInt(paymentAddress.chain_id) })
+                }
+              >
+                Switch Chains
+                <SwitchCamera className="mr-2 h-5 w-5" />
+              </Button>
+            ) : (
+              <Button
+                className="w-full text-md flex justify-between items-center"
+                disabled={
+                  !(
+                    account.isConnected &&
+                    (distributeStatus == null ||
+                      distributeStatus == "error" ||
+                      distributeStatus == "complete")
+                  )
+                }
+                onClick={() =>
+                  distributeToken({
+                    splitAddress: paymentAddress.wallet_address,
+                    token: "0x0000000000000000000000000000000000000000",
+                  })
+                }
+              >
+                {distributeStatus == "pendingApproval" ? (
+                  <>Waiting for approval</>
+                ) : distributeStatus == "txInProgress" ? (
+                  <>In progress</>
+                ) : (
+                  <>Distribute Balances</>
+                )}
+                <Split className="mr-2 h-5 w-5 transform rotate-90" />
+              </Button>
+            )}
           </CardFooter>
         </Card>
       )}

@@ -53,11 +53,14 @@ export default function CreateNewProjectPage() {
 
   const handleCreateTeam = async () => {
     nextStep();
-    const { data } = await axios.post("/api/teams", { name: createTeamName });
+    const { data } = await axios.post("/api/projects", {
+      name: createTeamName,
+      repoCount: selectedGithubRepos.length,
+    });
     if (data.success) {
-      setProject(data.createdTeam);
-      await handleRegisterRepos(data.createdTeam.id);
-      handleGenerateReport(data.createdTeam.id);
+      setProject(data.createdProject);
+      await handleRegisterRepos(data.createdProject.id);
+      handleGenerateReport(data.createdProject.id);
     } else {
       previousStep();
     }
