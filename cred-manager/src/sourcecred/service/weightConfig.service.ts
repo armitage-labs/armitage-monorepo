@@ -8,7 +8,7 @@ import {
 
 @Injectable()
 export class WeightConfigService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) { }
 
   async getTeamWeightConfigs(teamId: string): Promise<WeightConfigDto[]> {
     const teamWeightConfigs =
@@ -42,7 +42,7 @@ export class WeightConfigService {
         'N\u0000sourcecred\u0000github\u0000COMMENT\u0000':
           nodeWeightsMap.get('NODE_COMMENT') || 0,
         'N\u0000sourcecred\u0000github\u0000COMMIT\u0000':
-          nodeWeightsMap.get('NODE_COMMIT') || 0,
+          nodeWeightsMap.get('NODE_COMMIT') || 0.0625,
         'N\u0000sourcecred\u0000github\u0000ISSUE\u0000':
           nodeWeightsMap.get('NODE_ISSUE') || 0,
         'N\u0000sourcecred\u0000github\u0000PULL\u0000':
