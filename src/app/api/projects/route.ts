@@ -37,7 +37,7 @@ export async function DELETE(req: NextRequest) {
     }
   } catch (error) {
     console.log(error);
-    return NextResponse.json({ success: false })
+    return NextResponse.json({ success: false });
   }
 }
 
