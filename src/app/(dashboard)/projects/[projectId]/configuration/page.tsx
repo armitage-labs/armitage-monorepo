@@ -66,6 +66,15 @@ export default function ProjectConfigurationPage({ params }: PageProps) {
     }
   };
 
+  const handleDeleteProject = async () => {
+    const { data } = await axios.delete(`/api/projects?team_id=${teamId}`);
+    if (data.success) {
+      router.push(`/projects`);
+    } else {
+      console.log("Error deleting project");
+    }
+  };
+
   const handleCalculate = async () => {
     const { data } = await axios.get(`/api/credmanager?team_id=${team!.id}`);
     if (data && data.success) {
@@ -107,6 +116,15 @@ export default function ProjectConfigurationPage({ params }: PageProps) {
                   }}
                 >
                   Save
+                </Button>
+                <Button
+                  variant={"destructive"}
+                  className="ml-3"
+                  onClick={() => {
+                    handleDeleteProject();
+                  }}
+                >
+                  Delete Project
                 </Button>
               </div>
             </>
